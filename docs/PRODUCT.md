@@ -1,10 +1,10 @@
 # Product Specification
 
-## Nome provisório
+## Nome
 
-Tamagotchi App.
+Dengo.
 
-O nome é um codinome. O produto não é uma reprodução do brinquedo/jogo Tamagotchi.
+O produto não é uma reprodução do brinquedo/jogo Tamagotchi.
 
 ## Visão
 

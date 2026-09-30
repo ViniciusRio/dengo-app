@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TamagotchiApp"
+rootProject.name = "Dengo"
 include(":app")

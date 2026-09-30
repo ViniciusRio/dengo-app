@@ -2,7 +2,7 @@
 
 ## Contexto
 
-Este repositório contém um app Android privado de interação afetiva entre **Lidianne e Vinícius**. O nome provisório é **Tamagotchi App**.
+Este repositório contém o app Android **Dengo**, de interação afetiva entre **Lidianne e Vinícius**.
 
 ## Antes de programar
 

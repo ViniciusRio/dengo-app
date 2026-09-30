@@ -1,8 +1,8 @@
-# Tamagotchi App — Product & Design Starter v2
+# Dengo — Product & Design Starter v2
 
 Projeto Android pessoal para criar uma forma divertida, útil e afetiva de interação entre **Lidianne e Vinícius**.
 
-> `Tamagotchi App` é apenas um codinome provisório. O produto não reproduz o brinquedo/jogo Tamagotchi; a essência é comunicação afetiva entre duas pessoas.
+> Dengo é um app de comunicação afetiva entre duas pessoas, sem reproduzir o brinquedo/jogo Tamagotchi.
 
 ## Estado atual
 
