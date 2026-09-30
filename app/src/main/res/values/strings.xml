@@ -43,4 +43,25 @@
     <string name="mural_placeholder">Um espaço para guardar recados e desenhos.</string>
     <string name="history_placeholder">As interações importantes aparecerão aqui.</string>
     <string name="profile_placeholder">Seu perfil aparecerá aqui.</string>
+    <string name="perspective_title">Perspectiva do protótipo</string>
+    <string name="perspective_explanation">Escolha qual Home deseja visualizar neste aparelho.</string>
+    <string name="perspective_lidianne">Lidianne</string>
+    <string name="perspective_vinicius">Vinícius</string>
+    <string name="vinicius_greeting">Olá, Vinícius</string>
+    <string name="vinicius_intro">Cuidar começa por ouvir o que ela compartilha.</string>
+    <string name="vinicius_space_title">Um tempo só dela</string>
+    <string name="vinicius_space_body">Lidianne pediu um tempo só dela. Os pedidos continuam por aqui. Quando ela encerrar esse momento, você poderá responder normalmente.</string>
+    <string name="vinicius_mood_label">Como Lidianne está</string>
+    <string name="vinicius_mood_empty">Ela ainda não compartilhou como está. Quando quiser, aparece aqui.</string>
+    <string name="vinicius_mood_today">%1$s Lidianne está %2$s hoje</string>
+    <string name="vinicius_mood_previous">Último mood: %1$s %2$s</string>
+    <string name="vinicius_requests_title">Pedidos dela</string>
+    <string name="vinicius_requests_empty">Tudo tranquilo por agora ♡</string>
+    <string name="vinicius_requests_empty_detail">Quando Lidianne pedir algo, aparece aqui.</string>
+    <string name="vinicius_request_waiting">Um pedido para você</string>
+    <string name="vinicius_request_accepted">Você respondeu: estou indo ❤️</string>
+    <string name="vinicius_request_declined">Você avisou que não consegue agora</string>
+    <string name="vinicius_request_completed">Cuidado realizado</string>
+    <string name="vinicius_accept">Estou indo ❤️</string>
+    <string name="vinicius_decline">Não consigo agora</string>
 </resources>

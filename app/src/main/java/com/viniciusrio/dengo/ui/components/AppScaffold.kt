@@ -8,6 +8,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.material3.Icon
 import com.viniciusrio.dengo.navigation.AppDestination
@@ -16,6 +17,8 @@ import com.viniciusrio.dengo.navigation.AppDestination
 fun AppScaffold(
     currentDestination: AppDestination,
     onDestinationSelected: (AppDestination) -> Unit,
+    selectedColor: Color = MaterialTheme.colorScheme.primary,
+    indicatorColor: Color = MaterialTheme.colorScheme.primaryContainer,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
@@ -36,9 +39,9 @@ fun AppScaffold(
                         label = { Text(label) },
                         alwaysShowLabel = true,
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                            selectedTextColor = MaterialTheme.colorScheme.primary,
-                            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedIconColor = selectedColor,
+                            selectedTextColor = selectedColor,
+                            indicatorColor = indicatorColor,
                         ),
                     )
                 }
