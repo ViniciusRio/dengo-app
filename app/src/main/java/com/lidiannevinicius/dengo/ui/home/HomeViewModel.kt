@@ -21,8 +21,14 @@ class HomeViewModel(private val repository: FakeCoupleRepository) : ViewModel() 
             initialValue = repository.state.value.toLidianneHomeState(),
         )
 
-    fun createRequest(type: CareRequestType, message: String? = null) {
-        repository.createRequest(type, message)
+    fun createQuickRequest(type: CareRequestType) {
+        require(type != CareRequestType.OTHER)
+        repository.createRequest(type)
+    }
+
+    fun createOtherRequest(text: String) {
+        require(text.isNotBlank())
+        repository.createRequest(CareRequestType.OTHER, text)
     }
 
     fun setMood(option: MoodOption) {

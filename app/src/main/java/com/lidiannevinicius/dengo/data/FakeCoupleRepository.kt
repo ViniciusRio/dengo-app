@@ -32,12 +32,13 @@ class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone())
     val state: StateFlow<CoupleState> = mutableState.asStateFlow()
 
     fun createRequest(type: CareRequestType, message: String? = null): CareRequest {
+        require(type == CareRequestType.OTHER || message == null)
         val request = CareRequest(
             id = nextRequestId.getAndIncrement(),
             type = type,
             requesterId = PartnerId.LIDIANNE,
             recipientId = PartnerId.VINICIUS,
-            status = CareRequestStatus.REQUESTED,
+            status = CareRequestStatus.PENDING,
             createdAt = clock.instant(),
             message = message?.trim()?.takeIf(String::isNotEmpty),
         )
@@ -55,23 +56,42 @@ class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone())
     }
 
     fun setMood(option: MoodOption) {
+        val now = clock.instant()
+        val mood = Mood(PartnerId.LIDIANNE, option, LocalDate.ofInstant(now, clock.zone))
         mutableState.update { current ->
-            current.copy(mood = Mood(option, LocalDate.now(clock)))
+            if (current.mood == mood) current else current.copy(
+                mood = mood,
+                history = current.history + HistoryEvent.MoodChanged(
+                    option = option,
+                    actorId = mood.partnerId,
+                    occurredAt = now,
+                ),
+            )
         }
     }
 
     fun activatePersonalSpace() {
+        val now = clock.instant()
         mutableState.update { current ->
-            if (current.personalSpace.isActive) current else current.copy(
-                personalSpace = PersonalSpace(isActive = true, activatedAt = clock.instant()),
+            if (current.personalSpace.status == PersonalSpace.Status.ACTIVE) current else current.copy(
+                personalSpace = PersonalSpace(PersonalSpace.Status.ACTIVE, now),
+                history = current.history + HistoryEvent.PersonalSpaceActivated(
+                    actorId = PartnerId.LIDIANNE,
+                    occurredAt = now,
+                ),
             )
         }
     }
 
     fun endPersonalSpace() {
+        val now = clock.instant()
         mutableState.update { current ->
-            if (!current.personalSpace.isActive) current else current.copy(
+            if (current.personalSpace.status == PersonalSpace.Status.INACTIVE) current else current.copy(
                 personalSpace = PersonalSpace(),
+                history = current.history + HistoryEvent.PersonalSpaceEnded(
+                    actorId = PartnerId.LIDIANNE,
+                    occurredAt = now,
+                ),
             )
         }
     }

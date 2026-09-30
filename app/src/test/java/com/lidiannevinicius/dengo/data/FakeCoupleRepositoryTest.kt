@@ -12,7 +12,6 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -34,23 +33,28 @@ class FakeCoupleRepositoryTest {
     }
 
     @Test
-    fun creatingRequestPublishesRequestedState() {
+    fun creatingRequestPublishesPendingRequestAndMatchingHistoryEventTogether() {
         val repository = FakeCoupleRepository(clock)
 
-        val request = repository.createRequest(CareRequestType.AFFECTION)
+        val request = repository.createRequest(CareRequestType.DENGO)
+        val state = repository.state.value
 
         assertEquals(1L, request.id)
-        assertEquals(CareRequestType.AFFECTION, request.type)
+        assertEquals(CareRequestType.DENGO, request.type)
         assertEquals(PartnerId.LIDIANNE, request.requesterId)
         assertEquals(PartnerId.VINICIUS, request.recipientId)
-        assertEquals(CareRequestStatus.REQUESTED, request.status)
+        assertEquals(CareRequestStatus.PENDING, request.status)
         assertEquals(now, request.createdAt)
         assertNull(request.message)
-        assertEquals(listOf(request), repository.state.value.requests)
+        assertEquals(listOf(request), state.requests)
+        assertEquals(
+            listOf(HistoryEvent.RequestCreated(request.id, PartnerId.LIDIANNE, now)),
+            state.history,
+        )
     }
 
     @Test
-    fun requestsReceiveSequentialIdsAndTrimOptionalMessage() {
+    fun requestsReceiveSequentialIdsAndOtherTextIsTrimmed() {
         val repository = FakeCoupleRepository(clock)
 
         repository.createRequest(CareRequestType.HOT_WATER_BAG)
@@ -59,55 +63,83 @@ class FakeCoupleRepositoryTest {
         assertEquals(2L, other.id)
         assertEquals("Pode trazer água?", other.message)
         assertEquals(2, repository.state.value.requests.size)
+        assertEquals(2, repository.state.value.history.size)
     }
 
     @Test
-    fun changingMoodReplacesCurrentDayWithoutHistoryEvent() {
+    fun newRepositoryStartsWithFirstIdAndEmptyHistory() {
+        FakeCoupleRepository(clock).createRequest(CareRequestType.MEDICINE)
+
+        val freshRepository = FakeCoupleRepository(clock)
+
+        assertTrue(freshRepository.state.value.history.isEmpty())
+        assertEquals(1L, freshRepository.createRequest(CareRequestType.MEDICINE).id)
+    }
+
+    @Test
+    fun changingMoodStoresPersonAndDateAndRecordsEachChange() {
         val repository = FakeCoupleRepository(clock)
 
         repository.setMood(MoodOption.TIRED)
         repository.setMood(MoodOption.NEEDY)
+        repository.setMood(MoodOption.NEEDY)
 
-        assertEquals(Mood(MoodOption.NEEDY, LocalDate.of(2026, 9, 29)), repository.state.value.mood)
-        assertTrue(repository.state.value.history.isEmpty())
+        assertEquals(
+            Mood(PartnerId.LIDIANNE, MoodOption.NEEDY, LocalDate.of(2026, 9, 29)),
+            repository.state.value.mood,
+        )
+        assertEquals(
+            listOf(
+                HistoryEvent.MoodChanged(MoodOption.TIRED, PartnerId.LIDIANNE, now),
+                HistoryEvent.MoodChanged(MoodOption.NEEDY, PartnerId.LIDIANNE, now),
+            ),
+            repository.state.value.history,
+        )
     }
 
     @Test
-    fun activatingPersonalSpaceKeepsItSeparateFromRequests() {
+    fun activatingPersonalSpaceRecordsOneEventAndNoRequest() {
         val repository = FakeCoupleRepository(clock)
 
         repository.activatePersonalSpace()
-        val activeState = repository.state.value
         repository.activatePersonalSpace()
+        val state = repository.state.value
 
-        assertEquals(PersonalSpace(isActive = true, activatedAt = now), activeState.personalSpace)
-        assertEquals(activeState, repository.state.value)
-        assertTrue(activeState.requests.isEmpty())
-        assertTrue(activeState.history.isEmpty())
+        assertEquals(PersonalSpace(PersonalSpace.Status.ACTIVE, now), state.personalSpace)
+        assertTrue(state.requests.isEmpty())
+        assertEquals(
+            listOf(HistoryEvent.PersonalSpaceActivated(PartnerId.LIDIANNE, now)),
+            state.history,
+        )
     }
 
     @Test
-    fun endingPersonalSpaceClearsItWithoutCreatingRequestOrHistory() {
+    fun endingPersonalSpaceRecordsOneEventAndClearsStartTime() {
         val repository = FakeCoupleRepository(clock)
         repository.activatePersonalSpace()
 
         repository.endPersonalSpace()
+        repository.endPersonalSpace()
+        val state = repository.state.value
 
-        assertFalse(repository.state.value.personalSpace.isActive)
-        assertNull(repository.state.value.personalSpace.activatedAt)
-        assertTrue(repository.state.value.requests.isEmpty())
-        assertTrue(repository.state.value.history.isEmpty())
+        assertEquals(PersonalSpace(), state.personalSpace)
+        assertTrue(state.requests.isEmpty())
+        assertEquals(
+            listOf(
+                HistoryEvent.PersonalSpaceActivated(PartnerId.LIDIANNE, now),
+                HistoryEvent.PersonalSpaceEnded(PartnerId.LIDIANNE, now),
+            ),
+            state.history,
+        )
     }
 
     @Test
-    fun creatingRequestRecordsCorrespondingHistoryEvent() {
+    fun endingInactivePersonalSpaceDoesNotCreateEvent() {
         val repository = FakeCoupleRepository(clock)
 
-        val request = repository.createRequest(CareRequestType.MEDICINE)
+        repository.endPersonalSpace()
 
-        assertEquals(
-            listOf(HistoryEvent.RequestCreated(request.id, PartnerId.LIDIANNE, now)),
-            repository.state.value.history,
-        )
+        assertEquals(PersonalSpace(), repository.state.value.personalSpace)
+        assertTrue(repository.state.value.history.isEmpty())
     }
 }

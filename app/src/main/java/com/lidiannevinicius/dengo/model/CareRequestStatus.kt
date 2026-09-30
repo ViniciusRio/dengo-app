@@ -1,9 +1,8 @@
 package com.lidiannevinicius.dengo.model
 
 enum class CareRequestStatus {
-    REQUESTED,
-    SEEN,
+    PENDING,
     ACCEPTED,
     COMPLETED,
-    CANT_NOW,
+    DECLINED,
 }

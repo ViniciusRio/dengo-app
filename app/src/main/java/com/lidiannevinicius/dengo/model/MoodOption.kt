@@ -1,12 +1,12 @@
 package com.lidiannevinicius.dengo.model
 
 enum class MoodOption {
-    SAD,
-    ANGRY,
-    TIRED,
-    NORMAL,
+    VERY_HAPPY,
     HAPPY,
+    OKAY,
+    SAD,
+    UPSET,
+    TIRED,
     LOVING,
     NEEDY,
-    EXCITED,
 }

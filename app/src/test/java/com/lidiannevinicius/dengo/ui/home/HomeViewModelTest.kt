@@ -3,6 +3,7 @@ package com.lidiannevinicius.dengo.ui.home
 import com.lidiannevinicius.dengo.data.FakeCoupleRepository
 import com.lidiannevinicius.dengo.model.CareRequestType
 import com.lidiannevinicius.dengo.model.MoodOption
+import com.lidiannevinicius.dengo.model.PersonalSpace
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -15,9 +16,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -42,27 +41,67 @@ class HomeViewModelTest {
 
         assertNull(viewModel.state.value.latestRequest)
         assertNull(viewModel.state.value.mood)
-        assertFalse(viewModel.state.value.personalSpace.isActive)
+        assertEquals(PersonalSpace(), viewModel.state.value.personalSpace)
     }
 
     @Test
-    fun actionsDelegateToRepositoryAndUpdateHomeState() = runTest {
+    fun quickRequestActionUpdatesRepositoryAndHomeState() = runTest {
         val repository = FakeCoupleRepository(clock)
         val viewModel = HomeViewModel(repository)
 
-        viewModel.createRequest(CareRequestType.TIME_TOGETHER)
-        viewModel.setMood(MoodOption.LOVING)
-        viewModel.activatePersonalSpace()
+        viewModel.createQuickRequest(CareRequestType.SPEND_TIME_TOGETHER)
         advanceUntilIdle()
 
-        assertEquals(CareRequestType.TIME_TOGETHER, viewModel.state.value.latestRequest?.type)
-        assertEquals(MoodOption.LOVING, viewModel.state.value.mood?.option)
-        assertTrue(viewModel.state.value.personalSpace.isActive)
-        assertEquals(1, repository.state.value.history.size)
+        assertEquals(CareRequestType.SPEND_TIME_TOGETHER, viewModel.state.value.latestRequest?.type)
+        assertEquals(repository.state.value.requests.last(), viewModel.state.value.latestRequest)
+    }
+
+    @Test
+    fun otherRequestActionPassesTextToRepository() = runTest {
+        val viewModel = HomeViewModel(FakeCoupleRepository(clock))
+
+        viewModel.createOtherRequest("  Quero conversar  ")
+        advanceUntilIdle()
+
+        assertEquals(CareRequestType.OTHER, viewModel.state.value.latestRequest?.type)
+        assertEquals("Quero conversar", viewModel.state.value.latestRequest?.message)
+    }
+
+    @Test
+    fun moodActionUpdatesHomeState() = runTest {
+        val viewModel = HomeViewModel(FakeCoupleRepository(clock))
+
+        viewModel.setMood(MoodOption.HAPPY)
+        advanceUntilIdle()
+
+        assertEquals(MoodOption.HAPPY, viewModel.state.value.mood?.option)
+    }
+
+    @Test
+    fun personalSpaceActionsUpdateHomeState() = runTest {
+        val viewModel = HomeViewModel(FakeCoupleRepository(clock))
+
+        viewModel.activatePersonalSpace()
+        advanceUntilIdle()
+        assertEquals(PersonalSpace.Status.ACTIVE, viewModel.state.value.personalSpace.status)
 
         viewModel.endPersonalSpace()
         advanceUntilIdle()
+        assertEquals(PersonalSpace(), viewModel.state.value.personalSpace)
+    }
 
-        assertFalse(viewModel.state.value.personalSpace.isActive)
+    @Test
+    fun stateFollowsRepositoryChangesMadeOutsideViewModel() = runTest {
+        val repository = FakeCoupleRepository(clock)
+        val viewModel = HomeViewModel(repository)
+
+        repository.createRequest(CareRequestType.HOT_WATER_BAG)
+        repository.setMood(MoodOption.OKAY)
+        repository.activatePersonalSpace()
+        advanceUntilIdle()
+
+        assertEquals(repository.state.value.requests.last(), viewModel.state.value.latestRequest)
+        assertEquals(repository.state.value.mood, viewModel.state.value.mood)
+        assertEquals(repository.state.value.personalSpace, viewModel.state.value.personalSpace)
     }
 }
