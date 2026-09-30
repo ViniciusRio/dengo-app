@@ -12,6 +12,18 @@ sealed interface HistoryEvent {
         override val occurredAt: Instant,
     ) : HistoryEvent
 
+    data class RequestAccepted(
+        val requestId: Long,
+        override val actorId: PartnerId,
+        override val occurredAt: Instant,
+    ) : HistoryEvent
+
+    data class RequestDeclined(
+        val requestId: Long,
+        override val actorId: PartnerId,
+        override val occurredAt: Instant,
+    ) : HistoryEvent
+
     data class MoodChanged(
         val option: MoodOption,
         override val actorId: PartnerId,

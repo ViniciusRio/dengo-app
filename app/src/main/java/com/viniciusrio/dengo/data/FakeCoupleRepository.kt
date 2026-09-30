@@ -55,6 +55,32 @@ class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone())
         return request
     }
 
+    fun acceptRequest(requestId: Long) = respondToRequest(requestId, CareRequestStatus.ACCEPTED)
+
+    fun declineRequest(requestId: Long) = respondToRequest(requestId, CareRequestStatus.DECLINED)
+
+    private fun respondToRequest(requestId: Long, status: CareRequestStatus) {
+        val now = clock.instant()
+        mutableState.update { current ->
+            val request = current.requests.firstOrNull { it.id == requestId }
+            if (current.personalSpace.status == PersonalSpace.Status.ACTIVE ||
+                request?.recipientId != PartnerId.VINICIUS ||
+                request.status != CareRequestStatus.PENDING
+            ) {
+                current
+            } else {
+                current.copy(
+                    requests = current.requests.map { if (it.id == requestId) it.copy(status = status) else it },
+                    history = current.history + when (status) {
+                        CareRequestStatus.ACCEPTED -> HistoryEvent.RequestAccepted(requestId, PartnerId.VINICIUS, now)
+                        CareRequestStatus.DECLINED -> HistoryEvent.RequestDeclined(requestId, PartnerId.VINICIUS, now)
+                        else -> error("Unsupported response status")
+                    },
+                )
+            }
+        }
+    }
+
     fun setMood(option: MoodOption) {
         val now = clock.instant()
         val mood = Mood(PartnerId.LIDIANNE, option, LocalDate.ofInstant(now, clock.zone))

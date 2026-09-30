@@ -142,4 +142,61 @@ class FakeCoupleRepositoryTest {
         assertEquals(PersonalSpace(), repository.state.value.personalSpace)
         assertTrue(repository.state.value.history.isEmpty())
     }
+
+    @Test
+    fun acceptingPendingRequestUpdatesStatusAndHistoryTogether() {
+        val repository = FakeCoupleRepository(clock)
+        val request = repository.createRequest(CareRequestType.DENGO)
+
+        repository.acceptRequest(request.id)
+
+        assertEquals(CareRequestStatus.ACCEPTED, repository.state.value.requests.single().status)
+        assertEquals(
+            HistoryEvent.RequestAccepted(request.id, PartnerId.VINICIUS, now),
+            repository.state.value.history.last(),
+        )
+    }
+
+    @Test
+    fun decliningPendingRequestUpdatesStatusAndHistoryTogether() {
+        val repository = FakeCoupleRepository(clock)
+        val request = repository.createRequest(CareRequestType.MEDICINE)
+
+        repository.declineRequest(request.id)
+
+        assertEquals(CareRequestStatus.DECLINED, repository.state.value.requests.single().status)
+        assertEquals(
+            HistoryEvent.RequestDeclined(request.id, PartnerId.VINICIUS, now),
+            repository.state.value.history.last(),
+        )
+    }
+
+    @Test
+    fun invalidTransitionsKeepStateAndHistoryUnchanged() {
+        val repository = FakeCoupleRepository(clock)
+        val request = repository.createRequest(CareRequestType.DENGO)
+        repository.acceptRequest(request.id)
+        val before = repository.state.value
+
+        repository.declineRequest(request.id)
+        repository.acceptRequest(999L)
+
+        assertEquals(before, repository.state.value)
+    }
+
+    @Test
+    fun personalSpaceBlocksResponsesWithoutChangingExistingRequests() {
+        val repository = FakeCoupleRepository(clock)
+        val request = repository.createRequest(CareRequestType.DENGO)
+        repository.activatePersonalSpace()
+        val before = repository.state.value
+
+        repository.acceptRequest(request.id)
+        repository.declineRequest(request.id)
+        assertEquals(before, repository.state.value)
+
+        repository.endPersonalSpace()
+        repository.acceptRequest(request.id)
+        assertEquals(CareRequestStatus.ACCEPTED, repository.state.value.requests.single().status)
+    }
 }
