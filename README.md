@@ -1,0 +1,47 @@
+# Tamagotchi App — Product & Design Starter v2
+
+Projeto Android pessoal para criar uma forma divertida, útil e afetiva de interação entre **Lidianne e Vinícius**.
+
+> `Tamagotchi App` é apenas um codinome provisório. O produto não reproduz o brinquedo/jogo Tamagotchi; a essência é comunicação afetiva entre duas pessoas.
+
+## Estado atual
+
+Produto, MVP e direção visual inicial já foram definidos. A próxima etapa é **planejar a arquitetura Android e implementar uma primeira Home representativa com dados fake/local**, sem backend remoto.
+
+## Stack aprovada para o protótipo
+
+- Android
+- Kotlin
+- Jetpack Compose
+- Material 3 como base, customizado pelo design system
+- Dados fake/local durante a validação
+- Backend futuro, somente quando necessário: Java + Spring Boot + PostgreSQL
+
+## Direção visual aprovada
+
+- tema claro;
+- fundo creme/off-white;
+- Lidianne associada a rosa;
+- Vinícius associado a azul;
+- personagens originais em linguagem chibi/pixel-art suave;
+- cards suaves, bordas levemente arredondadas e baixa elevação;
+- interface carinhosa, limpa e sem excesso de elementos.
+
+A referência aprovada está em `docs/design/references/approved/01-approved-design-direction.png`.
+
+## Documentação principal
+
+- `docs/PRODUCT.md` — visão e princípios do produto
+- `docs/MVP.md` — escopo inicial e roadmap
+- `docs/USER-FLOWS.md` — fluxos principais
+- `docs/design/SCREENS.md` — estrutura e comportamento das telas
+- `docs/design/REFERENCES.md` — uso das referências visuais
+- `docs/design/DESIGN-SYSTEM.md` — tokens e direção visual
+- `docs/design/CHARACTERS.md` — especificação de Lidianne e Vinícius
+- `docs/design/COMPONENTS.md` — componentes previstos
+- `docs/features/` — especificações por funcionalidade
+- `docs/decisions/` — decisões registradas
+
+## Regra para agentes
+
+Leia `AGENTS.md` e a documentação antes de alterar o projeto. Não invente requisitos silenciosamente e não introduza backend, autenticação ou infraestrutura remota antes de validar o protótipo local.

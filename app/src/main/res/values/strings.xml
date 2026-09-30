@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Tamagotchi App</string>
+    <string name="nav_home">Início</string>
+    <string name="nav_mural">Mural</string>
+    <string name="nav_history">Histórico</string>
+    <string name="nav_profile">Perfil</string>
+    <string name="home_greeting">Olá, Lidianne</string>
+    <string name="home_placeholder">Seu cantinho de cuidado está começando a ganhar forma.</string>
+    <string name="mural_placeholder">Um espaço para guardar recados e desenhos.</string>
+    <string name="history_placeholder">As interações importantes aparecerão aqui.</string>
+    <string name="profile_placeholder">Seu perfil aparecerá aqui.</string>
+</resources>
