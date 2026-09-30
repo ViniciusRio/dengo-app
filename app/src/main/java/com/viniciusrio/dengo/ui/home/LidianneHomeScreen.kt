@@ -1,6 +1,7 @@
 package com.viniciusrio.dengo.ui.home
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.verticalScroll
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,7 +29,6 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.LocalFireDepartment
 import androidx.compose.material.icons.outlined.Medication
 import androidx.compose.material.icons.outlined.PeopleOutline
@@ -47,8 +48,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.heading
@@ -58,7 +61,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.stringResource
 import com.viniciusrio.dengo.R
 import com.viniciusrio.dengo.model.CareRequestStatus
 import com.viniciusrio.dengo.model.CareRequestType
@@ -71,7 +73,6 @@ import com.viniciusrio.dengo.ui.theme.AppSpacing
 import com.viniciusrio.dengo.ui.theme.DengoTheme
 import com.viniciusrio.dengo.ui.theme.LidianneAction
 import com.viniciusrio.dengo.ui.theme.LidiannePinkSoft
-import com.viniciusrio.dengo.ui.theme.ViniciusBlueSoft
 import java.time.Instant
 import java.time.LocalDate
 
@@ -128,7 +129,7 @@ fun LidianneHomeScreen(
         Spacer(Modifier.height(AppSpacing.Base))
         GreetingHeader()
         Spacer(Modifier.height(AppSpacing.Small))
-        CoupleHeroPlaceholder()
+        CoupleHero()
         Spacer(Modifier.height(AppSpacing.Small))
         Button(
             onClick = { onQuickRequest(CareRequestType.DENGO) },
@@ -218,39 +219,15 @@ private fun GreetingHeader() {
 }
 
 @Composable
-private fun CoupleHeroPlaceholder() {
-    Box(
+private fun CoupleHero() {
+    Image(
+        painter = painterResource(R.drawable.dengo_couple_hero),
+        contentDescription = stringResource(R.string.home_hero_content_description),
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 152.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .height(96.dp)
-                .clip(MaterialTheme.shapes.extraLarge)
-                .background(Brush.horizontalGradient(listOf(LidiannePinkSoft, AppBackground, ViniciusBlueSoft))),
-        )
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Image,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(24.dp),
-            )
-            Spacer(Modifier.height(AppSpacing.ExtraSmall))
-            Text(
-                text = stringResource(R.string.home_hero_art_placeholder),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-        }
-    }
+            .aspectRatio(1765f / 891f),
+        contentScale = ContentScale.Fit,
+    )
 }
 
 @Composable

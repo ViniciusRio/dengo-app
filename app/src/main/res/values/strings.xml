@@ -5,7 +5,7 @@
     <string name="nav_history">Histórico</string>
     <string name="nav_profile">Perfil</string>
     <string name="home_greeting">Olá, Lidianne</string>
-    <string name="home_hero_art_placeholder">Ilustração em breve</string>
+    <string name="home_hero_content_description">Ilustração de Lidianne e Vinícius abraçados, com corações ao redor</string>
     <string name="home_primary_action">Pedir dengo</string>
     <string name="home_latest_request">Pedido de %1$s registrado</string>
     <string name="home_requests_title">Pedidos rápidos</string>
