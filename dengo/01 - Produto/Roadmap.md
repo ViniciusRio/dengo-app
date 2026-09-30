@@ -8,7 +8,7 @@
 - [x] Etapa 4.5 — Base de documentação no Obsidian
 
 ## Atual
-- [ ] Etapa 5 — [[Home Vinícius]]
+- [ ] Etapa 5 — [[Home Vinícius]] (implementada; revisão visual no dispositivo pendente)
 
 ## Futuro
 - [ ] Mural

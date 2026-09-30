@@ -21,3 +21,5 @@ Decisões arquiteturais detalhadas permanecem nos ADRs do repositório.
 - espaço pessoal ativo tem precedência;
 - mood antigo recebe contexto temporal;
 - protótipo terá troca local de perspectiva.
+- troca de perspectiva fica em Perfil e retorna à Home escolhida; as duas Homes observam o mesmo estado em memória;
+- aceitação e recusa geram eventos de histórico; espaço pessoal suspende respostas sem alterar pedidos.

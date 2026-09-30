@@ -10,10 +10,10 @@ Aceito para a Etapa 2.
 
 O histórico registra criação de pedido, alteração de mood, ativação e encerramento de espaço pessoal, conforme o escopo definido para a Etapa 2. Selecionar novamente o mesmo mood no mesmo dia ou repetir uma ação de espaço pessoal que já está no estado desejado não cria novo evento. O estado atual de mood e espaço pessoal permanece no mesmo snapshot dos pedidos e do histórico.
 
-Os status do pedido nesta etapa são `PENDING`, `ACCEPTED`, `COMPLETED` e `DECLINED`; apenas a criação em `PENDING` é implementada agora. O relógio é injetável e os IDs de pedido são sequenciais por instância do repository para permitir testes determinísticos sem infraestrutura extra.
+Os status do pedido são `PENDING`, `ACCEPTED`, `COMPLETED` e `DECLINED`. Na Etapa 2, apenas a criação em `PENDING` foi implementada; as respostas foram adicionadas na Etapa 5 conforme o ADR-009. O relógio é injetável e os IDs de pedido são sequenciais por instância do repository para permitir testes determinísticos sem infraestrutura extra.
 
 Como o `minSdk` é 24 e os models usam `java.time`, habilitar desugaring das APIs Java para manter suporte a Android 7.
 
 ## Consequências
 
-Estado e identificadores reiniciam com o processo. Respostas a pedidos e eventos correspondentes entram somente quando seus fluxos forem implementados.
+Estado e identificadores reiniciam com o processo. As respostas e seus eventos foram implementados na Etapa 5; `COMPLETED` permanece sem ação nesta fase.

@@ -1,7 +1,7 @@
 # Etapa Atual
 
 ## Etapa 5 — Home Vinícius
-Status: 🟡 Planejamento aprovado, aguardando implementação
+Status: 🟡 Implementada; aguardando revisão visual no dispositivo
 
 ## Escopo
 - alternância local de perspectiva;
@@ -19,4 +19,6 @@ Status: 🟡 Planejamento aprovado, aguardando implementação
 Backend, autenticação, persistência, notificações, Mural funcional, Histórico/Perfil completos, conclusão e `SEEN`.
 
 ## Processo
-Planejamento → implementação → testes → Samsung → screenshots → revisão → ajustes → aprovação → commit.
+Planejamento → implementação → testes → **Samsung (pendente)** → screenshots → revisão → ajustes → aprovação → commit.
+
+Testes e build locais concluídos não equivalem à aprovação visual da Home Vinícius.

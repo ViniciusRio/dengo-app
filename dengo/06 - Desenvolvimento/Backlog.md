@@ -1,10 +1,10 @@
 # Backlog
 
 ## Agora
-- [ ] implementar [[Home Vinícius]]
-- [ ] compartilhar repository entre perspectivas
-- [ ] aceite/recusa de pedido
-- [ ] testes da Etapa 5
+- [x] implementar [[Home Vinícius]] (aguardando revisão visual)
+- [x] compartilhar repository entre perspectivas
+- [x] aceite/recusa de pedido
+- [x] testes da Etapa 5
 - [ ] validar visualmente no Samsung
 
 ## Depois

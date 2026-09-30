@@ -19,6 +19,10 @@ Dengo, Bolsa quente, Remédio, Passar tempo juntos e Outro.
 - sem `SEEN`;
 - `OTHER` exige texto;
 - pedidos para Vinícius: mais recentes primeiro.
+- somente pedidos pendentes dirigidos a Vinícius admitem resposta;
+- cada resposta válida atualiza pedido e histórico no mesmo estado;
+- resposta inválida não altera estado nem registra evento;
+- com espaço pessoal ativo, pedidos seguem visíveis e respostas ficam indisponíveis até o encerramento.
 
 ## Em aberto
 Quem conclui, quando concluir, cancelamento e permanência de pedidos respondidos.
