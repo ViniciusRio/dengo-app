@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.lidiannevinicius.tamagotchi"
+    namespace = "com.lidiannevinicius.dengo"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.lidiannevinicius.tamagotchi"
+        applicationId = "com.lidiannevinicius.dengo"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
