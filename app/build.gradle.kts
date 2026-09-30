@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.lidiannevinicius.dengo"
+    namespace = "com.viniciusrio.dengo"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.lidiannevinicius.dengo"
+        applicationId = "com.viniciusrio.dengo"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
