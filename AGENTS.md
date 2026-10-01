@@ -33,6 +33,12 @@ Leia, nesta ordem:
 - Decisões relevantes devem ser registradas em `docs/decisions/`.
 - Quando houver ambiguidade de produto, apresentar alternativas em vez de escolher silenciosamente.
 
+## Fontes e fases
+
+- Antes de afirmar o estado do projeto, confira código e documentação atuais. `docs/` e ADRs registram especificações e decisões consolidadas; o vault `dengo/` registra planejamento e contexto de produto. Notas exploratórias não substituem decisões vigentes; exponha divergências entre fontes.
+- Planejamento, implementação, testes automatizados, revisão no Samsung, ajustes, aprovação humana e fechamento documental são fases distintas. Registre aprovação e conclusão somente após ocorrerem; adapte os artefatos à etapa.
+- Não faça commit nem push sem autorização explícita.
+
 ## Fase atual
 
 As Etapas 1–7 foram concluídas e aprovadas no dispositivo. Histórico e Mural permanecem em memória. A próxima etapa de produto ainda não foi definida. Consulte `dengo/06 - Desenvolvimento/Etapa Atual.md` e os ADRs mais recentes para o estado vigente; documentos iniciais podem descrever planos já superados.
