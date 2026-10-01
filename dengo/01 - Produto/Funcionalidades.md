@@ -8,14 +8,12 @@
 - [x] estado em memória e histórico interno
 - [x] navegação base
 - [x] identidade visual e ilustração do casal
-
-## Em desenvolvimento
-- [ ] Home de Vinícius
-- [ ] respostas aos pedidos
+- [x] Home de Vinícius
+- [x] respostas aos pedidos
+- [x] Histórico compartilhado em memória
 
 ## Planejadas
 - [ ] Mural funcional
-- [ ] Histórico visível
 - [ ] Perfil
 - [ ] persistência
 - [ ] backend/sincronização

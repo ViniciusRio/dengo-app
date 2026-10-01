@@ -17,13 +17,14 @@ Validar se o ciclo `comunicar → receber → responder → registrar` é divert
 9. Mural representado visualmente; interação local simples pode ser adicionada após as Homes.
 10. Dados fake/local durante a validação visual e de fluxo.
 
-### Estados iniciais de um pedido
+### Estados atuais de um pedido
 
-- `REQUESTED` — solicitado.
-- `SEEN` — visualizado.
-- `ACCEPTED` — parceiro indicou que vai atender.
-- `COMPLETED` — concluído.
-- `CANT_NOW` — não consegue atender agora.
+- `PENDING` — solicitado, sem resposta.
+- `ACCEPTED` — Vinícius respondeu “Estou indo ❤️”; não significa conclusão.
+- `DECLINED` — Vinícius respondeu “Não consigo agora”.
+- `COMPLETED` — representável no domínio, mas sem ação aprovada.
+
+Visualizar não altera o pedido; não existe `SEEN` no protótipo atual.
 
 ## MVP 2 — dois dispositivos
 

@@ -1,19 +1,17 @@
 # Backlog
 
 ## Agora
-- [x] implementar [[Home Vinícius]]
-- [x] compartilhar repository entre perspectivas
-- [x] aceite/recusa de pedido
-- [x] testes da Etapa 5
-- [x] validar visualmente no Samsung
-- [x] retestar no Samsung múltiplos pedidos com respostas diferentes nas duas Homes
+- [x] implementar [[Histórico]] compartilhado e somente de leitura
+- [x] projetar os seis eventos atuais em linguagem humana
+- [x] ordenar e agrupar por dia, preservando eventos sem pedido associado
+- [x] adicionar testes unitários da projeção
+- [x] revisar visualmente o Histórico no Samsung, incluindo o estado vazio refinado
 
-Etapa 5 concluída e aprovada. Próxima etapa ainda não definida.
+Etapa 6 concluída e aprovada no dispositivo. Próxima etapa ainda não definida.
 
 ## Depois
 - [ ] definir conclusão de [[Pedidos]]
 - [ ] [[Mural]]
-- [ ] [[Histórico]]
 - [ ] [[Perfil]]
 
 ## Infraestrutura futura

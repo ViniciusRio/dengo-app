@@ -7,13 +7,13 @@
 - [x] Etapa 4 — Ilustração do casal
 - [x] Etapa 4.5 — Base de documentação no Obsidian
 - [x] Etapa 5 — [[Home Vinícius]] (aprovada no Samsung, incluindo o reteste de múltiplos pedidos)
+- [x] Etapa 6 — [[Histórico]] (aprovada no Samsung após refinamento do estado vazio)
 
 ## Atual
 Próxima etapa ainda não definida.
 
 ## Futuro
 - [ ] Mural
-- [ ] Histórico
 - [ ] Perfil
 - [ ] persistência local
 - [ ] backend e sincronização

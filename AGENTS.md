@@ -35,8 +35,4 @@ Leia, nesta ordem:
 
 ## Fase atual
 
-A direção visual foi aprovada. O próximo objetivo é:
-1. propor a arquitetura Android e packages;
-2. definir models mínimos e fonte fake/local;
-3. escolher a primeira Home representativa;
-4. implementar apenas o esqueleto e essa primeira experiência após aprovação do plano.
+As Etapas 1–6 foram aprovadas no dispositivo. O Histórico compartilhado permanece em memória. Consulte `dengo/06 - Desenvolvimento/Etapa Atual.md` e os ADRs mais recentes para o estado vigente; documentos iniciais podem descrever planos já superados.

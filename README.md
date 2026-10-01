@@ -1,4 +1,4 @@
-# Dengo — Product & Design Starter v2
+# Dengo
 
 Projeto Android pessoal para criar uma forma divertida, útil e afetiva de interação entre **Lidianne e Vinícius**.
 
@@ -6,7 +6,7 @@ Projeto Android pessoal para criar uma forma divertida, útil e afetiva de inter
 
 ## Estado atual
 
-Produto, MVP e direção visual inicial já foram definidos. A próxima etapa é **planejar a arquitetura Android e implementar uma primeira Home representativa com dados fake/local**, sem backend remoto.
+As Etapas 1–6 foram concluídas e aprovadas no dispositivo. O Histórico compartilhado funciona em memória. O planejamento e o estado atuais ficam no vault versionado `dengo/`; decisões técnicas ficam em `docs/decisions/`.
 
 ## Stack aprovada para o protótipo
 
@@ -41,6 +41,7 @@ A referência aprovada está em `docs/design/references/approved/01-approved-des
 - `docs/design/COMPONENTS.md` — componentes previstos
 - `docs/features/` — especificações por funcionalidade
 - `docs/decisions/` — decisões registradas
+- `dengo/` — produto, UX, regras de negócio, planejamento e backlog versionados
 
 ## Regra para agentes
 

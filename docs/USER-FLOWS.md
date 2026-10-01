@@ -2,7 +2,7 @@
 
 ## Fluxo 1 — Lidianne faz um pedido de cuidado
 
-Lidianne abre Home → escolhe pedido rápido ou CTA principal → revisa/confirma quando necessário → pedido vira `REQUESTED` → Vinícius visualiza → pedido vira `SEEN` → Vinícius responde → Lidianne recebe feedback → pedido pode ser marcado `COMPLETED` → evento relevante aparece no histórico.
+Lidianne abre Home → escolhe pedido rápido ou CTA principal → pedido fica `PENDING` → Vinícius visualiza sem mudar o status → responde com `ACCEPTED` ou `DECLINED` → Lidianne recebe feedback → criação e resposta aparecem no Histórico. Conclusão de pedido ainda não tem ação aprovada.
 
 ## Fluxo 2 — Vinícius responde a um pedido
 
@@ -33,12 +33,12 @@ No protótipo local, não definir expiração automática; o estado permanece at
 
 ## Fluxo 5 — Histórico
 
-Usuário abre Histórico → vê eventos relevantes em ordem cronológica → identifica pedido, resposta, conclusão e data/hora.
+Usuário abre Histórico → vê os acontecimentos compartilhados do mais recente ao mais antigo, agrupados por dia → identifica pedidos, respostas, mudanças de mood e períodos de espaço pessoal.
 
 Exemplo:
-- 14:32 — Lidianne pediu dengo.
+- 18:42 — Lidianne compartilhou como estava: 😴 Cansada.
 - 14:34 — Vinícius respondeu `Estou indo ❤️`.
-- 15:47 — Pedido concluído.
+- 14:32 — Lidianne pediu dengo.
 
 ## Fluxo 6 — Mural local
 

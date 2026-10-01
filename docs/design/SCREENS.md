@@ -33,7 +33,7 @@ Permitir que Lidianne expresse rapidamente o que sente/precisa e veja feedback r
 ### Estados importantes
 
 - pedido enviado;
-- pedido visto;
+- pedido pendente;
 - pedido aceito;
 - parceiro não pode agora;
 - espaço pessoal ativo;
