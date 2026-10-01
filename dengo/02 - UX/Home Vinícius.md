@@ -41,7 +41,7 @@ Não repetir o hero grande da [[Home Lidianne]].
 - estado de espaço pessoal aparece antes do mood e suspende as respostas aos pedidos;
 - pedidos pendentes mostram duas respostas; pedidos respondidos continuam visíveis em tom secundário;
 - mood antigo aparece como “Último mood” acompanhado da data;
-- Mural continua como preview vazio.
+- preview do Mural mantém o estado vazio ou mostra o recado mais recente, com autoria, e abre a aba Mural; integração da Etapa 7 aguarda revisão no Samsung.
 
 A composição visual e os fluxos de pedidos, mood, espaço pessoal e alternância de perspectiva foram aprovados no Samsung. Dois pedidos com respostas distintas permaneceram visíveis com seus estados corretos.
 

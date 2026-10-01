@@ -36,7 +36,7 @@ Sugestão contextual como desenhar, mandar recado ou oferecer companhia.
 Evento cronológico com horário, descrição e estado.
 
 ### MuralPreview
-Preview do último desenho/recado.
+Preview discreto do recado mais recente, com autoria e trecho, ou estado vazio; abre a aba Mural. Desenhos permanecem possibilidade futura.
 
 ### BottomNavigation
 Destinos iniciais:

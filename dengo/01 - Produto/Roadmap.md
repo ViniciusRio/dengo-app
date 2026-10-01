@@ -10,10 +10,10 @@
 - [x] Etapa 6 — [[Histórico]] (aprovada no Samsung após refinamento do estado vazio)
 
 ## Atual
-Próxima etapa ainda não definida.
+- [ ] Etapa 7 — [[Mural]] de recados implementado; aguardando revisão visual no Samsung.
 
 ## Futuro
-- [ ] Mural
+- [ ] desenhos no Mural (possibilidade futura)
 - [ ] Perfil
 - [ ] persistência local
 - [ ] backend e sincronização

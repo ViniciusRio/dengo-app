@@ -1,17 +1,16 @@
 # Backlog
 
 ## Agora
-- [x] implementar [[Histórico]] compartilhado e somente de leitura
-- [x] projetar os seis eventos atuais em linguagem humana
-- [x] ordenar e agrupar por dia, preservando eventos sem pedido associado
-- [x] adicionar testes unitários da projeção
-- [x] revisar visualmente o Histórico no Samsung, incluindo o estado vazio refinado
+- [x] implementar [[Mural]] compartilhado em memória para recados de texto e emojis
+- [x] validar 1–160 pontos de código Unicode, autoria, ordem e ausência de `HistoryEvent`
+- [x] mostrar o recado mais recente nos previews das duas Homes e abrir a aba Mural
+- [ ] revisar no Samsung estado vazio, composição com teclado, lista, previews e espaço pessoal ativo
 
-Etapa 6 concluída e aprovada no dispositivo. Próxima etapa ainda não definida.
+Etapa 7 implementada e aguardando revisão visual no Samsung.
 
 ## Depois
 - [ ] definir conclusão de [[Pedidos]]
-- [ ] [[Mural]]
+- [ ] desenhos no [[Mural]] (possibilidade futura)
 - [ ] [[Perfil]]
 
 ## Infraestrutura futura

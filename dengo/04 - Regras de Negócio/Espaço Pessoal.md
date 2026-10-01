@@ -12,6 +12,7 @@ INACTIVE e ACTIVE; ao ativar, registra início.
 - ativo na Home Vinícius ganha precedência;
 - pedidos anteriores continuam visíveis;
 - ações de contato imediato ficam indisponíveis;
+- ler ou deixar um recado assíncrono no [[Mural]] continua permitido, sem sugestões insistentes de contato;
 - não altera status dos pedidos.
 
 Evitar urgência, culpa ou cobrança.

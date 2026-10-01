@@ -30,3 +30,11 @@ Decisões arquiteturais detalhadas permanecem nos ADRs do repositório.
 - pedido aceito significa “Estou indo ❤️” e pedido recusado significa “Não consigo agora”, sem sugerir conclusão ou culpa;
 - acontecimentos ordenados do mais recente ao mais antigo e agrupados por dia;
 - estado em memória nesta primeira versão; timeline e estado vazio aprovados no Samsung.
+
+## Mural — Etapa 7
+- cantinho compartilhado para recados de texto e emojis, com autoria explícita;
+- até 160 pontos de código Unicode, sem edição ou exclusão;
+- mesma lista em memória para as duas perspectivas; publicações não geram `HistoryEvent`;
+- permitido durante espaço pessoal ativo, sem incentivo a contato insistente;
+- previews das duas Homes mostram somente o recado mais recente e abrem o Mural;
+- desenhos ficam como possibilidade futura; revisão visual no Samsung ainda pendente.

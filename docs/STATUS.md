@@ -1,5 +1,7 @@
 # Status do projeto
 
+Etapas 1–6 concluídas e aprovadas no dispositivo. Etapa 7 — Mural de recados — implementada e aguardando revisão visual no Samsung. Consulte o vault `dengo/` e os ADRs recentes para as decisões vigentes.
+
 ## Aprovado
 
 - visão do produto;
@@ -19,5 +21,5 @@
 - textos finais dos CTAs;
 - pequenos ajustes de paleta/contraste;
 - expressões/assets finais dos personagens;
-- detalhes do mural;
+- revisão visual do Mural de recados da Etapa 7 no Samsung;
 - arquitetura do backend futuro.

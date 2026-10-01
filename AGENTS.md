@@ -35,4 +35,4 @@ Leia, nesta ordem:
 
 ## Fase atual
 
-As Etapas 1–6 foram aprovadas no dispositivo. O Histórico compartilhado permanece em memória. Consulte `dengo/06 - Desenvolvimento/Etapa Atual.md` e os ADRs mais recentes para o estado vigente; documentos iniciais podem descrever planos já superados.
+As Etapas 1–6 foram aprovadas no dispositivo. A Etapa 7 — Mural de recados — está implementada e aguarda revisão visual no Samsung. Histórico e Mural permanecem em memória. Consulte `dengo/06 - Desenvolvimento/Etapa Atual.md` e os ADRs mais recentes para o estado vigente; documentos iniciais podem descrever planos já superados.

@@ -58,12 +58,10 @@ Dar a Vinícius contexto rápido sobre Lidianne e permitir responder aos pedidos
    - ação principal: `Estou indo ❤️`;
    - ação secundária: `Não consigo agora`.
 6. `PersonalSpaceCard` substitui CTAs insistentes quando espaço pessoal estiver ativo.
-7. seção de sugestões discretas:
-   - desenhar no mural;
-   - mandar recado;
-   - oferecer companhia quando apropriado.
-8. última interação/mural.
-9. `BottomNavigation`.
+7. preview discreto do Mural; na Etapa 7, mostra o recado mais recente e abre a aba Mural.
+8. `BottomNavigation`.
+
+Esta hierarquia era uma proposta inicial. A Home do Vinícius aprovada no dispositivo prioriza contexto, pedidos e espaço pessoal. Ela não incentiva contato insistente durante espaço pessoal ativo; desenhos no Mural permanecem futuros.
 
 ## 3. Pedido recebido — detalhe/estado
 
@@ -85,11 +83,11 @@ Pode começar como seção da Home, sem tela dedicada. Seleção rápida com emo
 
 Tela simples:
 - conteúdo recente;
-- canvas/área de desenho local;
-- recado curto;
-- salvar localmente.
+- recados curtos de texto e emojis, com nome do autor e horário;
+- ação “Deixar um recado” com composição curta em bottom sheet;
+- estado vazio afetivo e lista aberta, sem cards pesados.
 
-Sincronização remota fica fora do protótipo inicial.
+Na Etapa 7 o Mural é compartilhado apenas pelo estado em memória do protótipo; desenhos e sincronização entre dispositivos ficam para depois. A implementação ainda aguarda revisão visual no Samsung.
 
 ## 6. Histórico
 

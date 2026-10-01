@@ -3,7 +3,7 @@
 App afetivo para comunicação entre Lidianne e Vinícius.
 
 ## Estado atual
-Última etapa concluída e aprovada no dispositivo: Etapa 6 — [[Histórico]]. Próxima etapa ainda não definida.
+Última etapa concluída e aprovada no dispositivo: Etapa 6 — [[Histórico]]. Etapa 7 — [[Mural]] implementada e aguardando revisão visual no Samsung.
 
 ## Produto
 - [[Visão do Produto]]

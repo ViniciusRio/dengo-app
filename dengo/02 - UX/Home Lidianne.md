@@ -17,5 +17,7 @@ Permitir que Lidianne expresse rapidamente como está e o que precisa.
 ## Decisões
 Pedidos rápidos: Bolsa quente, Remédio, Passar tempo juntos e Outro pedido. “Pedir dengo” permanece como CTA principal. Mood é horizontal. Espaço pessoal usa “Um tempo só seu”. A ilustração aprovada é exibida sem recorte/distorção.
 
+Na Etapa 7, o preview do Mural preserva a composição aprovada, mostra o recado mais recente com autoria quando houver e abre a aba Mural. Essa integração ainda aguarda revisão no Samsung.
+
 ## Princípio visual
 Evitar coleção genérica de cards Material; usar também espaçamento, tipografia, cor e proporção para hierarquia.

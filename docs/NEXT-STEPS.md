@@ -1,5 +1,7 @@
 # Próximos passos para o agente de código
 
+> Registro do planejamento inicial. As Etapas 1–6 foram concluídas e aprovadas; a Etapa 7 — Mural de recados — está implementada e aguarda revisão visual no Samsung. Para o estado vigente, consulte `dengo/06 - Desenvolvimento/Etapa Atual.md`.
+
 ## Estado
 
 Produto, MVP, personagens e direção visual inicial estão aprovados. Não redesenhar o produto do zero.

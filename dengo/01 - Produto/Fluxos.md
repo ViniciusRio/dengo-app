@@ -10,4 +10,4 @@ Lidianne → seleciona como está → estado fica disponível para a outra persp
 Lidianne → ativa “Um tempo só seu” → Vinícius recebe o contexto → Lidianne encerra quando quiser. Ver [[Espaço Pessoal]].
 
 ## Mural
-Planejado: casal → deixa pequenos recados/desenhos → outra pessoa visualiza. Ver [[Mural]].
+Lidianne ou Vinícius → abre o Mural → deixa um recado de texto → ambos veem o mesmo recado com autoria e horário. Desenhos são possibilidade futura. Ver [[Mural]].

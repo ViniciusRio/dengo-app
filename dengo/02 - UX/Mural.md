@@ -1,15 +1,20 @@
 # Mural
-Status: ⚪ Ideia
+Status: 🟡 Implementado; aguardando revisão visual no Samsung
 
-Espaço compartilhado para pequenos recados e, futuramente, desenhos.
+Cantinho compartilhado do casal para deixar pequenos recados e carinho, sem aparência de feed social. Desenhos pertencem a uma possibilidade futura.
 
-## Estado atual
-A Home de Lidianne possui apenas preview/estado vazio.
+## Primeira versão
+- Lidianne e Vinícius publicam e consultam a mesma lista em memória;
+- texto com emojis digitados normalmente, até 160 pontos de código Unicode;
+- autor por nome e horário local visíveis;
+- mais recentes primeiro; empate por ID mais recente;
+- “Deixar um recado” abre uma composição curta em bottom sheet;
+- o contador mostra o tamanho; vazio ou acima do limite não pode ser publicado;
+- a publicação aparece imediatamente, sem confirmação adicional;
+- os previews das duas Homes mostram o recado mais recente e abrem o Mural.
 
-## Possível MVP
-- criar recado de texto;
-- visualizar;
-- excluir.
+## Estado vazio
+“Um cantinho para deixar carinho um para o outro.”
 
-## Em aberto
-Autor/horário, exclusão, limites, fotos e desenho à mão.
+## Limites
+Publicar e visualizar são permitidos durante espaço pessoal ativo, sem sugestões de contato insistente. Não há edição, exclusão, comentários, reações, fotos, anexos ou desenhos. O estado reinicia com o processo e não sincroniza entre aparelhos. Publicar não gera evento de Histórico.

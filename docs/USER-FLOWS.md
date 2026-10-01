@@ -42,6 +42,6 @@ Exemplo:
 
 ## Fluxo 6 — Mural local
 
-Usuário abre Mural → cria desenho/recado local → salva → item aparece no mural/preview da Home.
+Lidianne ou Vinícius abre Mural → toca em “Deixar um recado” → escreve até 160 pontos de código Unicode → publica → o recado aparece no topo, com nome e horário, para as duas perspectivas e nos previews das Homes. Espaço pessoal ativo não bloqueia este gesto assíncrono; publicar não gera evento de Histórico.
 
 Sincronização entre dispositivos pertence ao MVP 2.

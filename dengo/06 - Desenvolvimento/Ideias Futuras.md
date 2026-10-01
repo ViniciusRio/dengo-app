@@ -1,9 +1,8 @@
 # Ideias Futuras
 
 Ideias ainda fora do escopo aprovado:
-- desenhos e recados no [[Mural]];
+- desenhos no [[Mural]], incluindo o gesto de desenhar no mural da outra pessoa;
 - notificações carinhosas;
-- histórico por dia;
 - personalização;
 - conclusão de pedidos;
 - respostas adicionais.
