@@ -14,6 +14,8 @@ import com.viniciusrio.dengo.ui.home.HomeViewModel
 import com.viniciusrio.dengo.ui.home.LidianneHomeScreen
 import com.viniciusrio.dengo.ui.home.ViniciusHomeScreen
 import com.viniciusrio.dengo.ui.home.ViniciusHomeViewModel
+import com.viniciusrio.dengo.ui.history.HistoryScreen
+import com.viniciusrio.dengo.ui.history.HistoryViewModel
 import com.viniciusrio.dengo.ui.screens.PlaceholderScreen
 import com.viniciusrio.dengo.ui.screens.PrototypePerspectiveScreen
 import com.viniciusrio.dengo.ui.theme.DengoTheme
@@ -21,7 +23,11 @@ import com.viniciusrio.dengo.ui.theme.ViniciusAction
 import com.viniciusrio.dengo.ui.theme.ViniciusBlueSoft
 
 @Composable
-fun DengoApp(homeViewModel: HomeViewModel, viniciusHomeViewModel: ViniciusHomeViewModel) {
+fun DengoApp(
+    homeViewModel: HomeViewModel,
+    viniciusHomeViewModel: ViniciusHomeViewModel,
+    historyViewModel: HistoryViewModel,
+) {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestination.Home) }
     var perspective by rememberSaveable { mutableStateOf(PrototypePerspective.LIDIANNE) }
 
@@ -51,6 +57,9 @@ fun DengoApp(homeViewModel: HomeViewModel, viniciusHomeViewModel: ViniciusHomeVi
                     onDeclineRequest = viniciusHomeViewModel::declineRequest,
                     contentPadding = padding,
                 )
+            } else if (currentDestination == AppDestination.History) {
+                val historyState by historyViewModel.state.collectAsState()
+                HistoryScreen(state = historyState, contentPadding = padding)
             } else if (currentDestination == AppDestination.Profile) {
                 PrototypePerspectiveScreen(
                     perspective = perspective,
