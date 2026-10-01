@@ -3,6 +3,8 @@ package com.viniciusrio.dengo.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.viniciusrio.dengo.data.FakeCoupleRepository
+import com.viniciusrio.dengo.model.CareRequest
+import com.viniciusrio.dengo.model.CareRequestStatus
 import com.viniciusrio.dengo.model.CareRequestType
 import com.viniciusrio.dengo.model.CoupleState
 import com.viniciusrio.dengo.model.MoodOption
@@ -44,8 +46,17 @@ class HomeViewModel(private val repository: FakeCoupleRepository) : ViewModel() 
     }
 }
 
-private fun CoupleState.toLidianneHomeState() = LidianneHomeState(
-    latestRequest = requests.lastOrNull { it.requesterId == PartnerId.LIDIANNE },
-    mood = mood,
-    personalSpace = personalSpace,
-)
+private fun CoupleState.toLidianneHomeState(): LidianneHomeState {
+    val ownRequests = requests.filter { it.requesterId == PartnerId.LIDIANNE }
+    val latestRequest = ownRequests.maxWithOrNull(
+        compareBy<CareRequest> { it.createdAt }.thenBy { it.id },
+    )
+    return LidianneHomeState(
+        latestRequest = latestRequest,
+        otherRespondedRequestCount = ownRequests.count {
+            it.id != latestRequest?.id && it.status != CareRequestStatus.PENDING
+        },
+        mood = mood,
+        personalSpace = personalSpace,
+    )
+}

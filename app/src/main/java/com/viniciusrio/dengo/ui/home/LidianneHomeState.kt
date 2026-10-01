@@ -8,4 +8,5 @@ data class LidianneHomeState(
     val latestRequest: CareRequest?,
     val mood: Mood?,
     val personalSpace: PersonalSpace,
+    val otherRespondedRequestCount: Int = 0,
 )

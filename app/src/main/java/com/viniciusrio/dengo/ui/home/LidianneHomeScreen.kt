@@ -150,6 +150,19 @@ fun LidianneHomeScreen(
                 type = request.type,
                 status = request.status,
             )
+            if (state.otherRespondedRequestCount > 0) {
+                Spacer(Modifier.height(AppSpacing.ExtraSmall))
+                Text(
+                    text = stringResource(
+                        if (state.otherRespondedRequestCount == 1) R.string.home_other_responded_request
+                        else R.string.home_other_responded_requests,
+                        state.otherRespondedRequestCount,
+                    ),
+                    modifier = Modifier.padding(horizontal = AppSpacing.ExtraSmall),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
 
         Spacer(Modifier.height(AppSpacing.Large))

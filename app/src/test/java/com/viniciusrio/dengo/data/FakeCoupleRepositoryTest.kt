@@ -172,6 +172,36 @@ class FakeCoupleRepositoryTest {
     }
 
     @Test
+    fun responsesToDifferentRequestsPreserveEachIdStatusAndHistory() {
+        val repository = FakeCoupleRepository(clock)
+        val first = repository.createRequest(CareRequestType.DENGO)
+        val second = repository.createRequest(CareRequestType.MEDICINE)
+
+        repository.acceptRequest(first.id)
+        val firstAfterAcceptance = repository.state.value.requests.single { it.id == first.id }
+        repository.declineRequest(second.id)
+        val state = repository.state.value
+
+        assertEquals(listOf(first.id, second.id), state.requests.map { it.id })
+        assertEquals(firstAfterAcceptance, state.requests.single { it.id == first.id })
+        assertEquals(CareRequestStatus.ACCEPTED, state.requests.single { it.id == first.id }.status)
+        assertEquals(CareRequestStatus.DECLINED, state.requests.single { it.id == second.id }.status)
+        assertEquals(
+            listOf(
+                HistoryEvent.RequestCreated(first.id, PartnerId.LIDIANNE, now),
+                HistoryEvent.RequestCreated(second.id, PartnerId.LIDIANNE, now),
+                HistoryEvent.RequestAccepted(first.id, PartnerId.VINICIUS, now),
+                HistoryEvent.RequestDeclined(second.id, PartnerId.VINICIUS, now),
+            ),
+            state.history,
+        )
+
+        repository.declineRequest(first.id)
+        repository.acceptRequest(second.id)
+        assertEquals(state, repository.state.value)
+    }
+
+    @Test
     fun invalidTransitionsKeepStateAndHistoryUnchanged() {
         val repository = FakeCoupleRepository(clock)
         val request = repository.createRequest(CareRequestType.DENGO)

@@ -8,6 +8,8 @@
     <string name="home_hero_content_description">Ilustração de Lidianne e Vinícius abraçados, com corações ao redor</string>
     <string name="home_primary_action">Pedir dengo</string>
     <string name="home_latest_request">Pedido de %1$s registrado</string>
+    <string name="home_other_responded_request">+ %1$d outro pedido com resposta</string>
+    <string name="home_other_responded_requests">+ %1$d outros pedidos com resposta</string>
     <string name="home_requests_title">Pedidos rápidos</string>
     <string name="home_mood_title">Como você está hoje?</string>
     <string name="home_personal_space_title">Um tempo só seu</string>

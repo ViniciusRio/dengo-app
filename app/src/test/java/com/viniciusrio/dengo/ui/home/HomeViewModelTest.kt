@@ -1,6 +1,7 @@
 package com.viniciusrio.dengo.ui.home
 
 import com.viniciusrio.dengo.data.FakeCoupleRepository
+import com.viniciusrio.dengo.model.CareRequestStatus
 import com.viniciusrio.dengo.model.CareRequestType
 import com.viniciusrio.dengo.model.MoodOption
 import com.viniciusrio.dengo.model.PersonalSpace
@@ -40,6 +41,7 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         assertNull(viewModel.state.value.latestRequest)
+        assertEquals(0, viewModel.state.value.otherRespondedRequestCount)
         assertNull(viewModel.state.value.mood)
         assertEquals(PersonalSpace(), viewModel.state.value.personalSpace)
     }
@@ -103,5 +105,50 @@ class HomeViewModelTest {
         assertEquals(repository.state.value.requests.last(), viewModel.state.value.latestRequest)
         assertEquals(repository.state.value.mood, viewModel.state.value.mood)
         assertEquals(repository.state.value.personalSpace, viewModel.state.value.personalSpace)
+    }
+
+    @Test
+    fun multipleResponsesKeepNewestRequestAsFeedbackAndCountOnlyOtherRespondedRequests() = runTest {
+        val repository = FakeCoupleRepository(clock)
+        val viewModel = HomeViewModel(repository)
+        val first = repository.createRequest(CareRequestType.DENGO)
+        val second = repository.createRequest(CareRequestType.MEDICINE)
+        repository.acceptRequest(first.id)
+        repository.declineRequest(second.id)
+        advanceUntilIdle()
+
+        assertEquals(second.id, viewModel.state.value.latestRequest?.id)
+        assertEquals(CareRequestStatus.DECLINED, viewModel.state.value.latestRequest?.status)
+        assertEquals(1, viewModel.state.value.otherRespondedRequestCount)
+
+        val third = repository.createRequest(CareRequestType.HOT_WATER_BAG)
+        advanceUntilIdle()
+
+        assertEquals(third.id, viewModel.state.value.latestRequest?.id)
+        assertEquals(CareRequestStatus.PENDING, viewModel.state.value.latestRequest?.status)
+        assertEquals(2, viewModel.state.value.otherRespondedRequestCount)
+
+        repository.acceptRequest(third.id)
+        advanceUntilIdle()
+        assertEquals(third.id, viewModel.state.value.latestRequest?.id)
+        assertEquals(CareRequestStatus.ACCEPTED, viewModel.state.value.latestRequest?.status)
+        assertEquals(2, viewModel.state.value.otherRespondedRequestCount)
+
+        val fourth = repository.createRequest(CareRequestType.SPEND_TIME_TOGETHER)
+        advanceUntilIdle()
+        assertEquals(fourth.id, viewModel.state.value.latestRequest?.id)
+        assertEquals(3, viewModel.state.value.otherRespondedRequestCount)
+    }
+
+    @Test
+    fun otherPendingRequestsDoNotInflateResponseCount() = runTest {
+        val repository = FakeCoupleRepository(clock)
+        val viewModel = HomeViewModel(repository)
+        repository.createRequest(CareRequestType.DENGO)
+        val latest = repository.createRequest(CareRequestType.MEDICINE)
+        advanceUntilIdle()
+
+        assertEquals(latest.id, viewModel.state.value.latestRequest?.id)
+        assertEquals(0, viewModel.state.value.otherRespondedRequestCount)
     }
 }
