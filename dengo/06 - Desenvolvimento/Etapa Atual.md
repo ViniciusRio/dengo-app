@@ -1,7 +1,7 @@
 # Etapa Atual
 
 ## Etapa 5 — Home Vinícius
-Status: 🟡 Implementada; aguardando revisão visual no dispositivo
+Status: 🟢 Concluída e aprovada no dispositivo
 
 ## Escopo
 - alternância local de perspectiva;
@@ -19,6 +19,8 @@ Status: 🟡 Implementada; aguardando revisão visual no dispositivo
 Backend, autenticação, persistência, notificações, Mural funcional, Histórico/Perfil completos, conclusão e `SEEN`.
 
 ## Processo
-Planejamento → implementação → testes → **Samsung (pendente)** → screenshots → revisão → ajustes → aprovação → commit.
+Planejamento → implementação → testes → revisão no Samsung → ajustes → reteste de múltiplos pedidos → aprovação.
 
-Testes e build locais concluídos não equivalem à aprovação visual da Home Vinícius.
+No Samsung, estados vazio, mood, pedido pendente/aceito, espaço pessoal ativo, respostas desabilitadas e alternância entre as duas Homes foram aprovados. No reteste, dois pedidos receberam respostas diferentes e mantiveram seus estados; a Home da Lidianne mostrou o pedido mais recente e indicou o outro com resposta. Um terceiro pedido pendente passou a ser o resumo principal, com os dois anteriores contabilizados como pedidos com resposta.
+
+Próxima etapa ainda não definida.

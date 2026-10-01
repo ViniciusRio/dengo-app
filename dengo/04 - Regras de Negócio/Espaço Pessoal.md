@@ -1,5 +1,5 @@
 # Espaço Pessoal
-Status: 🟢 Implementado / 🔵 integração com Home Vinícius em evolução
+Status: 🟢 Implementado e validado nas duas Homes
 
 ## Estados
 INACTIVE e ACTIVE; ao ativar, registra início.

@@ -3,7 +3,7 @@
 App afetivo para comunicação entre Lidianne e Vinícius.
 
 ## Estado atual
-Etapa atual: [[Home Vinícius]]
+Última etapa concluída: Etapa 5 — [[Home Vinícius]]. Próxima etapa ainda não definida.
 
 ## Produto
 - [[Visão do Produto]]

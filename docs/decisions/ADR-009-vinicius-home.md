@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementado na Etapa 5; aguardando revisão visual em dispositivo físico.
+Aceito após aprovação funcional e visual da Etapa 5 em dispositivo físico.
 
 ## Decisão
 
@@ -16,4 +16,4 @@ Com espaço pessoal ativo, o aviso precede o mood. Pedidos anteriores continuam 
 
 ## Consequências
 
-O estado ainda é local e se perde ao encerrar o processo. A alternância facilita a revisão das duas perspectivas no mesmo aparelho. A aprovação visual da Home Vinícius depende de revisão no dispositivo antes do commit final da Etapa 5.
+O estado ainda é local e se perde ao encerrar o processo. A alternância facilita a revisão das duas perspectivas no mesmo aparelho. A Home do Vinícius e seus estados foram aprovados visualmente no Samsung. O reteste com dois pedidos e respostas diferentes confirmou que ambos permanecem visíveis com os respectivos status e que a Home da Lidianne resume o mais recente sem ocultar a existência do outro pedido respondido.

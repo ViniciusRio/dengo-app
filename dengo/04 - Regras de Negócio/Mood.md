@@ -1,5 +1,5 @@
 # Mood
-Status: 🟢 Implementado / 🔵 integração com Home Vinícius em evolução
+Status: 🟢 Implementado e validado nas duas Homes
 
 Representa como uma pessoa se sente em uma data.
 

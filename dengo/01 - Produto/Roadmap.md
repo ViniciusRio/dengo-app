@@ -6,9 +6,10 @@
 - [x] Etapa 3 — Home Lidianne
 - [x] Etapa 4 — Ilustração do casal
 - [x] Etapa 4.5 — Base de documentação no Obsidian
+- [x] Etapa 5 — [[Home Vinícius]] (aprovada no Samsung, incluindo o reteste de múltiplos pedidos)
 
 ## Atual
-- [ ] Etapa 5 — [[Home Vinícius]] (implementada; revisão visual no dispositivo pendente)
+Próxima etapa ainda não definida.
 
 ## Futuro
 - [ ] Mural

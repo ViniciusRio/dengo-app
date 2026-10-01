@@ -1,5 +1,5 @@
 # Home Vinícius
-Status: 🟡 Implementada; aguardando revisão visual no dispositivo
+Status: 🟢 Implementada e aprovada no dispositivo
 
 ## Objetivo
 Mostrar o que [[Lidianne]] comunicou e fornecer contexto para [[Vinícius]] responder.
@@ -43,7 +43,7 @@ Não repetir o hero grande da [[Home Lidianne]].
 - mood antigo aparece como “Último mood” acompanhado da data;
 - Mural continua como preview vazio.
 
-A composição visual ainda depende de revisão no dispositivo.
+A composição visual e os fluxos de pedidos, mood, espaço pessoal e alternância de perspectiva foram aprovados no Samsung. Dois pedidos com respostas distintas permaneceram visíveis com seus estados corretos.
 
 ## Princípio
 Não parecer dashboard, Jira ou sistema de tickets.
