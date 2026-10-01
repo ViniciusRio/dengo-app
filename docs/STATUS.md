@@ -1,6 +1,6 @@
 # Status do projeto
 
-Etapas 1–6 concluídas e aprovadas no dispositivo. Etapa 7 — Mural de recados — implementada e aguardando revisão visual no Samsung. Consulte o vault `dengo/` e os ADRs recentes para as decisões vigentes.
+Etapas 1–7 concluídas e aprovadas no dispositivo. A próxima etapa de produto ainda não foi definida. Consulte o vault `dengo/` e os ADRs recentes para as decisões vigentes.
 
 ## Aprovado
 
@@ -14,6 +14,7 @@ Etapas 1–6 concluídas e aprovadas no dispositivo. Etapa 7 — Mural de recado
 - Home de Lidianne focada em expressão/pedidos;
 - Home de Vinícius focada em contexto/resposta;
 - Personal Space separado de Care Request.
+- Mural de recados da Etapa 7 aprovado visual e funcionalmente no Samsung.
 
 ## Ainda pode mudar após protótipo
 
@@ -21,5 +22,4 @@ Etapas 1–6 concluídas e aprovadas no dispositivo. Etapa 7 — Mural de recado
 - textos finais dos CTAs;
 - pequenos ajustes de paleta/contraste;
 - expressões/assets finais dos personagens;
-- revisão visual do Mural de recados da Etapa 7 no Samsung;
 - arquitetura do backend futuro.

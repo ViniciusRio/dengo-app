@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Cantinho compartilhado para Lidianne e Vinícius deixarem pequenos recados/carinho. A primeira versão está implementada em memória e aguarda revisão visual no Samsung.
+Cantinho compartilhado para Lidianne e Vinícius deixarem pequenos recados/carinho. A primeira versão em memória foi aprovada visual e funcionalmente no Samsung na Etapa 7.
 
 ## Primeira versão
 

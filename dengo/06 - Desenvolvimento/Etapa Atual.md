@@ -1,7 +1,7 @@
 # Etapa Atual
 
 ## Etapa 7 — Mural de recados do casal
-Status: 🟡 Implementada e aguardando revisão visual no Samsung
+Status: 🟢 Concluída e aprovada no Samsung
 
 ## Escopo implementado
 - recados de texto e emojis, com autoria explícita e limite de 160 pontos de código Unicode;
@@ -15,4 +15,4 @@ Status: 🟡 Implementada e aguardando revisão visual no Samsung
 Desenhos, fotos, anexos, edição, exclusão, comentários, reações, filtros, busca, novos eventos de Histórico, backend, persistência e sincronização.
 
 ## Validação
-Revisão visual no Samsung ainda pendente. A Etapa 6 — Histórico já foi concluída e aprovada no dispositivo.
+Revisão visual e funcional concluída no Samsung: estado vazio, CTA, bottom sheet e teclado, contador e limite, texto e emoji, publicação imediata, lista compartilhada e ordenada, autoria, previews das Homes e navegação para o Mural. A próxima etapa de produto ainda não foi definida e dependerá de novo planejamento.

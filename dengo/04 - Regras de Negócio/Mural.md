@@ -1,5 +1,5 @@
 # Mural
-Status: 🟡 Implementado em memória; aguardando revisão visual no Samsung
+Status: 🟢 Implementado em memória e aprovado no Samsung
 
 - As duas perspectivas consultam a mesma lista e podem deixar recados.
 - A perspectiva atual define o autor; cada recado registra ID próprio e horário pelo relógio do repository.

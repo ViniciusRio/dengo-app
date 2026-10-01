@@ -1,5 +1,5 @@
 # Mural
-Status: 🟡 Implementado; aguardando revisão visual no Samsung
+Status: 🟢 Implementado e aprovado no Samsung
 
 Cantinho compartilhado do casal para deixar pequenos recados e carinho, sem aparência de feed social. Desenhos pertencem a uma possibilidade futura.
 
@@ -18,3 +18,6 @@ Cantinho compartilhado do casal para deixar pequenos recados e carinho, sem apar
 
 ## Limites
 Publicar e visualizar são permitidos durante espaço pessoal ativo, sem sugestões de contato insistente. Não há edição, exclusão, comentários, reações, fotos, anexos ou desenhos. O estado reinicia com o processo e não sincroniza entre aparelhos. Publicar não gera evento de Histórico.
+
+## Validação no dispositivo
+Foram aprovados estado vazio, CTA, bottom sheet com teclado e campo multilinha, contador e bloqueio acima do limite, texto e emoji, publicação imediata no topo, ordenação visual, autoria nas duas perspectivas, previews nas Homes e navegação para o Mural.

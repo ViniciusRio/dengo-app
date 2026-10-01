@@ -6,7 +6,7 @@ Projeto Android pessoal para criar uma forma divertida, útil e afetiva de inter
 
 ## Estado atual
 
-As Etapas 1–6 foram concluídas e aprovadas no dispositivo. A Etapa 7 — Mural de recados — está implementada e aguarda revisão visual no Samsung. Histórico e Mural funcionam em memória. O planejamento e o estado atuais ficam no vault versionado `dengo/`; decisões técnicas ficam em `docs/decisions/`.
+As Etapas 1–7 foram concluídas e aprovadas no dispositivo. Histórico e Mural funcionam em memória. A próxima etapa de produto ainda não foi definida. O planejamento e o estado atuais ficam no vault versionado `dengo/`; decisões técnicas ficam em `docs/decisions/`.
 
 ## Stack aprovada para o protótipo
 

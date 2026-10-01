@@ -11,7 +11,7 @@
 - [x] Home de Vinícius
 - [x] respostas aos pedidos
 - [x] Histórico compartilhado em memória
-- [x] Mural de recados em memória (aguardando revisão visual no Samsung)
+- [x] Mural de recados em memória (aprovado no Samsung)
 
 ## Planejadas
 - [ ] Perfil

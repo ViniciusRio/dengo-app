@@ -87,7 +87,7 @@ Tela simples:
 - ação “Deixar um recado” com composição curta em bottom sheet;
 - estado vazio afetivo e lista aberta, sem cards pesados.
 
-Na Etapa 7 o Mural é compartilhado apenas pelo estado em memória do protótipo; desenhos e sincronização entre dispositivos ficam para depois. A implementação ainda aguarda revisão visual no Samsung.
+Na Etapa 7 o Mural é compartilhado apenas pelo estado em memória do protótipo; desenhos e sincronização entre dispositivos ficam para depois. A tela e seus estados foram aprovados no Samsung.
 
 ## 6. Histórico
 

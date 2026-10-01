@@ -37,4 +37,4 @@ Decisões arquiteturais detalhadas permanecem nos ADRs do repositório.
 - mesma lista em memória para as duas perspectivas; publicações não geram `HistoryEvent`;
 - permitido durante espaço pessoal ativo, sem incentivo a contato insistente;
 - previews das duas Homes mostram somente o recado mais recente e abrem o Mural;
-- desenhos ficam como possibilidade futura; revisão visual no Samsung ainda pendente.
+- desenhos ficam como possibilidade futura; Mural e previews aprovados visual e funcionalmente no Samsung.

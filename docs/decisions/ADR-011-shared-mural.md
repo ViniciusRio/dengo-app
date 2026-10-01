@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementado na Etapa 7; aguardando revisão visual no Samsung.
+Aceito após aprovação funcional e visual da Etapa 7 no Samsung.
 
 ## Decisão
 
@@ -16,4 +16,4 @@ Os previews discretos das duas Homes mantêm o texto vazio anterior ou mostram s
 
 ## Consequências
 
-Não há edição, exclusão, comentários, reações, fotos, anexos, desenhos, filtros, busca, notificações, persistência ou sincronização. Desenhar no Mural permanece possibilidade futura do conceito original. A implementação funcional e os testes não significam aprovação visual; a Etapa 7 aguarda revisão no Samsung.
+Não há edição, exclusão, comentários, reações, fotos, anexos, desenhos, filtros, busca, notificações, persistência ou sincronização. Desenhar no Mural permanece possibilidade futura do conceito original. No Samsung foram aprovados o estado vazio, a composição com teclado e contador, o limite, textos e emojis, a publicação imediata e a ordem visual, a mesma lista e autoria nas duas perspectivas, além dos previews e sua navegação nas Homes. A Etapa 7 está concluída; a próxima etapa de produto ainda não foi definida.

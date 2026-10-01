@@ -1,6 +1,6 @@
 # Próximos passos para o agente de código
 
-> Registro do planejamento inicial. As Etapas 1–6 foram concluídas e aprovadas; a Etapa 7 — Mural de recados — está implementada e aguarda revisão visual no Samsung. Para o estado vigente, consulte `dengo/06 - Desenvolvimento/Etapa Atual.md`.
+> Registro do planejamento inicial. As Etapas 1–7 foram concluídas e aprovadas no dispositivo. A próxima etapa de produto ainda não foi definida. Para o estado vigente, consulte `dengo/06 - Desenvolvimento/Etapa Atual.md`.
 
 ## Estado
 

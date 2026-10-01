@@ -8,9 +8,10 @@
 - [x] Etapa 4.5 — Base de documentação no Obsidian
 - [x] Etapa 5 — [[Home Vinícius]] (aprovada no Samsung, incluindo o reteste de múltiplos pedidos)
 - [x] Etapa 6 — [[Histórico]] (aprovada no Samsung após refinamento do estado vazio)
+- [x] Etapa 7 — [[Mural]] de recados (aprovada no Samsung)
 
 ## Atual
-- [ ] Etapa 7 — [[Mural]] de recados implementado; aguardando revisão visual no Samsung.
+Próxima etapa de produto ainda não definida; depende de novo planejamento.
 
 ## Futuro
 - [ ] desenhos no Mural (possibilidade futura)

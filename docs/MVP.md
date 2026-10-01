@@ -14,7 +14,7 @@ Validar se o ciclo `comunicar → receber → responder → registrar` é divert
 6. Mood do dia.
 7. Estado de espaço pessoal.
 8. Histórico básico.
-9. Mural de recados de texto compartilhado no estado em memória do protótipo (Etapa 7 implementada, aguardando revisão visual).
+9. Mural de recados de texto compartilhado no estado em memória do protótipo (Etapa 7 aprovada no Samsung).
 10. Dados fake/local durante a validação visual e de fluxo.
 
 ### Estados atuais de um pedido
