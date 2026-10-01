@@ -19,6 +19,14 @@
     <string name="home_personal_space_end">Encerrar meu tempo</string>
     <string name="home_mural_title">Nosso mural</string>
     <string name="home_mural_empty">Ainda sem recados por aqui.</string>
+    <string name="home_mural_open">Abrir nosso mural</string>
+    <string name="mural_empty">Um cantinho para deixar carinho um para o outro.</string>
+    <string name="mural_leave_note">Deixar um recado</string>
+    <string name="mural_note_label">Seu recado</string>
+    <string name="mural_note_count">%1$d/%2$d</string>
+    <string name="mural_note_count_exceeded">Acima do limite: %1$d/%2$d</string>
+    <string name="mural_cancel">Cancelar</string>
+    <string name="mural_submit">Deixar recado</string>
     <string name="request_dengo">Dengo</string>
     <string name="request_hot_water_bag">Bolsa quente</string>
     <string name="request_medicine">Remédio</string>
@@ -42,7 +50,6 @@
     <string name="mood_needy">Dengosa</string>
     <string name="mood_very_happy">Animada</string>
     <string name="home_placeholder">Seu cantinho de cuidado está começando a ganhar forma.</string>
-    <string name="mural_placeholder">Um espaço para guardar recados e desenhos.</string>
     <string name="history_placeholder">As interações importantes aparecerão aqui.</string>
     <string name="history_empty_title">Nossos momentos vão aparecer por aqui.</string>
     <string name="history_empty_body">Pedidos, respostas e o que vocês compartilharem ficam reunidos neste cantinho.</string>

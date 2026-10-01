@@ -2,6 +2,7 @@ package com.viniciusrio.dengo.ui.home
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.verticalScroll
@@ -66,6 +67,7 @@ import com.viniciusrio.dengo.model.CareRequestStatus
 import com.viniciusrio.dengo.model.CareRequestType
 import com.viniciusrio.dengo.model.Mood
 import com.viniciusrio.dengo.model.MoodOption
+import com.viniciusrio.dengo.model.MuralNote
 import com.viniciusrio.dengo.model.PartnerId
 import com.viniciusrio.dengo.model.PersonalSpace
 import com.viniciusrio.dengo.ui.theme.AppBackground
@@ -114,6 +116,7 @@ fun LidianneHomeScreen(
     onMoodSelected: (MoodOption) -> Unit,
     onPersonalSpaceActivated: () -> Unit,
     onPersonalSpaceEnded: () -> Unit,
+    onOpenMural: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     var showOtherDialog by rememberSaveable { mutableStateOf(false) }
@@ -206,7 +209,7 @@ fun LidianneHomeScreen(
         )
 
         Spacer(Modifier.height(AppSpacing.Large))
-        MuralPreview()
+        MuralPreview(state.latestMuralNote, onOpenMural)
         Spacer(Modifier.height(AppSpacing.Base))
     }
 
@@ -404,26 +407,16 @@ private fun PersonalSpaceSection(
 }
 
 @Composable
-private fun MuralPreview() {
-    Column {
+private fun MuralPreview(note: MuralNote?, onOpenMural: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 48.dp)
+            .clickable(onClickLabel = stringResource(R.string.home_mural_open), role = Role.Button, onClick = onOpenMural),
+    ) {
         SectionHeading(stringResource(R.string.home_mural_title))
         Spacer(Modifier.height(AppSpacing.Small))
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(AppSpacing.Small),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.EditNote,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(20.dp),
-            )
-            Text(
-                text = stringResource(R.string.home_mural_empty),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+        MuralPreviewContent(note)
     }
 }
 

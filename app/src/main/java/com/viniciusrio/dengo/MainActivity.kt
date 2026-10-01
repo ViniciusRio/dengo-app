@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.viniciusrio.dengo.ui.home.HomeViewModel
 import com.viniciusrio.dengo.ui.home.ViniciusHomeViewModel
 import com.viniciusrio.dengo.ui.history.HistoryViewModel
+import com.viniciusrio.dengo.ui.mural.MuralViewModel
 
 class MainActivity : ComponentActivity() {
     private val prototypeState by viewModels<PrototypeStateViewModel>()
@@ -21,6 +22,7 @@ class MainActivity : ComponentActivity() {
                 HomeViewModel::class.java -> HomeViewModel(prototypeState.repository) as T
                 ViniciusHomeViewModel::class.java -> ViniciusHomeViewModel(prototypeState.repository) as T
                 HistoryViewModel::class.java -> HistoryViewModel(prototypeState.repository) as T
+                MuralViewModel::class.java -> MuralViewModel(prototypeState.repository) as T
                 else -> throw IllegalArgumentException("Unknown ViewModel: $modelClass")
             }
         }
@@ -31,10 +33,11 @@ class MainActivity : ComponentActivity() {
     }
     private val viniciusHomeViewModel by viewModels<ViniciusHomeViewModel> { homeFactory }
     private val historyViewModel by viewModels<HistoryViewModel> { homeFactory }
+    private val muralViewModel by viewModels<MuralViewModel> { homeFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent { DengoApp(homeViewModel, viniciusHomeViewModel, historyViewModel) }
+        setContent { DengoApp(homeViewModel, viniciusHomeViewModel, historyViewModel, muralViewModel) }
     }
 }

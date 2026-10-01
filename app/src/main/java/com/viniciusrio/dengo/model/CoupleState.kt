@@ -6,4 +6,5 @@ data class CoupleState(
     val mood: Mood? = null,
     val personalSpace: PersonalSpace = PersonalSpace(),
     val history: List<HistoryEvent> = emptyList(),
+    val muralNotes: List<MuralNote> = emptyList(),
 )

@@ -4,6 +4,7 @@ import com.viniciusrio.dengo.data.FakeCoupleRepository
 import com.viniciusrio.dengo.model.CareRequestStatus
 import com.viniciusrio.dengo.model.CareRequestType
 import com.viniciusrio.dengo.model.MoodOption
+import com.viniciusrio.dengo.model.PartnerId
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -92,5 +93,18 @@ class ViniciusHomeViewModelTest {
 
         assertNull(viewModel.state.value.mood)
         assertFalse(viewModel.state.value.isMoodToday)
+    }
+
+    @Test
+    fun muralPreviewUsesSameLatestNoteAsLidianneHome() = runTest {
+        val repository = FakeCoupleRepository(clock)
+        val lidianne = HomeViewModel(repository)
+        val vinicius = ViniciusHomeViewModel(repository, clock)
+        repository.createMuralNote(PartnerId.LIDIANNE, "Um recado")
+        val latest = repository.createMuralNote(PartnerId.VINICIUS, "Outro recado")
+        advanceUntilIdle()
+
+        assertEquals(latest, lidianne.state.value.latestMuralNote)
+        assertEquals(latest, vinicius.state.value.latestMuralNote)
     }
 }

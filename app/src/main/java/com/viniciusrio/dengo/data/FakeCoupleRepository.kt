@@ -7,9 +7,12 @@ import com.viniciusrio.dengo.model.CoupleState
 import com.viniciusrio.dengo.model.HistoryEvent
 import com.viniciusrio.dengo.model.Mood
 import com.viniciusrio.dengo.model.MoodOption
+import com.viniciusrio.dengo.model.MuralNote
+import com.viniciusrio.dengo.model.MURAL_NOTE_MAX_CODE_POINTS
 import com.viniciusrio.dengo.model.Partner
 import com.viniciusrio.dengo.model.PartnerId
 import com.viniciusrio.dengo.model.PersonalSpace
+import com.viniciusrio.dengo.model.muralCodePointCount
 import java.time.Clock
 import java.time.LocalDate
 import java.util.concurrent.atomic.AtomicLong
@@ -20,6 +23,7 @@ import kotlinx.coroutines.flow.update
 
 class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone()) {
     private val nextRequestId = AtomicLong(1)
+    private val nextMuralNoteId = AtomicLong(1)
     private val mutableState = MutableStateFlow(
         CoupleState(
             partners = listOf(
@@ -30,6 +34,19 @@ class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone())
     )
 
     val state: StateFlow<CoupleState> = mutableState.asStateFlow()
+
+    fun createMuralNote(authorId: PartnerId, text: String): MuralNote {
+        val normalized = text.trim()
+        require(normalized.isNotEmpty() && normalized.muralCodePointCount() <= MURAL_NOTE_MAX_CODE_POINTS)
+        val note = MuralNote(
+            id = nextMuralNoteId.getAndIncrement(),
+            authorId = authorId,
+            text = normalized,
+            createdAt = clock.instant(),
+        )
+        mutableState.update { current -> current.copy(muralNotes = current.muralNotes + note) }
+        return note
+    }
 
     fun createRequest(type: CareRequestType, message: String? = null): CareRequest {
         require(type == CareRequestType.OTHER || message == null)

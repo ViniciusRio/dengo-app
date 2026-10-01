@@ -2,6 +2,7 @@ package com.viniciusrio.dengo.ui.home
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.PauseCircleOutline
 import androidx.compose.material3.Button
@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -59,6 +60,7 @@ fun ViniciusHomeScreen(
     state: ViniciusHomeState,
     onAcceptRequest: (Long) -> Unit,
     onDeclineRequest: (Long) -> Unit,
+    onOpenMural: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     Column(
@@ -96,22 +98,19 @@ fun ViniciusHomeScreen(
         Spacer(Modifier.height(AppSpacing.Large))
         HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f))
         Spacer(Modifier.height(AppSpacing.Base))
-        Text(
-            text = stringResource(R.string.home_mural_title),
-            modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Spacer(Modifier.height(AppSpacing.Small))
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AppSpacing.Small),
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 48.dp)
+                .clickable(onClickLabel = stringResource(R.string.home_mural_open), role = Role.Button, onClick = onOpenMural),
         ) {
-            Icon(Icons.Outlined.EditNote, contentDescription = null, modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(
-                text = stringResource(R.string.home_mural_empty),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text = stringResource(R.string.home_mural_title),
+                modifier = Modifier.semantics { heading() },
+                style = MaterialTheme.typography.titleMedium,
             )
+            Spacer(Modifier.height(AppSpacing.Small))
+            MuralPreviewContent(state.latestMuralNote)
         }
         Spacer(Modifier.height(AppSpacing.Large))
     }

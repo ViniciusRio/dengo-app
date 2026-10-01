@@ -6,8 +6,10 @@ import com.viniciusrio.dengo.data.FakeCoupleRepository
 import com.viniciusrio.dengo.model.CareRequest
 import com.viniciusrio.dengo.model.CoupleState
 import com.viniciusrio.dengo.model.Mood
+import com.viniciusrio.dengo.model.MuralNote
 import com.viniciusrio.dengo.model.PartnerId
 import com.viniciusrio.dengo.model.PersonalSpace
+import com.viniciusrio.dengo.model.latestMuralNote
 import java.time.Clock
 import java.time.LocalDate
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,6 +22,7 @@ data class ViniciusHomeState(
     val mood: Mood?,
     val isMoodToday: Boolean,
     val isPersonalSpaceActive: Boolean,
+    val latestMuralNote: MuralNote? = null,
 )
 
 class ViniciusHomeViewModel(
@@ -51,6 +54,7 @@ class ViniciusHomeViewModel(
             mood = lidianneMood,
             isMoodToday = lidianneMood?.date == LocalDate.now(clock),
             isPersonalSpaceActive = couple.personalSpace.status == PersonalSpace.Status.ACTIVE,
+            latestMuralNote = couple.muralNotes.latestMuralNote(),
         )
     }
 }

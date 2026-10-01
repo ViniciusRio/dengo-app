@@ -4,6 +4,7 @@ import com.viniciusrio.dengo.data.FakeCoupleRepository
 import com.viniciusrio.dengo.model.CareRequestStatus
 import com.viniciusrio.dengo.model.CareRequestType
 import com.viniciusrio.dengo.model.MoodOption
+import com.viniciusrio.dengo.model.PartnerId
 import com.viniciusrio.dengo.model.PersonalSpace
 import java.time.Clock
 import java.time.Instant
@@ -150,5 +151,18 @@ class HomeViewModelTest {
 
         assertEquals(latest.id, viewModel.state.value.latestRequest?.id)
         assertEquals(0, viewModel.state.value.otherRespondedRequestCount)
+    }
+
+    @Test
+    fun muralPreviewFollowsLatestNoteWithoutChangingRequestFeedback() = runTest {
+        val repository = FakeCoupleRepository(clock)
+        val viewModel = HomeViewModel(repository)
+        val request = repository.createRequest(CareRequestType.DENGO)
+        repository.createMuralNote(PartnerId.VINICIUS, "Primeiro")
+        val latest = repository.createMuralNote(PartnerId.LIDIANNE, "Segundo")
+        advanceUntilIdle()
+
+        assertEquals(latest, viewModel.state.value.latestMuralNote)
+        assertEquals(request, viewModel.state.value.latestRequest)
     }
 }

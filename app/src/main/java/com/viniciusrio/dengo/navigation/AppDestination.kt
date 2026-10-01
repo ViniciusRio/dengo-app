@@ -14,7 +14,7 @@ enum class AppDestination(
     val icon: ImageVector,
 ) {
     Home(R.string.nav_home, R.string.home_placeholder, Icons.Outlined.Home),
-    Mural(R.string.nav_mural, R.string.mural_placeholder, Icons.Outlined.Edit),
+    Mural(R.string.nav_mural, R.string.mural_empty, Icons.Outlined.Edit),
     History(R.string.nav_history, R.string.history_placeholder, Icons.Outlined.History),
     Profile(R.string.nav_profile, R.string.profile_placeholder, Icons.Outlined.Person),
 }

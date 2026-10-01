@@ -9,6 +9,7 @@ import com.viniciusrio.dengo.model.CareRequestType
 import com.viniciusrio.dengo.model.CoupleState
 import com.viniciusrio.dengo.model.MoodOption
 import com.viniciusrio.dengo.model.PartnerId
+import com.viniciusrio.dengo.model.latestMuralNote
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -58,5 +59,6 @@ private fun CoupleState.toLidianneHomeState(): LidianneHomeState {
         },
         mood = mood,
         personalSpace = personalSpace,
+        latestMuralNote = muralNotes.latestMuralNote(),
     )
 }
