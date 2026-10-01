@@ -167,6 +167,7 @@ private fun itemTitle(item: HistoryItem): String = when (item.event) {
     }
     is HistoryEvent.RequestAccepted -> stringResource(R.string.history_accepted)
     is HistoryEvent.RequestDeclined -> stringResource(R.string.history_declined)
+    is HistoryEvent.RequestAcknowledged -> stringResource(R.string.history_acknowledged)
     is HistoryEvent.MoodChanged -> stringResource(R.string.history_mood_changed)
     is HistoryEvent.PersonalSpaceActivated -> stringResource(R.string.history_space_activated)
     is HistoryEvent.PersonalSpaceEnded -> stringResource(R.string.history_space_ended)
@@ -175,7 +176,7 @@ private fun itemTitle(item: HistoryItem): String = when (item.event) {
 @Composable
 private fun itemContext(item: HistoryItem): String? = when (val event = item.event) {
     is HistoryEvent.RequestCreated -> item.requestMessage
-    is HistoryEvent.RequestAccepted, is HistoryEvent.RequestDeclined -> when (item.requestType) {
+    is HistoryEvent.RequestAccepted, is HistoryEvent.RequestDeclined, is HistoryEvent.RequestAcknowledged -> when (item.requestType) {
         null -> null
         CareRequestType.OTHER -> item.requestMessage?.let { stringResource(R.string.history_request_context, it) }
             ?: stringResource(R.string.history_request_context, stringResource(R.string.request_other))

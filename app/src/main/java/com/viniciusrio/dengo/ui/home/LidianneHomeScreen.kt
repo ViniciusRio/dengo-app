@@ -35,6 +35,8 @@ import androidx.compose.material.icons.outlined.Medication
 import androidx.compose.material.icons.outlined.PeopleOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -55,6 +57,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -63,6 +66,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.viniciusrio.dengo.R
+import com.viniciusrio.dengo.model.CareRequest
 import com.viniciusrio.dengo.model.CareRequestStatus
 import com.viniciusrio.dengo.model.CareRequestType
 import com.viniciusrio.dengo.model.Mood
@@ -113,6 +117,7 @@ fun LidianneHomeScreen(
     state: LidianneHomeState,
     onQuickRequest: (CareRequestType) -> Unit,
     onOtherRequest: (String) -> Unit,
+    onAcknowledgeRequest: (Long) -> Unit = {},
     onMoodSelected: (MoodOption) -> Unit,
     onPersonalSpaceActivated: () -> Unit,
     onPersonalSpaceEnded: () -> Unit,
@@ -136,6 +141,7 @@ fun LidianneHomeScreen(
         Spacer(Modifier.height(AppSpacing.Small))
         Button(
             onClick = { onQuickRequest(CareRequestType.DENGO) },
+            enabled = state.activeRequests.none { it.type == CareRequestType.DENGO },
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = 56.dp),
@@ -145,6 +151,9 @@ fun LidianneHomeScreen(
             Icon(Icons.Outlined.FavoriteBorder, contentDescription = null)
             Spacer(Modifier.width(AppSpacing.Small))
             Text(stringResource(R.string.home_primary_action), style = MaterialTheme.typography.labelLarge)
+        }
+        state.activeRequests.firstOrNull { it.type == CareRequestType.DENGO }?.let { request ->
+            ActiveRequestHint(request)
         }
 
         state.latestRequest?.let { request ->
@@ -167,6 +176,27 @@ fun LidianneHomeScreen(
                 )
             }
         }
+        val acceptedRequests = state.activeRequests.filter { it.status == CareRequestStatus.ACCEPTED }
+        if (acceptedRequests.isNotEmpty()) {
+            Spacer(Modifier.height(AppSpacing.Medium))
+            Text(
+                text = stringResource(R.string.home_accepted_title),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.semantics { heading() },
+            )
+            acceptedRequests.forEach { request ->
+                Spacer(Modifier.height(AppSpacing.Small))
+                AcceptedRequestRow(request, onAcknowledgeRequest)
+            }
+        }
+        state.acknowledgedRequest?.let {
+            Spacer(Modifier.height(AppSpacing.Small))
+            Text(
+                text = stringResource(R.string.home_acknowledged_feedback),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
 
         Spacer(Modifier.height(AppSpacing.Large))
         SectionHeading(stringResource(R.string.home_requests_title))
@@ -179,6 +209,7 @@ fun LidianneHomeScreen(
                 row.forEach { choice ->
                     QuickRequestTile(
                         choice = choice,
+                        activeRequest = state.activeRequests.firstOrNull { it.type == choice.type && choice.type != CareRequestType.OTHER },
                         onClick = {
                             if (choice.type == CareRequestType.OTHER) {
                                 showOtherDialog = true
@@ -221,6 +252,63 @@ fun LidianneHomeScreen(
                 showOtherDialog = false
             },
         )
+    }
+}
+
+@Composable
+private fun ActiveRequestHint(request: CareRequest) {
+    Text(
+        text = stringResource(R.string.home_active_request, stringResource(request.type.labelRes()), stringResource(request.status.activeLabelRes())),
+        modifier = Modifier.padding(top = AppSpacing.ExtraSmall, start = AppSpacing.ExtraSmall),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+@Composable
+private fun AcceptedRequestRow(request: CareRequest, onAcknowledgeRequest: (Long) -> Unit) {
+    val requestName = request.message ?: stringResource(request.type.labelRes())
+    val requestIcon = quickRequests.firstOrNull { it.type == request.type }?.icon ?: Icons.Outlined.FavoriteBorder
+    val acknowledgeDescription = stringResource(R.string.home_acknowledge_request_accessibility, requestName)
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+    ) {
+        Column(Modifier.padding(AppSpacing.Base)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(AppSpacing.Medium),
+                verticalAlignment = Alignment.Top,
+            ) {
+                Icon(
+                    imageVector = requestIcon,
+                    contentDescription = null,
+                    tint = LidianneAction,
+                    modifier = Modifier.size(24.dp),
+                )
+                Column(Modifier.weight(1f)) {
+                    Text(requestName, style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.height(AppSpacing.ExtraSmall))
+                    Text(
+                        text = stringResource(R.string.home_request_accepted),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+            Spacer(Modifier.height(AppSpacing.Medium))
+            FilledTonalButton(
+                onClick = { onAcknowledgeRequest(request.id) },
+                modifier = Modifier
+                    .heightIn(min = 48.dp)
+                    .semantics { contentDescription = acknowledgeDescription },
+                shape = MaterialTheme.shapes.medium,
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    containerColor = LidiannePinkSoft,
+                    contentColor = LidianneAction,
+                ),
+            ) { Text(stringResource(R.string.home_acknowledge_action)) }
+        }
     }
 }
 
@@ -285,9 +373,10 @@ private fun SectionHeading(title: String) {
 }
 
 @Composable
-private fun QuickRequestTile(choice: RequestChoice, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun QuickRequestTile(choice: RequestChoice, activeRequest: CareRequest?, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Surface(
         onClick = onClick,
+        enabled = activeRequest == null,
         modifier = modifier.heightIn(min = 80.dp),
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surface,
@@ -303,12 +392,21 @@ private fun QuickRequestTile(choice: RequestChoice, onClick: () -> Unit, modifie
                 tint = LidianneAction,
                 modifier = Modifier.size(24.dp),
             )
-            Text(
-                text = stringResource(choice.labelRes),
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
+            Column {
+                Text(
+                    text = stringResource(choice.labelRes),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                activeRequest?.let {
+                    Text(
+                        text = stringResource(it.status.activeLabelRes()),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         }
     }
 }
@@ -468,8 +566,15 @@ private fun CareRequestType.labelRes(): Int = when (this) {
 private fun CareRequestStatus.labelRes(): Int = when (this) {
     CareRequestStatus.PENDING -> R.string.request_status_pending
     CareRequestStatus.ACCEPTED -> R.string.request_status_accepted
-    CareRequestStatus.COMPLETED -> R.string.request_status_completed
+    CareRequestStatus.ACKNOWLEDGED -> R.string.request_status_acknowledged
     CareRequestStatus.DECLINED -> R.string.request_status_declined
+}
+
+@StringRes
+private fun CareRequestStatus.activeLabelRes(): Int = when (this) {
+    CareRequestStatus.PENDING -> R.string.home_request_waiting
+    CareRequestStatus.ACCEPTED -> R.string.home_request_accepted
+    else -> error("Only active requests have active labels")
 }
 
 @Preview(name = "Home inicial", showBackground = true, widthDp = 393, heightDp = 900)

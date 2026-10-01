@@ -2,7 +2,7 @@
 
 ## Fluxo 1 — Lidianne faz um pedido de cuidado
 
-Lidianne abre Home → escolhe pedido rápido ou CTA principal → pedido fica `PENDING` → Vinícius visualiza sem mudar o status → responde com `ACCEPTED` ou `DECLINED` → Lidianne recebe feedback → criação e resposta aparecem no Histórico. Conclusão de pedido ainda não tem ação aprovada.
+Lidianne abre Home → escolhe pedido rápido ou CTA principal → pedido fica `PENDING` → Vinícius visualiza sem mudar o status → responde com `ACCEPTED` ou `DECLINED` → Lidianne recebe feedback. Se o carinho aceito acontecer, Lidianne toca em “Obrigada, meu amor ❤️” e o pedido vai para `ACKNOWLEDGED`. Criação, resposta e agradecimento aparecem separadamente no Histórico. Esta evolução foi aprovada no Samsung; ver ADR-012.
 
 ## Fluxo 2 — Vinícius responde a um pedido
 

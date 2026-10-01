@@ -16,7 +16,9 @@ A lista deve ser pequena no MVP e poderá ser personalizável futuramente.
 
 ## Estados
 
-`PENDING → ACCEPTED` por “Estou indo ❤️” ou `PENDING → DECLINED` por “Não consigo agora”. Visualizar não altera o status; não existe `SEEN`. `COMPLETED` está modelado, mas a ação de conclusão ainda não foi definida.
+`PENDING → ACCEPTED` por “Estou indo ❤️” ou `PENDING → DECLINED` por “Não consigo agora”. Se o carinho aceito acontecer, somente Lidianne pode agradecer: `ACCEPTED → ACKNOWLEDGED`. `ACCEPTED` não significa conclusão e permanece aberto sem prazo, mesmo se o carinho não acontecer. Visualizar não altera o status; não existe `SEEN`. O domínio em memória usa `ACKNOWLEDGED` no lugar do antigo `COMPLETED` sem migração persistida.
+
+Cada tipo predefinido admite no máximo um pedido `PENDING` ou `ACCEPTED`. `DECLINED` e `ACKNOWLEDGED` liberam novo pedido do mesmo tipo imediatamente. `OTHER` é sempre independente, inclusive quando o texto é igual. A proteção, as transições e os acontecimentos de Histórico são atômicos no repository. Esta evolução foi aprovada no Samsung; ver ADR-012.
 
 ## Ações de quem recebe
 

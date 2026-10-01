@@ -1,6 +1,6 @@
 # Status do projeto
 
-Etapas 1–7 concluídas e aprovadas no dispositivo. A próxima etapa de produto ainda não foi definida. Consulte o vault `dengo/` e os ADRs recentes para as decisões vigentes.
+Etapas 1–7 concluídas e aprovadas no dispositivo. A evolução posterior do ciclo afetivo dos pedidos foi revisada e aprovada funcional e visualmente no Samsung Galaxy A26 5G. Consulte o ADR-012 para a decisão vigente. A próxima etapa de produto ainda não foi definida.
 
 ## Aprovado
 
@@ -15,6 +15,7 @@ Etapas 1–7 concluídas e aprovadas no dispositivo. A próxima etapa de produto
 - Home de Vinícius focada em contexto/resposta;
 - Personal Space separado de Care Request.
 - Mural de recados da Etapa 7 aprovado visual e funcionalmente no Samsung.
+- Ciclo afetivo dos pedidos aprovado funcional e visualmente no Samsung; sem evidência específica de teste com fonte ampliada ou TalkBack.
 
 ## Ainda pode mudar após protótipo
 

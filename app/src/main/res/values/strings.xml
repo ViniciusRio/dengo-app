@@ -7,6 +7,13 @@
     <string name="home_greeting">Olá, Lidianne</string>
     <string name="home_hero_content_description">Ilustração de Lidianne e Vinícius abraçados, com corações ao redor</string>
     <string name="home_primary_action">Pedir dengo</string>
+    <string name="home_active_request">%1$s · %2$s</string>
+    <string name="home_request_waiting">Aguardando resposta</string>
+    <string name="home_request_accepted">Vinícius aceitou ❤️</string>
+    <string name="home_accepted_title">Carinhos em aberto</string>
+    <string name="home_acknowledge_action">Obrigada, meu amor ❤️</string>
+    <string name="home_acknowledge_request_accessibility">Agradecer por %1$s</string>
+    <string name="home_acknowledged_feedback">Carinho agradecido ❤️</string>
     <string name="home_latest_request">Pedido de %1$s registrado</string>
     <string name="home_other_responded_request">+ %1$d outro pedido com resposta</string>
     <string name="home_other_responded_requests">+ %1$d outros pedidos com resposta</string>
@@ -34,7 +41,7 @@
     <string name="request_other">Outro pedido</string>
     <string name="request_status_pending">Pendente</string>
     <string name="request_status_accepted">Aceito</string>
-    <string name="request_status_completed">Concluído</string>
+    <string name="request_status_acknowledged">Agradecido ❤️</string>
     <string name="request_status_declined">Não pode agora</string>
     <string name="request_other_dialog_title">Outro pedido</string>
     <string name="request_other_dialog_description">Escreva em poucas palavras o que você gostaria de pedir.</string>
@@ -62,6 +69,7 @@
     <string name="history_requested_generic">Lidianne fez um pedido</string>
     <string name="history_accepted">Vinícius respondeu: Estou indo ❤️</string>
     <string name="history_declined">Vinícius respondeu: Não consigo agora</string>
+    <string name="history_acknowledged">Lidianne agradeceu pelo carinho ❤️</string>
     <string name="history_mood_changed">Lidianne compartilhou como estava</string>
     <string name="history_space_activated">Lidianne pediu um tempo só dela</string>
     <string name="history_space_ended">Lidianne encerrou seu tempo só dela</string>
@@ -85,7 +93,9 @@
     <string name="vinicius_request_waiting">Um pedido para você</string>
     <string name="vinicius_request_accepted">Você respondeu: estou indo ❤️</string>
     <string name="vinicius_request_declined">Você avisou que não consegue agora</string>
-    <string name="vinicius_request_completed">Cuidado realizado</string>
+    <string name="vinicius_request_acknowledged">Lidianne agradeceu pelo carinho ❤️</string>
+    <string name="vinicius_acknowledged_feedback">Lidianne te agradeceu ❤️</string>
+    <string name="vinicius_acknowledged_message">“Obrigada, meu amor”</string>
     <string name="vinicius_accept">Estou indo ❤️</string>
     <string name="vinicius_decline">Não consigo agora</string>
 </resources>

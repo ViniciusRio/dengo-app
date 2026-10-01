@@ -48,6 +48,7 @@ fun DengoApp(
                     state = homeState,
                     onQuickRequest = homeViewModel::createQuickRequest,
                     onOtherRequest = homeViewModel::createOtherRequest,
+                    onAcknowledgeRequest = homeViewModel::acknowledgeRequest,
                     onMoodSelected = homeViewModel::setMood,
                     onPersonalSpaceActivated = homeViewModel::activatePersonalSpace,
                     onPersonalSpaceEnded = homeViewModel::endPersonalSpace,

@@ -16,3 +16,7 @@ Desenhos, fotos, anexos, edição, exclusão, comentários, reações, filtros, 
 
 ## Validação
 Revisão visual e funcional concluída no Samsung: estado vazio, CTA, bottom sheet e teclado, contador e limite, texto e emoji, publicação imediata, lista compartilhada e ordenada, autoria, previews das Homes e navegação para o Mural. A próxima etapa de produto ainda não foi definida e dependerá de novo planejamento.
+
+## Evolução posterior — ciclo afetivo dos pedidos
+
+Status: 🟢 Aprovada funcional e visualmente no Samsung Galaxy A26 5G. O contrato vigente está no ADR-012. Esta evolução não define uma nova etapa de produto; a próxima etapa permanece em aberto.

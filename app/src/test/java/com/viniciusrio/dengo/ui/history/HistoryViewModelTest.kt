@@ -193,4 +193,27 @@ class HistoryViewModelTest {
             history.state.value.days.single().items.map { it.event::class },
         )
     }
+
+    @Test
+    fun acknowledgementResolvesRequestContextAndKeepsChronology() {
+        val repository = FakeCoupleRepository(clock)
+        val request = repository.createRequest(CareRequestType.OTHER, "Um abraço")
+        repository.acceptRequest(request.id)
+        repository.acknowledgeRequest(request.id, PartnerId.LIDIANNE)
+        val items = repository.state.value.toHistoryUiState(clock.zone).days.single().items
+        assertEquals(listOf(HistoryEvent.RequestAcknowledged::class, HistoryEvent.RequestAccepted::class, HistoryEvent.RequestCreated::class), items.map { it.event::class })
+        assertEquals(listOf(2, 1, 0), items.map { it.originalIndex })
+        assertEquals(request.id, (items.first().event as HistoryEvent.RequestAcknowledged).requestId)
+        assertEquals("Um abraço", items.first().requestMessage)
+    }
+
+    @Test
+    fun missingRequestKeepsAcknowledgementWithHumanFallbackData() {
+        val state = CoupleState(partners = emptyList(), history = listOf(
+            HistoryEvent.RequestAcknowledged(42, PartnerId.LIDIANNE, now),
+        ))
+        val item = state.toHistoryUiState(clock.zone).days.single().items.single()
+        assertNull(item.requestType)
+        assertNull(item.requestMessage)
+    }
 }

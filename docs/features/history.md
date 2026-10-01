@@ -17,3 +17,7 @@ O estado é exclusivamente em memória e se perde ao reiniciar o processo. Não 
 ## Princípio
 
 Mostrar apenas informações úteis para memória/contexto da interação. Evitar métricas, rankings ou cobranças sobre frequência de cuidado.
+
+## Evolução do ciclo afetivo — aprovada no Samsung
+
+O reconhecimento de Lidianne adiciona `RequestAcknowledged`, com o texto “Lidianne agradeceu pelo carinho ❤️”. Criação, resposta e agradecimento são acontecimentos distintos. Como nos eventos anteriores, o contexto do pedido é resolvido por ID; na ausência do pedido, o evento continua com texto humano, sem ID técnico. O Histórico permanece somente leitura e em memória. Ver ADR-012.

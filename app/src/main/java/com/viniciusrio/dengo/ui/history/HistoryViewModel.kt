@@ -60,6 +60,7 @@ internal fun CoupleState.toHistoryUiState(zone: ZoneId): HistoryUiState {
                 is HistoryEvent.RequestCreated -> requestsById[event.requestId]
                 is HistoryEvent.RequestAccepted -> requestsById[event.requestId]
                 is HistoryEvent.RequestDeclined -> requestsById[event.requestId]
+                is HistoryEvent.RequestAcknowledged -> requestsById[event.requestId]
                 else -> null
             }
             HistoryItem(

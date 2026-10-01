@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.viniciusrio.dengo.data.FakeCoupleRepository
 import com.viniciusrio.dengo.model.CareRequest
+import com.viniciusrio.dengo.model.CareRequestStatus
 import com.viniciusrio.dengo.model.CoupleState
+import com.viniciusrio.dengo.model.HistoryEvent
 import com.viniciusrio.dengo.model.Mood
 import com.viniciusrio.dengo.model.MuralNote
 import com.viniciusrio.dengo.model.PartnerId
@@ -23,6 +25,7 @@ data class ViniciusHomeState(
     val isMoodToday: Boolean,
     val isPersonalSpaceActive: Boolean,
     val latestMuralNote: MuralNote? = null,
+    val acknowledgedRequest: CareRequest? = null,
 )
 
 class ViniciusHomeViewModel(
@@ -49,12 +52,14 @@ class ViniciusHomeViewModel(
         val lidianneMood = couple.mood?.takeIf { it.partnerId == PartnerId.LIDIANNE }
         return ViniciusHomeState(
             requests = couple.requests
-                .filter { it.recipientId == PartnerId.VINICIUS }
+                .filter { it.recipientId == PartnerId.VINICIUS && it.status in setOf(CareRequestStatus.PENDING, CareRequestStatus.ACCEPTED) }
                 .sortedWith(compareByDescending<CareRequest> { it.createdAt }.thenByDescending { it.id }),
             mood = lidianneMood,
             isMoodToday = lidianneMood?.date == LocalDate.now(clock),
             isPersonalSpaceActive = couple.personalSpace.status == PersonalSpace.Status.ACTIVE,
             latestMuralNote = couple.muralNotes.latestMuralNote(),
+            acknowledgedRequest = (couple.history.lastOrNull { it is HistoryEvent.RequestAcknowledged } as? HistoryEvent.RequestAcknowledged)
+                ?.let { event -> couple.requests.firstOrNull { it.id == event.requestId } },
         )
     }
 }

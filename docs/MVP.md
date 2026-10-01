@@ -22,7 +22,9 @@ Validar se o ciclo `comunicar → receber → responder → registrar` é divert
 - `PENDING` — solicitado, sem resposta.
 - `ACCEPTED` — Vinícius respondeu “Estou indo ❤️”; não significa conclusão.
 - `DECLINED` — Vinícius respondeu “Não consigo agora”.
-- `COMPLETED` — representável no domínio, mas sem ação aprovada.
+- `ACKNOWLEDGED` — Lidianne reconheceu e agradeceu um carinho aceito que aconteceu.
+
+Um pedido predefinido em `PENDING` ou `ACCEPTED` bloqueia outro do mesmo tipo. `OTHER` permanece independente. Esta evolução foi aprovada no Samsung; ver ADR-012.
 
 Visualizar não altera o pedido; não existe `SEEN` no protótipo atual.
 

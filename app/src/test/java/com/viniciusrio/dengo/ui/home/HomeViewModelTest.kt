@@ -165,4 +165,25 @@ class HomeViewModelTest {
         assertEquals(latest, viewModel.state.value.latestMuralNote)
         assertEquals(request, viewModel.state.value.latestRequest)
     }
+
+    @Test
+    fun pendingAndMultipleAcceptedRequestsRemainIndividuallyAvailableForAcknowledgement() = runTest {
+        val repository = FakeCoupleRepository(clock)
+        val viewModel = HomeViewModel(repository)
+        val dengo = repository.createRequest(CareRequestType.DENGO)
+        val medicine = repository.createRequest(CareRequestType.MEDICINE)
+        val bag = repository.createRequest(CareRequestType.HOT_WATER_BAG)
+        repository.acceptRequest(medicine.id)
+        repository.acceptRequest(dengo.id)
+        advanceUntilIdle()
+
+        assertEquals(listOf(bag.id, medicine.id, dengo.id), viewModel.state.value.activeRequests.map { it.id })
+        viewModel.acknowledgeRequest(dengo.id)
+        advanceUntilIdle()
+        assertEquals(listOf(bag.id, medicine.id), viewModel.state.value.activeRequests.map { it.id })
+        viewModel.acknowledgeRequest(medicine.id)
+        repository.declineRequest(bag.id)
+        advanceUntilIdle()
+        assertEquals(emptyList<Long>(), viewModel.state.value.activeRequests.map { it.id })
+    }
 }

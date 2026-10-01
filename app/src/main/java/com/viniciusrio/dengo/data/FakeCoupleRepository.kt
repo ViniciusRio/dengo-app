@@ -35,7 +35,7 @@ class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone())
 
     val state: StateFlow<CoupleState> = mutableState.asStateFlow()
 
-    fun createMuralNote(authorId: PartnerId, text: String): MuralNote {
+    @Synchronized fun createMuralNote(authorId: PartnerId, text: String): MuralNote {
         val normalized = text.trim()
         require(normalized.isNotEmpty() && normalized.muralCodePointCount() <= MURAL_NOTE_MAX_CODE_POINTS)
         val note = MuralNote(
@@ -48,35 +48,40 @@ class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone())
         return note
     }
 
-    fun createRequest(type: CareRequestType, message: String? = null): CareRequest {
+    @Synchronized fun createRequest(type: CareRequestType, message: String? = null): CareRequest {
         require(type == CareRequestType.OTHER || message == null)
-        val request = CareRequest(
-            id = nextRequestId.getAndIncrement(),
-            type = type,
-            requesterId = PartnerId.LIDIANNE,
-            recipientId = PartnerId.VINICIUS,
-            status = CareRequestStatus.PENDING,
-            createdAt = clock.instant(),
-            message = message?.trim()?.takeIf(String::isNotEmpty),
-        )
+        val normalized = message?.trim()?.takeIf(String::isNotEmpty)
+        require(type != CareRequestType.OTHER || normalized != null)
+        var result: CareRequest? = null
         mutableState.update { current ->
-            current.copy(
-                requests = current.requests + request,
-                history = current.history + HistoryEvent.RequestCreated(
-                    requestId = request.id,
-                    actorId = request.requesterId,
-                    occurredAt = request.createdAt,
-                ),
-            )
+            val active = current.requests.firstOrNull {
+                type != CareRequestType.OTHER && it.type == type &&
+                    it.status in setOf(CareRequestStatus.PENDING, CareRequestStatus.ACCEPTED)
+            }
+            if (active != null) {
+                result = active
+                current
+            } else {
+                val request = CareRequest(
+                    id = nextRequestId.getAndIncrement(), type = type,
+                    requesterId = PartnerId.LIDIANNE, recipientId = PartnerId.VINICIUS,
+                    status = CareRequestStatus.PENDING, createdAt = clock.instant(), message = normalized,
+                )
+                result = request
+                current.copy(
+                    requests = current.requests + request,
+                    history = current.history + HistoryEvent.RequestCreated(request.id, request.requesterId, request.createdAt),
+                )
+            }
         }
-        return request
+        return checkNotNull(result)
     }
 
     fun acceptRequest(requestId: Long) = respondToRequest(requestId, CareRequestStatus.ACCEPTED)
 
     fun declineRequest(requestId: Long) = respondToRequest(requestId, CareRequestStatus.DECLINED)
 
-    private fun respondToRequest(requestId: Long, status: CareRequestStatus) {
+    @Synchronized private fun respondToRequest(requestId: Long, status: CareRequestStatus) {
         val now = clock.instant()
         mutableState.update { current ->
             val request = current.requests.firstOrNull { it.id == requestId }
@@ -98,7 +103,22 @@ class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone())
         }
     }
 
-    fun setMood(option: MoodOption) {
+    @Synchronized fun acknowledgeRequest(requestId: Long, actorId: PartnerId) {
+        val now = clock.instant()
+        mutableState.update { current ->
+            val request = current.requests.firstOrNull { it.id == requestId }
+            if (actorId != PartnerId.LIDIANNE || request?.requesterId != actorId ||
+                request.status != CareRequestStatus.ACCEPTED
+            ) current else current.copy(
+                requests = current.requests.map {
+                    if (it.id == requestId) it.copy(status = CareRequestStatus.ACKNOWLEDGED) else it
+                },
+                history = current.history + HistoryEvent.RequestAcknowledged(requestId, actorId, now),
+            )
+        }
+    }
+
+    @Synchronized fun setMood(option: MoodOption) {
         val now = clock.instant()
         val mood = Mood(PartnerId.LIDIANNE, option, LocalDate.ofInstant(now, clock.zone))
         mutableState.update { current ->
@@ -113,7 +133,7 @@ class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone())
         }
     }
 
-    fun activatePersonalSpace() {
+    @Synchronized fun activatePersonalSpace() {
         val now = clock.instant()
         mutableState.update { current ->
             if (current.personalSpace.status == PersonalSpace.Status.ACTIVE) current else current.copy(
@@ -126,7 +146,7 @@ class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone())
         }
     }
 
-    fun endPersonalSpace() {
+    @Synchronized fun endPersonalSpace() {
         val now = clock.instant()
         mutableState.update { current ->
             if (current.personalSpace.status == PersonalSpace.Status.INACTIVE) current else current.copy(

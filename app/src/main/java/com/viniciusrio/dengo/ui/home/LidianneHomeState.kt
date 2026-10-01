@@ -11,4 +11,6 @@ data class LidianneHomeState(
     val personalSpace: PersonalSpace,
     val otherRespondedRequestCount: Int = 0,
     val latestMuralNote: MuralNote? = null,
+    val activeRequests: List<CareRequest> = emptyList(),
+    val acknowledgedRequest: CareRequest? = null,
 )

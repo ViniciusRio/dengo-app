@@ -7,6 +7,7 @@ import com.viniciusrio.dengo.model.CareRequest
 import com.viniciusrio.dengo.model.CareRequestStatus
 import com.viniciusrio.dengo.model.CareRequestType
 import com.viniciusrio.dengo.model.CoupleState
+import com.viniciusrio.dengo.model.HistoryEvent
 import com.viniciusrio.dengo.model.MoodOption
 import com.viniciusrio.dengo.model.PartnerId
 import com.viniciusrio.dengo.model.latestMuralNote
@@ -30,8 +31,12 @@ class HomeViewModel(private val repository: FakeCoupleRepository) : ViewModel() 
     }
 
     fun createOtherRequest(text: String) {
-        require(text.isNotBlank())
+        require(text.trim().isNotEmpty())
         repository.createRequest(CareRequestType.OTHER, text)
+    }
+
+    fun acknowledgeRequest(requestId: Long) {
+        repository.acknowledgeRequest(requestId, PartnerId.LIDIANNE)
     }
 
     fun setMood(option: MoodOption) {
@@ -60,5 +65,10 @@ private fun CoupleState.toLidianneHomeState(): LidianneHomeState {
         mood = mood,
         personalSpace = personalSpace,
         latestMuralNote = muralNotes.latestMuralNote(),
+        activeRequests = ownRequests
+            .filter { it.status == CareRequestStatus.PENDING || it.status == CareRequestStatus.ACCEPTED }
+            .sortedWith(compareByDescending<CareRequest> { it.createdAt }.thenByDescending { it.id }),
+        acknowledgedRequest = (history.lastOrNull() as? HistoryEvent.RequestAcknowledged)
+            ?.let { event -> ownRequests.firstOrNull { it.id == event.requestId } },
     )
 }

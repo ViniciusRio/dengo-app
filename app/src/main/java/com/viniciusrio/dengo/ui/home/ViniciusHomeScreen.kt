@@ -94,6 +94,10 @@ fun ViniciusHomeScreen(
                 Spacer(Modifier.height(AppSpacing.Medium))
             }
         }
+        state.acknowledgedRequest?.let { request ->
+            Spacer(Modifier.height(AppSpacing.Small))
+            AcknowledgementNote(request)
+        }
 
         Spacer(Modifier.height(AppSpacing.Large))
         HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f))
@@ -113,6 +117,46 @@ fun ViniciusHomeScreen(
             MuralPreviewContent(state.latestMuralNote)
         }
         Spacer(Modifier.height(AppSpacing.Large))
+    }
+}
+
+@Composable
+private fun AcknowledgementNote(request: CareRequest) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+    ) {
+        Row(
+            modifier = Modifier.padding(AppSpacing.Base),
+            horizontalArrangement = Arrangement.spacedBy(AppSpacing.Medium),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.FavoriteBorder,
+                contentDescription = null,
+                tint = LidianneAction,
+                modifier = Modifier.size(24.dp),
+            )
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.vinicius_acknowledged_feedback),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = LidianneAction,
+                )
+                Spacer(Modifier.height(AppSpacing.ExtraSmall))
+                Text(
+                    text = stringResource(R.string.vinicius_acknowledged_message),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Spacer(Modifier.height(AppSpacing.ExtraSmall))
+                Text(
+                    text = request.message ?: stringResource(request.type.labelRes()),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
     }
 }
 
@@ -350,7 +394,7 @@ private fun CareRequestStatus.humanLabelRes(): Int = when (this) {
     CareRequestStatus.PENDING -> R.string.vinicius_request_waiting
     CareRequestStatus.ACCEPTED -> R.string.vinicius_request_accepted
     CareRequestStatus.DECLINED -> R.string.vinicius_request_declined
-    CareRequestStatus.COMPLETED -> R.string.vinicius_request_completed
+    CareRequestStatus.ACKNOWLEDGED -> R.string.vinicius_request_acknowledged
 }
 
 private fun MoodOption.presentation(): Pair<String, Int> = when (this) {

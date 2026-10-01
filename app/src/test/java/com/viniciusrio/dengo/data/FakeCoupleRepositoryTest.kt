@@ -229,4 +229,98 @@ class FakeCoupleRepositoryTest {
         repository.acceptRequest(request.id)
         assertEquals(CareRequestStatus.ACCEPTED, repository.state.value.requests.single().status)
     }
+
+    @Test
+    fun predefinedRequestCannotBeRepeatedWhilePendingOrAcceptedAndDoesNotConsumeIdOrHistory() {
+        val repository = FakeCoupleRepository(clock)
+        val first = repository.createRequest(CareRequestType.DENGO)
+        val pending = repository.state.value
+        repository.createRequest(CareRequestType.DENGO)
+        assertEquals(pending, repository.state.value)
+        repository.acceptRequest(first.id)
+        val accepted = repository.state.value
+        repository.createRequest(CareRequestType.DENGO)
+        assertEquals(accepted, repository.state.value)
+        assertEquals(2L, repository.createRequest(CareRequestType.MEDICINE).id)
+    }
+
+    @Test
+    fun decliningOrAcknowledgingFreesPredefinedTypeImmediately() {
+        val repository = FakeCoupleRepository(clock)
+        val declined = repository.createRequest(CareRequestType.DENGO)
+        repository.declineRequest(declined.id)
+        val replacement = repository.createRequest(CareRequestType.DENGO)
+        assertEquals(2L, replacement.id)
+        repository.acceptRequest(replacement.id)
+        repository.acknowledgeRequest(replacement.id, PartnerId.LIDIANNE)
+        assertEquals(CareRequestStatus.ACKNOWLEDGED, repository.state.value.requests.last().status)
+        assertEquals(3L, repository.createRequest(CareRequestType.DENGO).id)
+    }
+
+    @Test
+    fun otherRequestsWithIdenticalTextStayIndependent() {
+        val repository = FakeCoupleRepository(clock)
+        val first = repository.createRequest(CareRequestType.OTHER, " Mesmo texto ")
+        val second = repository.createRequest(CareRequestType.OTHER, "Mesmo texto")
+        assertEquals(listOf(1L, 2L), repository.state.value.requests.map { it.id })
+        repository.acceptRequest(second.id)
+        repository.acknowledgeRequest(first.id, PartnerId.LIDIANNE)
+        assertEquals(CareRequestStatus.PENDING, repository.state.value.requests.first().status)
+        repository.acknowledgeRequest(second.id, PartnerId.LIDIANNE)
+        assertEquals(CareRequestStatus.ACKNOWLEDGED, repository.state.value.requests.last().status)
+    }
+
+    @Test
+    fun acknowledgementIsAtomicAndOnlyLidianneCanAcknowledgeAcceptedRequest() {
+        val repository = FakeCoupleRepository(clock)
+        val request = repository.createRequest(CareRequestType.HOT_WATER_BAG)
+        val pending = repository.state.value
+        repository.acknowledgeRequest(request.id, PartnerId.LIDIANNE)
+        repository.acknowledgeRequest(999L, PartnerId.LIDIANNE)
+        assertEquals(pending, repository.state.value)
+        repository.acceptRequest(request.id)
+        val accepted = repository.state.value
+        repository.acknowledgeRequest(request.id, PartnerId.VINICIUS)
+        assertEquals(accepted, repository.state.value)
+        repository.acknowledgeRequest(request.id, PartnerId.LIDIANNE)
+        val acknowledged = repository.state.value
+        assertEquals(CareRequestStatus.ACKNOWLEDGED, acknowledged.requests.single().status)
+        assertEquals(accepted.history + HistoryEvent.RequestAcknowledged(request.id, PartnerId.LIDIANNE, now), acknowledged.history)
+        repository.acknowledgeRequest(request.id, PartnerId.LIDIANNE)
+        repository.declineRequest(request.id)
+        assertEquals(acknowledged, repository.state.value)
+    }
+
+    @Test
+    fun onlyApprovedStatusesRemainAndBlankOtherIsRejectedAtRepositoryBoundary() {
+        assertEquals(
+            setOf(CareRequestStatus.PENDING, CareRequestStatus.ACCEPTED, CareRequestStatus.DECLINED, CareRequestStatus.ACKNOWLEDGED),
+            CareRequestStatus.entries.toSet(),
+        )
+        val repository = FakeCoupleRepository(clock)
+        try {
+            repository.createRequest(CareRequestType.OTHER, "   ")
+            throw AssertionError("Blank OTHER should be rejected")
+        } catch (_: IllegalArgumentException) {
+            assertTrue(repository.state.value.requests.isEmpty())
+            assertTrue(repository.state.value.history.isEmpty())
+            assertEquals(1L, repository.createRequest(CareRequestType.OTHER, "Um abraço").id)
+        }
+    }
+
+    @Test
+    fun acknowledgingDoesNotChangePersonalSpaceAndDoesNotUnblockResponsesDuringIt() {
+        val repository = FakeCoupleRepository(clock)
+        val accepted = repository.createRequest(CareRequestType.DENGO)
+        val pending = repository.createRequest(CareRequestType.MEDICINE)
+        repository.acceptRequest(accepted.id)
+        repository.activatePersonalSpace()
+        repository.acknowledgeRequest(accepted.id, PartnerId.LIDIANNE)
+        val afterAcknowledgement = repository.state.value
+        assertEquals(PersonalSpace.Status.ACTIVE, afterAcknowledgement.personalSpace.status)
+        assertEquals(CareRequestStatus.PENDING, afterAcknowledgement.requests.last().status)
+        repository.acceptRequest(pending.id)
+        repository.declineRequest(pending.id)
+        assertEquals(afterAcknowledgement, repository.state.value)
+    }
 }
