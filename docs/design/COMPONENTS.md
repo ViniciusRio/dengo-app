@@ -36,7 +36,7 @@ Sugestão contextual como desenhar, mandar recado ou oferecer companhia.
 Evento cronológico com horário, descrição e estado.
 
 ### MuralPreview
-Na versão aprovada no Samsung, preview discreto do recado textual mais recente, com autoria e trecho, ou estado vazio; abre a aba Mural. Na evolução implementada no protótipo, pendente de revisão no Samsung, o último recado desenhado mostra o traço real reduzido e a autoria, preservando a hierarquia das duas Homes e a ação de abrir o Mural. O tratamento visual exato depende de validação no Samsung; ver `docs/features/mural.md`.
+Na versão aprovada no Samsung, preview discreto do recado textual mais recente, com autoria e trecho, ou estado vazio; abre a aba Mural. Na evolução implementada e revisada contra a spec, o último recado desenhado mostra o traço real reduzido e a autoria, preservando a hierarquia das duas Homes e a ação de abrir o Mural. A validação manual da evolução no Galaxy A26 encontrou um problema funcional de expansão/recuo do bottom sheet; não há aprovação final no Samsung. O tratamento visual exato também depende de validação no aparelho; ver `docs/features/mural.md`.
 
 ### BottomNavigation
 Destinos iniciais:

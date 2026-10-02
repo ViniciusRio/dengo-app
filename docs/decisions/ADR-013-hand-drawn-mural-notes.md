@@ -2,7 +2,7 @@
 
 ## Status
 
-Aceito como decisão de produto. A implementação local existe e aguarda nova revisão contra a spec; validação no Samsung pendente.
+Aceito como decisão de produto. A implementação local passou pela revisão contra a spec e está em validação manual no Samsung. O compositor apresentou problema de expansão/recuo do bottom sheet; correção e nova validação estão pendentes. A evolução não foi aprovada no Samsung.
 
 ## Contexto
 

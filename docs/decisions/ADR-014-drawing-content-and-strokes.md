@@ -2,7 +2,7 @@
 
 ## Status
 
-Direções técnicas aceitas após revisão humana da auditoria da implementação. O protótipo existe; nova revisão contra a spec e validação funcional e visual no Samsung pendentes.
+Direções técnicas aceitas após revisão humana da auditoria da implementação. O protótipo passou pela revisão contra a spec e está em validação manual no Samsung. O compositor apresentou problema no estado de expansão/recuo do bottom sheet; correção e nova validação estão pendentes. A evolução não foi aprovada no Samsung.
 
 ## Contexto
 

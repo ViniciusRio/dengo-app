@@ -10,7 +10,7 @@ Etapa 7 concluída e aprovada no Samsung. Próxima etapa de produto ainda não d
 
 ## Depois
 - [ ] definir conclusão de [[Pedidos]]
-- [ ] implementar e validar no Samsung recados desenhados à mão no [[Mural]] (especificação aprovada; sem etapa definida)
+- [ ] corrigir o compositor de recados desenhados e concluir a validação no Samsung (implementação existente; sem etapa definida)
 - [ ] [[Perfil]]
 
 ## Infraestrutura futura

@@ -2,7 +2,7 @@
 
 Etapas 1–7 concluídas e aprovadas no dispositivo. A evolução posterior do ciclo afetivo dos pedidos foi revisada e aprovada funcional e visualmente no Samsung Galaxy A26 5G. Consulte o ADR-012 para a decisão vigente. A próxima etapa de produto ainda não foi definida.
 
-A evolução de recados desenhados do Mural existe no protótipo local e passou pelos testes automatizados. Uma nova revisão contra a spec e a revisão funcional e visual no Samsung estão pendentes; esta implementação não altera a aprovação da Etapa 7 textual nem define uma nova etapa de produto. Consulte o ADR-014.
+A evolução de recados desenhados do Mural existe no protótipo local, passou pelos testes automatizados e recebeu o gate para validação no Samsung após revisão contra a spec. A validação manual no Galaxy A26 foi iniciada e encontrou um problema funcional no compositor: o sheet abre parcialmente e pode recuar após a troca de cor. O gatilho exato desse recuo ainda não foi confirmado; correção e nova validação estão pendentes. Não há aprovação final da evolução no Samsung, e a aprovação da Etapa 7 continua se referindo à versão textual. Consulte o ADR-014.
 
 ## Aprovado
 

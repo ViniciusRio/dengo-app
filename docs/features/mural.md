@@ -17,9 +17,9 @@ Cantinho compartilhado para Lidianne e Vinícius deixarem pequenos recados/carin
 
 Esta versão não oferece desenho. Não há edição, exclusão, comentários, reações, fotos, anexos, filtros ou busca. O estado reinicia com o processo; não há comunicação entre aparelhos.
 
-## Evolução implementada no protótipo — revisão contra a spec e no Samsung pendentes
+## Evolução implementada no protótipo — validação no Samsung em andamento
 
-A hipótese é que o traço, a caligrafia e o gesto feitos pela própria mão tornem um recado mais íntimo e pessoal. A evolução abaixo foi implementada para um experimento local; sua validação no Samsung ainda está pendente. Ela não define uma nova etapa de produto.
+A hipótese é que o traço, a caligrafia e o gesto feitos pela própria mão tornem um recado mais íntimo e pessoal. A evolução abaixo foi implementada para um experimento local e passou pela revisão contra a spec. A validação manual no Galaxy A26 encontrou um problema funcional no estado de expansão do bottom sheet, que abre parcialmente e pode recuar após a troca de cor. O gatilho exato do recuo ainda não foi confirmado; correção e nova validação no Samsung estão pendentes. A evolução não foi aprovada no Samsung nem define uma nova etapa de produto. Os critérios abaixo continuam sendo o contrato; este registro não altera seus requisitos.
 
 ### Dois formatos e início da criação
 
