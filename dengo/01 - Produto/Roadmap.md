@@ -14,7 +14,7 @@
 Próxima etapa de produto ainda não definida; depende de novo planejamento.
 
 ## Futuro
-- [ ] desenhos no Mural (possibilidade futura)
+- [ ] recados desenhados à mão no [[Mural]] (especificados; implementação e validação no Samsung pendentes, sem etapa definida)
 - [ ] Perfil
 - [ ] persistência local
 - [ ] backend e sincronização

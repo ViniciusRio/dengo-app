@@ -1,7 +1,7 @@
 # Mural
 Status: 🟢 Implementado e aprovado no Samsung
 
-Cantinho compartilhado do casal para deixar pequenos recados e carinho, sem aparência de feed social. Desenhos pertencem a uma possibilidade futura.
+Cantinho compartilhado do casal para deixar pequenos recados e carinho, sem aparência de feed social. O status acima se refere à primeira versão textual.
 
 ## Primeira versão
 - Lidianne e Vinícius publicam e consultam a mesma lista em memória;
@@ -16,8 +16,12 @@ Cantinho compartilhado do casal para deixar pequenos recados e carinho, sem apar
 ## Estado vazio
 “Um cantinho para deixar carinho um para o outro.”
 
-## Limites
+## Limites da primeira versão
 Publicar e visualizar são permitidos durante espaço pessoal ativo, sem sugestões de contato insistente. Não há edição, exclusão, comentários, reações, fotos, anexos ou desenhos. O estado reinicia com o processo e não sincroniza entre aparelhos. Publicar não gera evento de Histórico.
 
-## Validação no dispositivo
+## Validação da primeira versão no dispositivo
 Foram aprovados estado vazio, CTA, bottom sheet com teclado e campo multilinha, contador e bloqueio acima do limite, texto e emoji, publicação imediata no topo, ordenação visual, autoria nas duas perspectivas, previews nas Homes e navegação para o Mural.
+
+## Evolução especificada — recados desenhados à mão
+
+Ainda não implementada nem validada no Samsung. “Deixar um recado” oferecerá **Escrever** para a composição textual existente e **Desenhar** para criar um recado individual com traços livres do dedo, inclusive escrita manual, sem teclado. A composição manual terá superfície confortável, escolha simples de cor, desfazer e limpar sem confirmação. Desenho vazio não publica; sair com traços não publicados exige escolha entre continuar e descartar. Depois de publicado, o desenho real aparece com autoria e horário na lista e, se for o último recado, em preview visual nas duas Homes, sem edição ao toque. A coleção continua local e em memória, sem evento de Histórico. Detalhes e critérios de aceitação estão em `docs/features/mural.md`.

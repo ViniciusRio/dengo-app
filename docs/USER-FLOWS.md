@@ -42,6 +42,8 @@ Exemplo:
 
 ## Fluxo 6 — Mural local
 
-Lidianne ou Vinícius abre Mural → toca em “Deixar um recado” → escreve até 160 pontos de código Unicode → publica → o recado aparece no topo, com nome e horário, para as duas perspectivas e nos previews das Homes. Espaço pessoal ativo não bloqueia este gesto assíncrono; publicar não gera evento de Histórico.
+Fluxo implementado e aprovado no Samsung: Lidianne ou Vinícius abre Mural → toca em “Deixar um recado” → escreve até 160 pontos de código Unicode → publica → o recado aparece no topo, com nome e horário, para as duas perspectivas e nos previews das Homes. Espaço pessoal ativo não bloqueia este gesto assíncrono; publicar não gera evento de Histórico.
+
+Evolução especificada, ainda não implementada: sob “Deixar um recado”, escolher **Escrever** mantém esse fluxo; escolher **Desenhar** abre a composição manual sem teclado. O desenho publicado entra na mesma lista e, quando for o último recado, aparece visualmente nas duas Homes. Ver `docs/features/mural.md` para o fluxo completo, proteção do rascunho e critérios de aceitação.
 
 Sincronização entre dispositivos pertence ao MVP 2.

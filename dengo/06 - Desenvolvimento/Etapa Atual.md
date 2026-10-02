@@ -11,12 +11,16 @@ Status: 🟢 Concluída e aprovada no Samsung
 - publicação permitida durante espaço pessoal e sem `HistoryEvent`;
 - testes unitários, sem persistência ou sincronização.
 
-## Fora do escopo
+## Fora do escopo da Etapa 7
 Desenhos, fotos, anexos, edição, exclusão, comentários, reações, filtros, busca, novos eventos de Histórico, backend, persistência e sincronização.
 
-## Validação
+## Validação da Etapa 7
 Revisão visual e funcional concluída no Samsung: estado vazio, CTA, bottom sheet e teclado, contador e limite, texto e emoji, publicação imediata, lista compartilhada e ordenada, autoria, previews das Homes e navegação para o Mural. A próxima etapa de produto ainda não foi definida e dependerá de novo planejamento.
 
 ## Evolução posterior — ciclo afetivo dos pedidos
 
 Status: 🟢 Aprovada funcional e visualmente no Samsung Galaxy A26 5G. O contrato vigente está no ADR-012. Esta evolução não define uma nova etapa de produto; a próxima etapa permanece em aberto.
+
+## Mural — evolução especificada, ainda não implementada
+
+Recados desenhados à mão foram aprovados como alternativa aos recados textuais da Etapa 7; o contrato de produto está em `docs/features/mural.md`. A implementação, os testes e a validação no Samsung desta evolução ainda não ocorreram. O experimento permanece em memória, sem nova etapa definida; decisões arquiteturais ficam para depois da revisão da especificação.
