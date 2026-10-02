@@ -3,6 +3,8 @@ package com.viniciusrio.dengo.ui.home
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.EditNote
@@ -17,8 +19,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.viniciusrio.dengo.R
 import com.viniciusrio.dengo.model.MuralNote
+import com.viniciusrio.dengo.model.MuralContent
 import com.viniciusrio.dengo.model.PartnerId
 import com.viniciusrio.dengo.ui.theme.AppSpacing
+import com.viniciusrio.dengo.ui.mural.MuralDrawing
+import com.viniciusrio.dengo.ui.mural.formatMuralTimestamp
+import java.time.LocalDate
+import java.time.ZoneId
 
 @Composable
 internal fun MuralPreviewContent(note: MuralNote?) {
@@ -45,12 +52,23 @@ internal fun MuralPreviewContent(note: MuralNote?) {
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Text(
-                    text = note.text,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+                when (val content = note.content) {
+                    is MuralContent.Text -> Text(
+                        text = content.value,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    is MuralContent.Drawing -> MuralDrawing(
+                        drawing = content,
+                        description = stringResource(
+                            R.string.mural_drawing_description,
+                            stringResource(if (note.authorId == PartnerId.LIDIANNE) R.string.perspective_lidianne else R.string.perspective_vinicius),
+                            formatMuralTimestamp(note.createdAt, LocalDate.now(ZoneId.systemDefault()), ZoneId.systemDefault()),
+                        ),
+                        modifier = Modifier.fillMaxWidth().height(96.dp),
+                    )
+                }
             }
         }
     }

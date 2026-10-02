@@ -19,6 +19,7 @@ import com.viniciusrio.dengo.ui.history.HistoryScreen
 import com.viniciusrio.dengo.ui.history.HistoryViewModel
 import com.viniciusrio.dengo.ui.mural.MuralScreen
 import com.viniciusrio.dengo.ui.mural.MuralViewModel
+import com.viniciusrio.dengo.ui.mural.ComposerMode
 import com.viniciusrio.dengo.ui.screens.PlaceholderScreen
 import com.viniciusrio.dengo.ui.screens.PrototypePerspectiveScreen
 import com.viniciusrio.dengo.ui.theme.DengoTheme
@@ -34,11 +35,18 @@ fun DengoApp(
 ) {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestination.Home) }
     var perspective by rememberSaveable { mutableStateOf(PrototypePerspective.LIDIANNE) }
+    var pendingDestination by rememberSaveable { mutableStateOf<AppDestination?>(null) }
+    val composer by muralViewModel.composer.collectAsState()
 
     DengoTheme {
         AppScaffold(
             currentDestination = currentDestination,
-            onDestinationSelected = { currentDestination = it },
+            onDestinationSelected = { destination ->
+                if (currentDestination == AppDestination.Mural && composer.mode != ComposerMode.CLOSED) {
+                    if (muralViewModel.requestExit()) currentDestination = destination
+                    else pendingDestination = destination
+                } else currentDestination = destination
+            },
             selectedColor = if (perspective == PrototypePerspective.VINICIUS) ViniciusAction else MaterialTheme.colorScheme.primary,
             indicatorColor = if (perspective == PrototypePerspective.VINICIUS) ViniciusBlueSoft else MaterialTheme.colorScheme.primaryContainer,
         ) { padding ->
@@ -68,8 +76,27 @@ fun DengoApp(
                 val muralState by muralViewModel.state.collectAsState()
                 MuralScreen(
                     state = muralState,
+                    composer = composer,
                     authorId = if (perspective == PrototypePerspective.LIDIANNE) PartnerId.LIDIANNE else PartnerId.VINICIUS,
                     onLeaveNote = muralViewModel::leaveNote,
+                    onOpenChooser = muralViewModel::openChooser,
+                    onOpenText = muralViewModel::openText,
+                    onOpenDrawing = muralViewModel::openDrawing,
+                    onSelectColor = muralViewModel::selectColor,
+                    onStroke = muralViewModel::addStroke,
+                    onUndo = muralViewModel::undoStroke,
+                    onClear = muralViewModel::clearDrawing,
+                    onPublishDrawing = muralViewModel::publishDrawing,
+                    onRequestExit = muralViewModel::requestExit,
+                    onContinueDrawing = {
+                        muralViewModel.continueDrawing()
+                        pendingDestination = null
+                    },
+                    onDiscard = {
+                        muralViewModel.discardDraft()
+                        pendingDestination?.let { currentDestination = it }
+                        pendingDestination = null
+                    },
                     contentPadding = padding,
                 )
             } else if (currentDestination == AppDestination.History) {

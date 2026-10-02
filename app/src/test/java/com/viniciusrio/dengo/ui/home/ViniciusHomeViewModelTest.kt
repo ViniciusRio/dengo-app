@@ -111,6 +111,26 @@ class ViniciusHomeViewModelTest {
     }
 
     @Test
+    fun drawingBecomesLatestPreviewInBothHomes() = runTest {
+        val repository = FakeCoupleRepository(clock)
+        val lidianne = HomeViewModel(repository)
+        val vinicius = ViniciusHomeViewModel(repository, clock)
+        repository.createMuralNote(PartnerId.LIDIANNE, "Texto")
+        val latest = repository.createMuralDrawing(
+            PartnerId.VINICIUS,
+            1.5f,
+            listOf(com.viniciusrio.dengo.model.DrawingStroke(
+                0xFF315F91.toInt(),
+                listOf(com.viniciusrio.dengo.model.DrawingPoint(0.4f, 0.5f)),
+            )),
+        )
+        advanceUntilIdle()
+
+        assertEquals(latest, lidianne.state.value.latestMuralNote)
+        assertEquals(latest, vinicius.state.value.latestMuralNote)
+    }
+
+    @Test
     fun mainListOnlyContainsPendingAndAcceptedAndLatestAcknowledgementGivesFeedback() = runTest {
         val repository = FakeCoupleRepository(clock)
         val viewModel = ViniciusHomeViewModel(repository, clock)

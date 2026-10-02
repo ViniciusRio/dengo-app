@@ -3,6 +3,8 @@ package com.viniciusrio.dengo.ui.mural
 import com.viniciusrio.dengo.data.FakeCoupleRepository
 import com.viniciusrio.dengo.model.CoupleState
 import com.viniciusrio.dengo.model.MuralNote
+import com.viniciusrio.dengo.model.MuralContent
+import com.viniciusrio.dengo.model.DrawingPoint
 import com.viniciusrio.dengo.model.Partner
 import com.viniciusrio.dengo.model.PartnerId
 import java.time.Clock
@@ -37,6 +39,53 @@ class MuralViewModelTest {
         assertTrue(viewModel.state.value.notes.isEmpty())
     }
 
+    @Test fun drawingDraftKeepsStrokeColorsUndoClearAndDiscard() = runTest {
+        val repository = FakeCoupleRepository(clock)
+        val viewModel = MuralViewModel(repository)
+        viewModel.openDrawing()
+        viewModel.selectColor(0xFFA63854.toInt())
+        viewModel.addStroke(listOf(DrawingPoint(0.1f, 0.2f)), 1.5f)
+        viewModel.selectColor(0xFF315F91.toInt())
+        viewModel.addStroke(listOf(DrawingPoint(0.3f, 0.4f)), 2f)
+        viewModel.addStroke(listOf(DrawingPoint(0.5f, 0.6f)), 2f, 0xFFA63854.toInt())
+        assertEquals(listOf(0xFFA63854.toInt(), 0xFF315F91.toInt(), 0xFFA63854.toInt()), viewModel.composer.value.strokes.map { it.argb })
+        assertEquals(listOf(1.5f, 2f, 2f), viewModel.composer.value.strokes.map { it.aspectRatio })
+        assertEquals(false, viewModel.requestExit())
+        assertTrue(viewModel.composer.value.confirmDiscard)
+        viewModel.continueDrawing()
+        viewModel.undoStroke()
+        assertEquals(2, viewModel.composer.value.strokes.size)
+        viewModel.clearDrawing()
+        assertTrue(viewModel.composer.value.strokes.isEmpty())
+        assertEquals(false, viewModel.publishDrawing(PartnerId.LIDIANNE))
+        assertEquals(true, viewModel.requestExit())
+        assertTrue(repository.state.value.muralNotes.isEmpty())
+    }
+
+    @Test fun discardingNonEmptyDrawingNeverPublishes() = runTest {
+        val repository = FakeCoupleRepository(clock)
+        val viewModel = MuralViewModel(repository)
+        viewModel.openDrawing()
+        viewModel.addStroke(listOf(DrawingPoint(0.5f, 0.5f)), 1f)
+        assertEquals(false, viewModel.requestExit())
+        viewModel.discardDraft()
+
+        assertEquals(ComposerMode.CLOSED, viewModel.composer.value.mode)
+        assertTrue(repository.state.value.muralNotes.isEmpty())
+    }
+
+    @Test fun drawingPublishesOnlyOnceAndClosesComposer() = runTest {
+        val repository = FakeCoupleRepository(clock)
+        val viewModel = MuralViewModel(repository)
+        viewModel.openDrawing()
+        assertEquals(false, viewModel.publishDrawing(PartnerId.LIDIANNE))
+        viewModel.addStroke(listOf(DrawingPoint(0.5f, 0.5f)), 1f)
+        assertEquals(true, viewModel.publishDrawing(PartnerId.LIDIANNE))
+        assertEquals(false, viewModel.publishDrawing(PartnerId.LIDIANNE))
+        assertEquals(1, repository.state.value.muralNotes.size)
+        assertEquals(ComposerMode.CLOSED, viewModel.composer.value.mode)
+    }
+
     @Test fun bothPerspectivesPublishIntoAndObserveOneSharedList() = runTest {
         val repository = FakeCoupleRepository(clock)
         val viewModel = MuralViewModel(repository)
@@ -52,9 +101,9 @@ class MuralViewModelTest {
         val early = Instant.parse("2026-09-29T12:00:00Z")
         val later = Instant.parse("2026-09-29T13:00:00Z")
         val notes = listOf(
-            MuralNote(3, PartnerId.VINICIUS, "Antigo", early),
-            MuralNote(2, PartnerId.LIDIANNE, "Novo", later),
-            MuralNote(1, PartnerId.VINICIUS, "Mesmo horário", later),
+            MuralNote(3, PartnerId.VINICIUS, MuralContent.Text("Antigo"), early),
+            MuralNote(2, PartnerId.LIDIANNE, MuralContent.Text("Novo"), later),
+            MuralNote(1, PartnerId.VINICIUS, MuralContent.Text("Mesmo horário"), later),
         )
         val state = CoupleState(partners = listOf(Partner(PartnerId.LIDIANNE, "Lidianne")), muralNotes = notes)
 

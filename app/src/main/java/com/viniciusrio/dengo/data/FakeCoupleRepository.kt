@@ -8,6 +8,8 @@ import com.viniciusrio.dengo.model.HistoryEvent
 import com.viniciusrio.dengo.model.Mood
 import com.viniciusrio.dengo.model.MoodOption
 import com.viniciusrio.dengo.model.MuralNote
+import com.viniciusrio.dengo.model.MuralContent
+import com.viniciusrio.dengo.model.DrawingStroke
 import com.viniciusrio.dengo.model.MURAL_NOTE_MAX_CODE_POINTS
 import com.viniciusrio.dengo.model.Partner
 import com.viniciusrio.dengo.model.PartnerId
@@ -38,10 +40,25 @@ class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone())
     @Synchronized fun createMuralNote(authorId: PartnerId, text: String): MuralNote {
         val normalized = text.trim()
         require(normalized.isNotEmpty() && normalized.muralCodePointCount() <= MURAL_NOTE_MAX_CODE_POINTS)
+        return appendMuralNote(authorId, MuralContent.Text(normalized))
+    }
+
+    @Synchronized fun createMuralDrawing(authorId: PartnerId, aspectRatio: Float, strokes: List<DrawingStroke>): MuralNote {
+        require(aspectRatio.isFinite() && aspectRatio > 0f)
+        require(strokes.isNotEmpty() && strokes.all { stroke ->
+            (stroke.aspectRatio == null || (stroke.aspectRatio.isFinite() && stroke.aspectRatio > 0f)) &&
+                stroke.points.isNotEmpty() && stroke.points.all { point ->
+                point.x.isFinite() && point.y.isFinite() && point.x in 0f..1f && point.y in 0f..1f
+            }
+        })
+        return appendMuralNote(authorId, MuralContent.Drawing(aspectRatio, strokes.map { it.copy(points = it.points.toList()) }))
+    }
+
+    private fun appendMuralNote(authorId: PartnerId, content: MuralContent): MuralNote {
         val note = MuralNote(
             id = nextMuralNoteId.getAndIncrement(),
             authorId = authorId,
-            text = normalized,
+            content = content,
             createdAt = clock.instant(),
         )
         mutableState.update { current -> current.copy(muralNotes = current.muralNotes + note) }

@@ -1,6 +1,7 @@
 package com.viniciusrio.dengo.ui.mural
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material3.Button
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -28,6 +30,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,12 +40,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.viniciusrio.dengo.R
 import com.viniciusrio.dengo.model.MURAL_NOTE_MAX_CODE_POINTS
 import com.viniciusrio.dengo.model.MuralNote
+import com.viniciusrio.dengo.model.MuralContent
+import com.viniciusrio.dengo.model.DrawingPoint
 import com.viniciusrio.dengo.model.PartnerId
 import com.viniciusrio.dengo.model.muralCodePointCount
 import com.viniciusrio.dengo.ui.theme.AppSpacing
@@ -70,11 +76,22 @@ internal fun formatMuralTimestamp(instant: Instant, today: LocalDate, zone: Zone
 @Composable
 fun MuralScreen(
     state: MuralUiState,
+    composer: MuralComposerState,
     authorId: PartnerId,
     onLeaveNote: (PartnerId, String) -> Unit,
+    onOpenChooser: () -> Unit,
+    onOpenText: () -> Unit,
+    onOpenDrawing: () -> Unit,
+    onSelectColor: (Int) -> Unit,
+    onStroke: (List<DrawingPoint>, Float, Int) -> Unit,
+    onUndo: () -> Unit,
+    onClear: () -> Unit,
+    onPublishDrawing: (PartnerId) -> Boolean,
+    onRequestExit: () -> Boolean,
+    onContinueDrawing: () -> Unit,
+    onDiscard: () -> Unit,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
-    var showComposer by rememberSaveable { mutableStateOf(false) }
     val accent = if (authorId == PartnerId.LIDIANNE) LidianneAction else ViniciusAction
     val zone = ZoneId.systemDefault()
     val today = LocalDate.now(zone)
@@ -94,7 +111,7 @@ fun MuralScreen(
             )
             Spacer(Modifier.height(AppSpacing.Large))
             Button(
-                onClick = { showComposer = true },
+                onClick = onOpenChooser,
                 modifier = Modifier.heightIn(min = 48.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = accent),
             ) {
@@ -119,14 +136,42 @@ fun MuralScreen(
         }
     }
 
-    if (showComposer) {
+    if (composer.mode == ComposerMode.CHOOSER) {
+        AlertDialog(
+            onDismissRequest = { onRequestExit() },
+            title = { Text(stringResource(R.string.mural_leave_note)) },
+            text = {
+                Column {
+                    TextButton(onClick = onOpenText, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                        Text(stringResource(R.string.mural_write))
+                    }
+                    TextButton(onClick = onOpenDrawing, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                        Text(stringResource(R.string.mural_draw))
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = { TextButton(onClick = { onRequestExit() }) { Text(stringResource(R.string.mural_cancel)) } },
+        )
+    }
+    if (composer.mode == ComposerMode.TEXT) {
         MuralComposer(
             accent = accent,
-            onDismiss = { showComposer = false },
-            onSubmit = { text ->
-                onLeaveNote(authorId, text)
-                showComposer = false
-            },
+            onDismiss = { onRequestExit() },
+            onSubmit = { text -> onLeaveNote(authorId, text) },
+        )
+    }
+    if (composer.mode == ComposerMode.DRAWING) {
+        DrawingComposer(composer, authorId, accent, onSelectColor, onStroke, onUndo, onClear,
+            onPublishDrawing, onRequestExit)
+    }
+    if (composer.confirmDiscard) {
+        AlertDialog(
+            onDismissRequest = onContinueDrawing,
+            title = { Text(stringResource(R.string.mural_discard_title)) },
+            text = { Text(stringResource(R.string.mural_discard_message)) },
+            confirmButton = { TextButton(onClick = onDiscard) { Text(stringResource(R.string.mural_discard)) } },
+            dismissButton = { TextButton(onClick = onContinueDrawing) { Text(stringResource(R.string.mural_continue)) } },
         )
     }
 }
@@ -143,9 +188,86 @@ private fun MuralNoteRow(note: MuralNote, today: LocalDate, zone: ZoneId) {
             style = MaterialTheme.typography.labelMedium,
         )
         Spacer(Modifier.height(AppSpacing.Small))
-        Text(note.text, style = MaterialTheme.typography.bodyLarge)
+        when (val content = note.content) {
+            is MuralContent.Text -> Text(content.value, style = MaterialTheme.typography.bodyLarge)
+            is MuralContent.Drawing -> MuralDrawing(
+                content,
+                stringResource(R.string.mural_drawing_description, author, formatMuralTimestamp(note.createdAt, today, zone)),
+                modifier = Modifier.fillMaxWidth().height(200.dp),
+            )
+        }
         Spacer(Modifier.height(AppSpacing.Base))
         HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f))
+    }
+}
+
+private data class InkColor(val label: Int, val argb: Int)
+private val inkColors = listOf(
+    InkColor(R.string.mural_color_pink, 0xFFA63854.toInt()),
+    InkColor(R.string.mural_color_blue, 0xFF315F91.toInt()),
+    InkColor(R.string.mural_color_dark, 0xFF292426.toInt()),
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DrawingComposer(
+    composer: MuralComposerState,
+    authorId: PartnerId,
+    accent: Color,
+    onSelectColor: (Int) -> Unit,
+    onStroke: (List<DrawingPoint>, Float, Int) -> Unit,
+    onUndo: () -> Unit,
+    onClear: () -> Unit,
+    onPublish: (PartnerId) -> Boolean,
+    onRequestExit: () -> Boolean,
+) {
+    ModalBottomSheet(onDismissRequest = { onRequestExit() }) {
+        Column(
+            modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
+                .padding(horizontal = AppSpacing.Large, vertical = AppSpacing.Base),
+        ) {
+            Text(stringResource(R.string.mural_draw_title), style = MaterialTheme.typography.titleLarge)
+            Spacer(Modifier.height(AppSpacing.Base))
+            MuralDrawing(
+                drawing = MuralContent.Drawing(composer.aspectRatio, composer.strokes),
+                description = stringResource(R.string.mural_drawing_surface),
+                modifier = Modifier.fillMaxWidth().aspectRatio(1.35f),
+                onStroke = onStroke,
+                selectedArgb = composer.selectedArgb,
+            )
+            Spacer(Modifier.height(AppSpacing.Base))
+            Text(stringResource(R.string.mural_color_label), style = MaterialTheme.typography.labelLarge)
+            Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.Small)) {
+                inkColors.forEach { ink ->
+                    val selected = composer.selectedArgb == ink.argb
+                    OutlinedButton(
+                        onClick = { onSelectColor(ink.argb) },
+                        modifier = Modifier.weight(1f).heightIn(min = 48.dp).semantics { this.selected = selected },
+                    ) {
+                        Text("${if (selected) "✓ " else ""}${stringResource(ink.label)}", color = Color(ink.argb))
+                    }
+                }
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.Small)) {
+                TextButton(onClick = onUndo, enabled = composer.strokes.isNotEmpty(), modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.mural_undo))
+                }
+                TextButton(onClick = onClear, enabled = composer.strokes.isNotEmpty(), modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.mural_clear))
+                }
+            }
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                TextButton(onClick = { onRequestExit() }, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.mural_cancel))
+                }
+                Button(
+                    onClick = { onPublish(authorId) },
+                    enabled = composer.strokes.isNotEmpty(),
+                    modifier = Modifier.heightIn(min = 48.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = accent),
+                ) { Text(stringResource(R.string.mural_submit)) }
+            }
+        }
     }
 }
 
