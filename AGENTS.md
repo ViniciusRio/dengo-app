@@ -33,6 +33,13 @@ Leia, nesta ordem:
 - Decisões relevantes devem ser registradas em `docs/decisions/`.
 - Quando houver ambiguidade de produto, apresentar alternativas em vez de escolher silenciosamente.
 
+## Skills externas
+
+- Regras deste repositório, documentação consolidada e skills específicas do Dengo prevalecem sobre skills externas. Elas complementam a disciplina de engenharia, sem redefinir requisitos, decisões de produto, fontes de verdade, terminologia consolidada, critérios de aprovação, fluxo documental ou autorização para commit/push.
+- Use `codebase-design` ao projetar ou reconsiderar interfaces, seams, módulos ou decisões estruturais relevantes; `tdd` para orientar implementação test-first quando houver comportamento implementável e testável; e `diagnosing-bugs` para investigar bugs sistematicamente antes de propor correções.
+- Não aplique mecanicamente instruções ou exemplos de outras stacks e ecossistemas ao Android/Kotlin/Compose. Pedidos de confirmação das skills externas não reabrem decisões já autorizadas; diante de ambiguidade real, apresente alternativas. Em caso de conflito com `AGENTS.md`, documentação consolidada, código atual ou skill específica do Dengo, prevalece o contexto do Dengo.
+- Mantenha as skills upstream sem modificações locais enquanto forem tratadas como upstream. Revise as mudanças antes de aceitar uma atualização.
+
 ## Fontes e fases
 
 - Antes de afirmar o estado do projeto, confira código e documentação atuais. `docs/` e ADRs registram especificações e decisões consolidadas; o vault `dengo/` registra planejamento e contexto de produto. Notas exploratórias não substituem decisões vigentes; exponha divergências entre fontes.
