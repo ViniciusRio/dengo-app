@@ -17,9 +17,9 @@ Cantinho compartilhado para Lidianne e Vinícius deixarem pequenos recados/carin
 
 Esta versão não oferece desenho. Não há edição, exclusão, comentários, reações, fotos, anexos, filtros ou busca. O estado reinicia com o processo; não há comunicação entre aparelhos.
 
-## Evolução aprovada para especificação — ainda não implementada
+## Evolução implementada no protótipo — revisão contra a spec e no Samsung pendentes
 
-A hipótese é que o traço, a caligrafia e o gesto feitos pela própria mão tornem um recado mais íntimo e pessoal. A evolução abaixo foi decidida para um experimento local; ainda não foi implementada nem validada no Samsung. Ela não define uma nova etapa de produto.
+A hipótese é que o traço, a caligrafia e o gesto feitos pela própria mão tornem um recado mais íntimo e pessoal. A evolução abaixo foi implementada para um experimento local; sua validação no Samsung ainda está pendente. Ela não define uma nova etapa de produto.
 
 ### Dois formatos e início da criação
 
@@ -76,4 +76,4 @@ Fotos, câmera, galeria, anexos, stickers, canvas colaborativo, desenho simultâ
 
 ## Decisões técnicas posteriores
 
-A representação do conteúdo no domínio, dos traços e de suas cores, a renderização, eventuais limites de memória e demais escolhas técnicas ainda precisam ser projetadas após a revisão desta especificação. Este documento não escolhe entidade, estrutura de strokes, bitmap, `Path`, serialização nem armazenamento.
+A representação técnica escolhida está no [ADR-014](../decisions/ADR-014-drawing-content-and-strokes.md). Este documento continua sendo a fonte do comportamento e dos critérios de aceitação. Limites de memória, serialização e armazenamento continuam sem decisão.

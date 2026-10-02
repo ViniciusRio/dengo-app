@@ -2,7 +2,7 @@
 
 ## Status
 
-Aceito como decisão de produto para especificação. Ainda não implementado nem validado no Samsung.
+Aceito como decisão de produto. A implementação local existe e aguarda nova revisão contra a spec; validação no Samsung pendente.
 
 ## Contexto
 
@@ -16,4 +16,4 @@ O Mural continua sendo uma coleção compartilhada de recados individuais, com a
 
 ## Consequências
 
-Esta decisão não altera retroativamente a versão entregue no ADR-011 nem aprova a evolução no Samsung. Representação do conteúdo e dos traços, armazenamento/renderização e limites de memória continuam decisões técnicas abertas. A [spec do Mural](../features/mural.md) é a fonte dos fluxos, limites comportamentais, critérios de aceitação e validação futura; nenhuma nova etapa de produto foi definida.
+Esta decisão não altera retroativamente a versão entregue no ADR-011 nem aprova a evolução no Samsung. A representação do conteúdo e dos traços está no [ADR-014](ADR-014-drawing-content-and-strokes.md); limites de memória e armazenamento durável continuam abertos. A [spec do Mural](../features/mural.md) é a fonte dos fluxos, limites comportamentais, critérios de aceitação e validação futura; nenhuma nova etapa de produto foi definida.

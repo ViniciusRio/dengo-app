@@ -21,6 +21,6 @@ Revisão visual e funcional concluída no Samsung: estado vazio, CTA, bottom she
 
 Status: 🟢 Aprovada funcional e visualmente no Samsung Galaxy A26 5G. O contrato vigente está no ADR-012. Esta evolução não define uma nova etapa de produto; a próxima etapa permanece em aberto.
 
-## Mural — evolução especificada, ainda não implementada
+## Mural — evolução implementada, revisão contra a spec e no Samsung pendentes
 
-Recados desenhados à mão foram aprovados como alternativa aos recados textuais da Etapa 7; o contrato de produto está em `docs/features/mural.md`. A implementação, os testes e a validação no Samsung desta evolução ainda não ocorreram. O experimento permanece em memória, sem nova etapa definida; decisões arquiteturais ficam para depois da revisão da especificação.
+Recados desenhados à mão foram aprovados como alternativa aos recados textuais da Etapa 7; o contrato de produto está em `docs/features/mural.md`. A implementação e os testes automatizados ocorreram; uma nova revisão contra a spec e a validação funcional e visual no Samsung ainda não ocorreram. O experimento permanece em memória, sem nova etapa definida. As direções técnicas aceitas estão no ADR-014. A aprovação da Etapa 7 continua se referindo à versão textual entregue naquela etapa.
