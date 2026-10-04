@@ -61,7 +61,7 @@ Dar a Vinícius contexto rápido sobre Lidianne e permitir responder aos pedidos
 7. preview discreto do Mural; na Etapa 7, mostra o recado mais recente e abre a aba Mural.
 8. `BottomNavigation`.
 
-Esta hierarquia era uma proposta inicial. A Home do Vinícius aprovada no dispositivo prioriza contexto, pedidos e espaço pessoal. Ela não incentiva contato insistente durante espaço pessoal ativo. O preview visual de recado desenhado está implementado no protótipo e aguarda validação final no Samsung; a validação manual da evolução encontrou um problema funcional no bottom sheet do compositor.
+Esta hierarquia era uma proposta inicial. A Home do Vinícius aprovada no dispositivo prioriza contexto, pedidos e espaço pessoal. Ela não incentiva contato insistente durante espaço pessoal ativo. O preview visual de recado desenhado está implementado no protótipo; a evolução recebeu aprovação humana geral no Galaxy A26, sem relato individual de teste deste preview.
 
 ## 3. Pedido recebido — detalhe/estado
 
@@ -89,7 +89,7 @@ Tela simples:
 
 Na Etapa 7 o Mural é compartilhado apenas pelo estado em memória do protótipo e contém recados textuais. A tela e seus estados foram aprovados no Samsung.
 
-Evolução implementada no protótipo e revisada contra a spec: “Deixar um recado” oferece **Escrever** (composição textual atual) ou **Desenhar** (traços livres feitos com o dedo, sem teclado). A composição manual oferece área confortável, poucas cores, desfazer e limpar; a lista mantém recados individuais com autoria e horário. Se o último recado for desenhado, ambas as Homes mostram o traço real em preview discreto, sem perder a hierarquia aprovada. A validação manual no Galaxy A26 encontrou um problema funcional de expansão/recuo do bottom sheet; a correção e a validação final, incluindo proporção da área, cores exatas e peso visual, continuam pendentes. Não há aprovação no Samsung; ver `docs/features/mural.md`. Sincronização entre dispositivos permanece futura.
+Evolução implementada no protótipo, revisada contra a spec e aprovada na validação manual final no Galaxy A26: “Deixar um recado” oferece **Escrever** (composição textual atual) ou **Desenhar** (traços livres feitos com o dedo, sem teclado). A composição manual oferece área para desenhar, poucas cores, desfazer e limpar; a lista mantém recados individuais com autoria e horário. Se o último recado for desenhado, ambas as Homes mostram o traço real em preview discreto. O relato da aprovação confirma abertura e estabilidade do compositor, cores em uma linha, desenho, controles e publicação no Mural; não detalha verificação de proporção da área, tons exatos, peso visual de vários recados ou previews nas Homes. Ver `docs/features/mural.md`. Sincronização entre dispositivos permanece futura.
 
 ## 6. Histórico
 

@@ -17,9 +17,9 @@ Cantinho compartilhado para Lidianne e Vinícius deixarem pequenos recados/carin
 
 Esta versão não oferece desenho. Não há edição, exclusão, comentários, reações, fotos, anexos, filtros ou busca. O estado reinicia com o processo; não há comunicação entre aparelhos.
 
-## Evolução implementada no protótipo — validação no Samsung em andamento
+## Evolução implementada no protótipo — aprovada no Galaxy A26
 
-A hipótese é que o traço, a caligrafia e o gesto feitos pela própria mão tornem um recado mais íntimo e pessoal. A evolução abaixo foi implementada para um experimento local e passou pela revisão contra a spec. A validação manual no Galaxy A26 encontrou um problema funcional no estado de expansão do bottom sheet, que abre parcialmente e pode recuar após a troca de cor. O gatilho exato do recuo ainda não foi confirmado; correção e nova validação no Samsung estão pendentes. A evolução não foi aprovada no Samsung nem define uma nova etapa de produto. Os critérios abaixo continuam sendo o contrato; este registro não altera seus requisitos.
+A hipótese é que o traço, a caligrafia e o gesto feitos pela própria mão tornem um recado mais íntimo e pessoal. A evolução abaixo foi implementada para um experimento local, passou pela revisão contra a spec e pelos testes automatizados e recebeu aprovação humana na validação manual final no Galaxy A26. Após os ajustes, o compositor abriu no tamanho esperado, manteve Rosa, Azul e Escuro em uma linha e não recuou na sequência Rosa → Azul → Escuro → Rosa. O relato também confirma desenho, troca de cores, Desfazer, Limpar, Cancelar e publicação no Mural. A aprovação é da evolução posterior à Etapa 7 e não define uma nova etapa de produto. Os critérios abaixo continuam sendo o contrato; este registro não altera seus requisitos.
 
 ### Dois formatos e início da criação
 
@@ -62,13 +62,15 @@ O experimento continua em memória. Ao reiniciar ou matar o processo, recados e 
 - Último recado textual mantém o preview textual; último recado desenhado oferece o desenho real nas duas Homes e abre o Mural. O desenho publicado não entra em edição ao toque.
 - As duas perspectivas consultam a mesma coleção local e publicam com autoria própria. Reiniciar o estado do protótipo perde o conteúdo em memória.
 
-### Validação humana futura no Samsung
+### Pontos de validação humana no Samsung
 
 - Conforto e prazer ao desenhar ou escrever com o dedo, tamanho da superfície e ausência de rolagem acidental durante o traço.
 - Legibilidade de coração, carinha, flor, palavra ou frase manuscrita e conteúdo misto; utilidade da troca de cor, de desfazer e de limpar.
 - Contraste e indicação da cor ativa; clareza do descarte de rascunho; leitura de vários desenhos sem peso visual excessivo no Mural.
 - Fidelidade e legibilidade do preview real nas duas Homes, preservando suas prioridades; uso com fonte de interface ampliada e semântica dos controles no TalkBack.
 - Se ver o traço da outra pessoa produz o valor afetivo que motivou a evolução. Testes automatizados não substituem esta aprovação.
+
+A aprovação humana geral no Galaxy A26 foi registrada acima. O relato não discrimina testes de todos estes pontos: não há evidência individual de TalkBack, fonte ampliada, previews nas duas Homes, leitura de vários desenhos ou avaliação do valor afetivo após uso continuado. Esses pontos não devem ser apresentados como testes concluídos individualmente.
 
 ## Fora deste experimento
 

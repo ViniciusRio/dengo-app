@@ -2,7 +2,7 @@
 
 ## Status
 
-Direções técnicas aceitas após revisão humana da auditoria da implementação. O protótipo passou pela revisão contra a spec e está em validação manual no Samsung. O compositor apresentou problema no estado de expansão/recuo do bottom sheet; correção e nova validação estão pendentes. A evolução não foi aprovada no Samsung.
+Direções técnicas aceitas após revisão humana da auditoria da implementação. O protótipo passou pela revisão contra a spec e pelos testes automatizados; após ajustes do compositor e da paleta, a evolução recebeu aprovação humana na validação final no Galaxy A26. O relato confirma abertura no tamanho esperado, rótulos das três cores em uma linha, troca Rosa → Azul → Escuro → Rosa sem recuo visual, desenho, cores, Desfazer, Limpar, Cancelar e publicação no Mural. A aprovação geral não comprova testes individuais de TalkBack, fonte ampliada ou previews nas duas Homes.
 
 ## Contexto
 
@@ -18,6 +18,6 @@ O `FakeCoupleRepository` valida o desenho antes de atribuir ID e o publica na me
 
 Texto e desenho compartilham ordenação, autoria e previews. O conteúdo tipado exclui a combinação dos dois formatos; conteúdo vazio ainda pode ser construído no modelo, mas o repository impede sua publicação. Os dados não dependem de `Path`, `Canvas` ou classes de cor do Compose.
 
-Na implementação atual, a captura registra a proporção da superfície por traço. `DrawingStroke.aspectRatio` admite `null`; nesse caso, a renderização usa a proporção de `Drawing`. O ajuste proporcional com centralização por traço é uma escolha de implementação em avaliação, não uma decisão congelada por este ADR: sua fidelidade visual ainda precisa ser verificada.
+Na implementação atual, a captura registra a proporção da superfície por traço. `DrawingStroke.aspectRatio` admite `null`; nesse caso, a renderização usa a proporção de `Drawing`. O ajuste proporcional com centralização por traço é uma escolha de implementação em avaliação, não uma decisão congelada por este ADR: o relato da aprovação geral não discrimina avaliação individual de sua fidelidade visual.
 
-O protótipo ainda perde recados e rascunhos ao morrer o processo. Persistência, sincronização, exportação e limite de pontos permanecem fora do experimento; conforto, legibilidade e peso visual exigem revisão no Samsung.
+O protótipo ainda perde recados e rascunhos ao morrer o processo. Persistência, sincronização, exportação e limite de pontos permanecem fora do experimento. A validação geral no Galaxy A26 não discrimina avaliação de conforto ao escrever, legibilidade de diferentes desenhos ou peso visual de vários recados.

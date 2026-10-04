@@ -2,7 +2,7 @@
 
 ## Status
 
-Aceito como decisão de produto. A implementação local passou pela revisão contra a spec e está em validação manual no Samsung. O compositor apresentou problema de expansão/recuo do bottom sheet; correção e nova validação estão pendentes. A evolução não foi aprovada no Samsung.
+Aceito como decisão de produto. A implementação local passou pela revisão contra a spec e recebeu aprovação humana na validação final no Galaxy A26 após os ajustes do compositor e da paleta. O estado técnico e a evidência da validação posterior constam do ADR-014.
 
 ## Contexto
 
@@ -16,4 +16,4 @@ O Mural continua sendo uma coleção compartilhada de recados individuais, com a
 
 ## Consequências
 
-Esta decisão não altera retroativamente a versão entregue no ADR-011 nem aprova a evolução no Samsung. A representação do conteúdo e dos traços está no [ADR-014](ADR-014-drawing-content-and-strokes.md); limites de memória e armazenamento durável continuam abertos. A [spec do Mural](../features/mural.md) é a fonte dos fluxos, limites comportamentais, critérios de aceitação e validação futura; nenhuma nova etapa de produto foi definida.
+Esta decisão não altera retroativamente a versão entregue no ADR-011; sua aceitação como decisão de produto, por si só, não constituía aprovação no Samsung. A aprovação posterior está registrada no [ADR-014](ADR-014-drawing-content-and-strokes.md), que também define a representação do conteúdo e dos traços. Limites de memória e armazenamento durável continuam abertos. A [spec do Mural](../features/mural.md) é a fonte dos fluxos, limites comportamentais e critérios de aceitação; nenhuma nova etapa de produto foi definida.

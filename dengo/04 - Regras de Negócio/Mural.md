@@ -1,5 +1,5 @@
 # Mural
-Status: 🟢 Implementado em memória e aprovado no Samsung
+Status da primeira versão textual: 🟢 Implementada em memória e aprovada no Samsung. A evolução posterior de desenhos está em `docs/features/mural.md` e no ADR-014.
 
 - As duas perspectivas consultam a mesma lista e podem deixar recados.
 - A perspectiva atual define o autor; cada recado registra ID próprio e horário pelo relógio do repository.

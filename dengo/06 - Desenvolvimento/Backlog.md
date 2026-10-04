@@ -10,7 +10,7 @@ Etapa 7 concluída e aprovada no Samsung. Próxima etapa de produto ainda não d
 
 ## Depois
 - [ ] definir conclusão de [[Pedidos]]
-- [ ] corrigir o compositor de recados desenhados e concluir a validação no Samsung (implementação existente; sem etapa definida)
+- [x] corrigir o compositor de recados desenhados e concluir a validação no Samsung (evolução posterior aprovada; sem etapa definida)
 - [ ] [[Perfil]]
 
 ## Infraestrutura futura
