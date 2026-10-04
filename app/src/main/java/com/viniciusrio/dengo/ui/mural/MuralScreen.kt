@@ -2,6 +2,7 @@ package com.viniciusrio.dengo.ui.mural
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,6 +29,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -221,7 +224,8 @@ private fun DrawingComposer(
     onPublish: (PartnerId) -> Boolean,
     onRequestExit: () -> Boolean,
 ) {
-    ModalBottomSheet(onDismissRequest = { onRequestExit() }) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ModalBottomSheet(sheetState = sheetState, onDismissRequest = { onRequestExit() }) {
         Column(
             modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
                 .padding(horizontal = AppSpacing.Large, vertical = AppSpacing.Base),
@@ -243,8 +247,12 @@ private fun DrawingComposer(
                     OutlinedButton(
                         onClick = { onSelectColor(ink.argb) },
                         modifier = Modifier.weight(1f).heightIn(min = 48.dp).semantics { this.selected = selected },
+                        contentPadding = PaddingValues(horizontal = AppSpacing.Small, vertical = AppSpacing.Small),
                     ) {
-                        Text("${if (selected) "✓ " else ""}${stringResource(ink.label)}", color = Color(ink.argb))
+                        Box(Modifier.size(16.dp)) {
+                            if (selected) Text("✓", color = Color(ink.argb))
+                        }
+                        Text(stringResource(ink.label), color = Color(ink.argb))
                     }
                 }
             }
