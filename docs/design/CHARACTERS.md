@@ -6,16 +6,9 @@ Os personagens representam Lidianne e Vinícius e dão identidade/calor ao app s
 
 ## Linguagem visual
 
-Direção aprovada:
-- chibi/pixel-art suave;
-- proporções simplificadas e cabeça levemente maior;
-- poucos detalhes;
-- expressões fáceis de reconhecer;
-- roupas simples/casuais inspiradas apenas na linguagem geral das referências;
-- contornos e sombras suaves;
-- aparência acolhedora e não excessivamente infantil.
+Para a identidade individual e conjunta vigente, seguir a prancha `references/approved/02-approved-lidianne-vinicius-characters.png`: ilustração original, afetiva e reconhecível, com as características próprias de cada pessoa. A direção inicial chibi/pixel-art suave do ADR-004 e da prancha `01-approved-design-direction.png` permanece como histórico e referência de interface; seu traço não se impõe à nova identidade dos personagens. A nova prancha também não é especificação pixel-perfect.
 
-A arte aprovada de direção está em `references/approved/01-approved-design-direction.png`.
+Os retratos principais, a composição do casal e os avatares circulares definem referências visuais; vistas, expressões e pequenos ícones são estudos de aplicação. Nenhuma dessas variações institui comportamento, catálogo de moods ou obrigação de uso em outras telas.
 
 ## Lidianne
 
@@ -25,19 +18,8 @@ Características:
 - cabelo longo;
 - cabelo castanho escuro;
 - óculos claros, em tom semelhante a branco/creme;
-- roupas casuais suaves, mantendo a linguagem das referências;
+- roupas mostradas na prancha são referência, não uniforme permanente;
 - paleta de apoio: rosa.
-
-### Expressões planejadas
-
-- neutral
-- happy
-- sad
-- angry/upset
-- tired
-- loving
-- needy/dengosa
-- excited
 
 ## Vinícius
 
@@ -46,21 +28,14 @@ Características:
 - pele morena clara;
 - cabelo preto/escuro;
 - cabelo extremamente curto, aproximadamente máquina 0,5–1;
-- roupas casuais simples;
+- óculos e barba, conforme a prancha aprovada;
+- roupas mostradas na prancha são referência, não uniforme permanente;
 - paleta de apoio: azul.
-
-### Expressões planejadas
-
-- neutral
-- happy
-- caring
-- worried
-- affectionate
 
 ## Regra de consistência
 
-Ao criar novos assets, preservar proporções, traços, roupa-base e paleta de cada personagem. Expressão pode variar, identidade não.
+Ao criar novos assets, preservar a identidade visual reconhecível de cada pessoa, respeitando a direção ilustrada aprovada e os acentos rosa/azul. As fotografias reais de origem não integram os assets do projeto.
 
 ## MVP
 
-Não é necessário criar todas as expressões antes de programar. A implementação deve aceitar assets substituíveis; usar primeiro versões neutras/aprovadas e evoluir as expressões depois.
+O uso dos avatares no Perfil será investigado em rodada própria. Esta aprovação não define a tela final nem propaga personagens para Home, Mural ou Histórico. A ilustração do casal já em uso na Home de Lidianne permanece; ver `REFERENCES.md` e o ADR-015.

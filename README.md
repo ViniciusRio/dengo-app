@@ -23,11 +23,11 @@ As Etapas 1–7 foram concluídas e aprovadas no dispositivo. Histórico e Mural
 - fundo creme/off-white;
 - Lidianne associada a rosa;
 - Vinícius associado a azul;
-- personagens originais em linguagem chibi/pixel-art suave;
+- personagens originais de Lidianne e Vinícius em linguagem ilustrada afetiva;
 - cards suaves, bordas levemente arredondadas e baixa elevação;
 - interface carinhosa, limpa e sem excesso de elementos.
 
-A referência aprovada está em `docs/design/references/approved/01-approved-design-direction.png`.
+As referências aprovadas estão em `docs/design/references/approved/`: `01-approved-design-direction.png` registra a direção inicial de interface; `02-approved-lidianne-vinicius-characters.png` consolida a identidade visual dos personagens. O alcance de cada aprovação está em `docs/design/REFERENCES.md` e no ADR-015.
 
 ## Documentação principal
 

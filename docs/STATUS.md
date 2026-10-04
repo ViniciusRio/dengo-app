@@ -12,7 +12,7 @@ A evolução de recados desenhados do Mural foi implementada no protótipo local
 - protótipo local/fake antes de backend;
 - usuários iniciais: Lidianne e Vinícius;
 - direção visual rosa/azul sobre base creme;
-- personagens chibi/pixel-art suave;
+- identidade visual ilustrada de Lidianne, Vinícius e do casal aprovada em prancha própria (ADR-015); uso no Perfil ainda por planejar;
 - Home de Lidianne focada em expressão/pedidos;
 - Home de Vinícius focada em contexto/resposta;
 - Personal Space separado de Care Request.
@@ -25,5 +25,5 @@ A evolução de recados desenhados do Mural foi implementada no protótipo local
 - nome definitivo do app;
 - textos finais dos CTAs;
 - pequenos ajustes de paleta/contraste;
-- expressões/assets finais dos personagens;
+- usos e eventuais recortes dos personagens como assets de runtime;
 - arquitetura do backend futuro.
