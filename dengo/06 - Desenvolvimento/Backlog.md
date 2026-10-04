@@ -11,7 +11,7 @@ Etapa 7 concluída e aprovada no Samsung. Próxima etapa de produto ainda não d
 ## Depois
 - [ ] definir conclusão de [[Pedidos]]
 - [x] corrigir o compositor de recados desenhados e concluir a validação no Samsung (evolução posterior aprovada; sem etapa definida)
-- [ ] [[Perfil]]
+- [ ] [[Perfil]] — experimento implementado e validado funcionalmente no Galaxy A26; refinamento e aprovação visual final pendentes
 
 ## Infraestrutura futura
 Persistência, backend, sincronização, autenticação e notificações.

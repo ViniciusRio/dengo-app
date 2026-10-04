@@ -1,6 +1,6 @@
 # Perfil
-Status: 🟡 Próxima investigação de produto; evolução da tela ainda não planejada
+Status: 🟡 Experimento implementado e validado funcionalmente no Galaxy A26; aprovação visual final pendente
 
-Hoje a aba funciona como seletor local de perspectiva e retorna à Home escolhida. A investigação anterior recomendou identidade individual em um Perfil que também comunique o vínculo do casal. A prancha aprovada em `docs/design/references/approved/02-approved-lidianne-vinicius-characters.png` agora oferece representações individuais e avatares circulares concretos para esse planejamento. Ver `docs/decisions/ADR-015-approved-character-reference.md` e `docs/features/profile.md` para o alcance da aprovação.
+O Perfil mantém a escolha local de perspectiva e retorna imediatamente à Home escolhida. A tela agora apresenta o casal em destaque, usa dois avatares individuais derivados da prancha aprovada e indica “Em uso” na perspectiva ativa. O responsável abriu e usou o Perfil no Galaxy A26 e confirmou a troca, as Homes correspondentes, a perspectiva ativa e a continuidade do fluxo existente. Ver `docs/features/profile.md` e ADR-016 para o alcance dessa validação.
 
-Na próxima rodada, planejar a evolução visual/UX preservando inicialmente o significado da troca de perspectiva. Não há decisão sobre design final, uso transversal dos avatares, autenticação ou configurações.
+A validação funcional não constitui aprovação visual definitiva. Hierarquia, espaçamento e aparência dos seletores podem ser refinados em rodada própria. Não há decisão de uso transversal dos avatares, autenticação ou configurações.

@@ -90,8 +90,10 @@
     <string name="history_space_ended">Lidianne encerrou seu tempo só dela</string>
     <string name="history_request_context">Pedido: %1$s</string>
     <string name="profile_placeholder">Seu perfil aparecerá aqui.</string>
-    <string name="perspective_title">Perspectiva do protótipo</string>
-    <string name="perspective_explanation">Escolha qual Home deseja visualizar neste aparelho.</string>
+    <string name="profile_couple_subtitle">Um espaço para cuidar um do outro.</string>
+    <string name="profile_perspective_heading">Usando o Dengo como</string>
+    <string name="profile_in_use">Em uso</string>
+    <string name="perspective_explanation">Escolher uma pessoa abre a Home dela neste aparelho.</string>
     <string name="perspective_lidianne">Lidianne</string>
     <string name="perspective_vinicius">Vinícius</string>
     <string name="vinicius_greeting">Olá, Vinícius</string>

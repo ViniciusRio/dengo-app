@@ -4,6 +4,8 @@ Etapas 1–7 concluídas e aprovadas no dispositivo. A evolução posterior do c
 
 A evolução de recados desenhados do Mural foi implementada no protótipo local, passou pela revisão contra a spec e pelos testes automatizados. Após os ajustes do compositor e da paleta, recebeu aprovação humana na validação final no Galaxy A26: abertura no tamanho esperado, rótulos de cor em uma linha, troca Rosa → Azul → Escuro → Rosa sem recuo visual, desenho, cores, Desfazer, Limpar, Cancelar e publicação no Mural. Esse relato não documenta testes individuais de TalkBack, fonte ampliada ou previews nas duas Homes. A aprovação da Etapa 7 continua se referindo à versão textual; a evolução desenhada é posterior e não define uma nova etapa de produto. Consulte o ADR-014.
 
+O experimento visual do Perfil foi implementado e seu funcionamento foi validado pelo responsável no Galaxy A26: a tela foi usada, a troca de perspectiva abriu as Homes correspondentes, a perspectiva ativa foi refletida corretamente e o fluxo existente continuou funcionando. Apenas o Perfil mudou visualmente nesta evolução. A aprovação visual definitiva permanece pendente; possíveis ajustes de hierarquia, espaçamento e seletores pertencem a outra rodada. O relato não documenta testes individuais de TalkBack, fonte ampliada ou autoria no Mural. Ver ADR-016.
+
 ## Aprovado
 
 - visão do produto;
@@ -12,7 +14,7 @@ A evolução de recados desenhados do Mural foi implementada no protótipo local
 - protótipo local/fake antes de backend;
 - usuários iniciais: Lidianne e Vinícius;
 - direção visual rosa/azul sobre base creme;
-- identidade visual ilustrada de Lidianne, Vinícius e do casal aprovada em prancha própria (ADR-015); uso no Perfil ainda por planejar;
+- identidade visual ilustrada de Lidianne, Vinícius e do casal aprovada em prancha própria (ADR-015); uso no Perfil implementado como experimento e validado funcionalmente, com aprovação visual final pendente (ADR-016);
 - Home de Lidianne focada em expressão/pedidos;
 - Home de Vinícius focada em contexto/resposta;
 - Personal Space separado de Care Request.
