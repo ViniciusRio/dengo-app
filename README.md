@@ -1,48 +1,84 @@
 # Dengo
 
-Projeto Android pessoal para criar uma forma divertida, útil e afetiva de interação entre **Lidianne e Vinícius**.
+### Small gestures of care, made easier to share.
 
-> Dengo é um app de comunicação afetiva entre duas pessoas, sem reproduzir o brinquedo/jogo Tamagotchi.
+Dengo is a personal Android prototype for Lidianne and Vinícius. It gives two people a simple, affectionate way to share a care request, a mood, personal space, or a note. It is designed around communication between people, rather than caring for a virtual pet or completing game tasks.
 
-## Estado atual
+## Screenshots
 
-As Etapas 1–7 foram concluídas e aprovadas no dispositivo. Histórico e Mural funcionam em memória. A próxima etapa de produto ainda não foi definida. O planejamento e o estado atuais ficam no vault versionado `dengo/`; decisões técnicas ficam em `docs/decisions/`.
+Captured directly from the app running on a Samsung Galaxy A26.
 
-## Stack aprovada para o protótipo
+<p align="center">
+  <img src="docs/assets/screenshots/home-lidianne.png" width="200" alt="Lidianne's Home with an accepted care request ready for acknowledgment" />
+  <img src="docs/assets/screenshots/home-vinicius.png" width="200" alt="Vinícius's Home showing Lidianne's mood, his response, and the latest Mural note" />
+  <img src="docs/assets/screenshots/mural.png" width="200" alt="The Mural with a hand-drawn heart note from Lidianne" />
+</p>
+<p align="center">
+  <img src="docs/assets/screenshots/history.png" width="200" alt="History showing the mood and care request timeline" />
+  <img src="docs/assets/screenshots/profile.png" width="200" alt="Profile B.1 with Vinícius selected" />
+</p>
 
-- Android
-- Kotlin
-- Jetpack Compose
-- Material 3 como base, customizado pelo design system
-- Dados fake/local durante a validação
-- Backend futuro, somente quando necessário: Java + Spring Boot + PostgreSQL
+## Current experiences
 
-## Direção visual aprovada
+- **Two Home perspectives:** Lidianne can share a mood, request care, or signal that she needs personal space. Vinícius can see that context and respond to active requests.
+- **Care requests:** requests can be accepted or declined; an accepted request can later be acknowledged. A response is not treated as proof that the requested care happened.
+- **Mural:** both perspectives can leave individual text or hand-drawn notes and see the same in-memory list.
+- **History:** a read-only timeline provides context for requests, responses, mood changes, and personal space.
+- **Profile:** switch locally between Lidianne's and Vinícius's perspectives on the same device.
 
-- tema claro;
-- fundo creme/off-white;
-- Lidianne associada a rosa;
-- Vinícius associado a azul;
-- personagens originais de Lidianne e Vinícius em linguagem ilustrada afetiva;
-- cards suaves, bordas levemente arredondadas e baixa elevação;
-- interface carinhosa, limpa e sem excesso de elementos.
+This is a local prototype. Its shared state is held in memory and is lost when the app process ends. It does not provide account sign-in, remote communication, notifications, or synchronization between devices.
 
-As referências aprovadas estão em `docs/design/references/approved/`: `01-approved-design-direction.png` registra a direção inicial de interface; `02-approved-lidianne-vinicius-characters.png` consolida a identidade visual dos personagens. O alcance de cada aprovação está em `docs/design/REFERENCES.md` e no ADR-015.
+## Project status
 
-## Documentação principal
+The current prototype includes the first seven product stages and later approved work on the care request cycle, drawn Mural notes, and Profile B.1. These experiences were reviewed on a Samsung Galaxy A26 as recorded in [project status](docs/STATUS.md) and the [decision records](docs/decisions/). The next product stage has not been selected. Dengo is not presented as a production service or a published app.
 
-- `docs/PRODUCT.md` — visão e princípios do produto
-- `docs/MVP.md` — escopo inicial e roadmap
-- `docs/USER-FLOWS.md` — fluxos principais
-- `docs/design/SCREENS.md` — estrutura e comportamento das telas
-- `docs/design/REFERENCES.md` — uso das referências visuais
-- `docs/design/DESIGN-SYSTEM.md` — tokens e direção visual
-- `docs/design/CHARACTERS.md` — especificação de Lidianne e Vinícius
-- `docs/design/COMPONENTS.md` — componentes previstos
-- `docs/features/` — especificações por funcionalidade
-- `docs/decisions/` — decisões registradas
-- `dengo/` — produto, UX, regras de negócio, planejamento e backlog versionados
+## Technology and structure
 
-## Regra para agentes
+- Kotlin, Jetpack Compose, and Material 3
+- A single Android application module: `:app`
+- Compose screens backed by screen-level ViewModels
+- A shared in-memory `FakeCoupleRepository` for the prototype state
+- JUnit tests for local logic and Android instrumentation tests for UI flows
 
-Leia `AGENTS.md` e a documentação antes de alterar o projeto. Não invente requisitos silenciosamente e não introduza backend, autenticação ou infraestrutura remota antes de validar o protótipo local.
+There is no backend or persistent data layer in the current prototype.
+
+## Getting started
+
+### Requirements
+
+- JDK 17
+- Android SDK 36 (installed through Android Studio's SDK Manager)
+- An Android device or emulator running Android 7.0 (API 24) or newer to install the app
+
+Clone the repository, then build and run the local checks with the Gradle wrapper:
+
+```bash
+git clone https://github.com/ViniciusRio/dengo-app.git
+cd dengo-app
+./gradlew assembleDebug
+./gradlew test
+```
+
+To install the debug build on a connected device or running emulator:
+
+```bash
+./gradlew installDebug
+```
+
+To run the instrumented tests, start an emulator or connect an Android device with USB debugging enabled, then run:
+
+```bash
+./gradlew connectedDebugAndroidTest
+```
+
+## Testing and device review
+
+The project has local unit tests under `app/src/test` and Android instrumentation tests under `app/src/androidTest`. The approved prototype has also received human visual and functional review on a Galaxy A26; the scope and limits of each review are recorded in the relevant feature documents and ADRs. Automated tests and device review cover different parts of the app.
+
+## Documentation
+
+- [Product principles](docs/PRODUCT.md) and [MVP scope](docs/MVP.md)
+- [User flows](docs/USER-FLOWS.md) and [current project status](docs/STATUS.md)
+- [Feature specifications](docs/features/)
+- [Screen and design documentation](docs/design/)
+- [Architecture and product decisions](docs/decisions/)
