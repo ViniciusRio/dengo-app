@@ -106,7 +106,7 @@ private fun ProfileComposition(
 ) {
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         // Only the illustration uses a width-based dimension. The panel and controls grow with text.
-        val heroHeight = maxWidth * 0.86f
+        val heroHeight = maxWidth * 0.79f
         val showTextLettering = maxWidth < 350.dp || LocalConfiguration.current.fontScale >= 1.3f
 
         Canvas(Modifier.fillMaxWidth().height(heroHeight)) {
@@ -162,16 +162,14 @@ private fun ProfileComposition(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(AppSpacing.Base))
-                    .background(LidiannePinkSoft.copy(alpha = 0.36f))
-                    .padding(AppSpacing.Medium),
+                    .padding(horizontal = AppSpacing.ExtraSmall, vertical = AppSpacing.ExtraSmall),
                 verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.spacedBy(AppSpacing.Small),
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Info,
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(18.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
@@ -240,7 +238,7 @@ private fun PerspectiveChoice(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 88.dp)
+            .heightIn(min = 80.dp)
             .clip(shape)
             .background(Brush.horizontalGradient(listOf(soft, soft.copy(alpha = 0.68f))))
             .border(if (selected) 1.5.dp else 1.dp, if (selected) accent.copy(alpha = 0.8f) else Color.White, shape)
@@ -252,7 +250,7 @@ private fun PerspectiveChoice(
         Image(
             painter = painterResource(avatar),
             contentDescription = null,
-            modifier = Modifier.size(72.dp).clip(CircleShape),
+            modifier = Modifier.size(64.dp).clip(CircleShape),
             contentScale = ContentScale.Crop,
         )
         Column(modifier = Modifier.weight(1f)) {
