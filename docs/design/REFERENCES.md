@@ -17,13 +17,13 @@ Direção inicial de interface validada:
 - linguagem afetiva;
 - Homes com prioridades diferentes para cada pessoa.
 
-Esta prancha inicial é referência de interface, não a identidade individual vigente dos personagens. Ela traz o nome “Patricia” para a personagem feminina e um traço chibi diferente da prancha de personagens posterior. O produto e a identidade aprovada usam **Lidianne**. O Perfil 1.1 usa a identidade posterior e foi aprovado visualmente no alcance do ADR-017, sem descartar a direção de interface anterior.
+Esta prancha inicial é referência de interface, não a identidade individual vigente dos personagens. Ela traz o nome “Patricia” para a personagem feminina e um traço chibi diferente da prancha de personagens posterior. O produto e a identidade aprovada usam **Lidianne**. O Perfil 1.1 usou a identidade posterior no checkpoint do ADR-017; a composição B.1 vigente também a preserva, no alcance do ADR-018, sem descartar a direção de interface anterior.
 
 `references/approved/02-approved-lidianne-vinicius-characters.png`
 
-Prancha aprovada para a **identidade e direção visual** de Lidianne, Vinícius e do casal, criada com base em sua aparência real. Reúne representações principais e conjunta, vistas de frente/lado/costas, expressões, propostas de avatares circulares e pequenos ícones. Os avatares circulares foram recortados para o Perfil; o refinamento 1.1 foi aprovado visualmente no Galaxy A26 no alcance do ADR-017, sem autorizar uso transversal. As fotografias reais usadas como referência não fazem parte dos assets do projeto e não devem ser adicionadas ao repositório.
+Prancha aprovada para a **identidade e direção visual** de Lidianne, Vinícius e do casal, criada com base em sua aparência real. Reúne representações principais e conjunta, vistas de frente/lado/costas, expressões, propostas de avatares circulares e pequenos ícones. Os avatares circulares foram recortados para o Perfil e permanecem na composição B.1, aprovada visualmente no Galaxy A26 no alcance do ADR-018, sem autorizar uso transversal. As fotografias reais usadas como referência não fazem parte dos assets do projeto e não devem ser adicionadas ao repositório.
 
-A ilustração existente do casal, `app/src/main/res/drawable/dengo_couple_hero.png`, continua como composição afetiva da Home de Lidianne, conforme o ADR-008, e foi reutilizada no experimento do Perfil. A nova prancha não a substitui automaticamente. Outras composições e usos dos avatares ainda exigem decisão de design.
+A ilustração `app/src/main/res/drawable/dengo_couple_hero.png` continua na Home de Lidianne, conforme o ADR-008, e foi reutilizada nos checkpoints anteriores do Perfil. O Perfil B.1 usa a ilustração transparente `app/src/main/res/drawable-nodpi/dengo_profile_couple_cutout.png` e o lettering `app/src/main/res/drawable-nodpi/dengo_profile_couple_lettering.png`, aprovados nesta composição específica; ver ADR-018. A nova arte não substitui automaticamente o hero da Home. Outros usos dos assets e avatares exigem decisão própria.
 
 A aprovação da prancha não torna obrigatórios poses, expressões, roupas específicas, moods de personagem, personalização, seleção de avatar, fotos reais no app ou avatares nas Homes, Mural e Histórico. Ver [ADR-015](../decisions/ADR-015-approved-character-reference.md) e [Personagens](CHARACTERS.md).
 

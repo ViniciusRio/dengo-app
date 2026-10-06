@@ -4,7 +4,7 @@ Etapas 1–7 concluídas e aprovadas no dispositivo. A evolução posterior do c
 
 A evolução de recados desenhados do Mural foi implementada no protótipo local, passou pela revisão contra a spec e pelos testes automatizados. Após os ajustes do compositor e da paleta, recebeu aprovação humana na validação final no Galaxy A26: abertura no tamanho esperado, rótulos de cor em uma linha, troca Rosa → Azul → Escuro → Rosa sem recuo visual, desenho, cores, Desfazer, Limpar, Cancelar e publicação no Mural. Esse relato não documenta testes individuais de TalkBack, fonte ampliada ou previews nas duas Homes. A aprovação da Etapa 7 continua se referindo à versão textual; a evolução desenhada é posterior e não define uma nova etapa de produto. Consulte o ADR-014.
 
-O experimento do Perfil teve funcionamento validado no Galaxy A26 no checkpoint do ADR-016. O refinamento visual 1.1, com destaque de superfície apenas na perspectiva ativa, foi aprovado pelo responsável no mesmo aparelho após observar Lidianne ativa, trocar para Vinícius e observar Vinícius ativo. A seleção visual estava correta nas duas perspectivas e a opção inativa permaneceu compreensível como escolha. A aprovação é do Perfil 1.1 neste checkpoint; TalkBack, fonte ampliada e acessibilidade completa não tiveram validação individual relatada. Ver ADR-017.
+O Perfil atual é a composição da Opção 1 refinada em B.1, aprovada visualmente pelo responsável no Galaxy A26 nas perspectivas de Lidianne e Vinícius. O painel curvo, a ilustração transparente, o lettering e as duas superfícies pessoais integram a direção vigente; a escolha ativa mantém contorno e “Em uso”. TalkBack e fonte `1.5×` foram exercitados no mesmo aparelho nos cenários descritos em `docs/features/profile.md`, sem auditoria exaustiva de acessibilidade. O checkpoint funcional inicial (ADR-016) e o refinamento 1.1 (ADR-017) permanecem como histórico; a precedência visual atual está no ADR-018.
 
 ## Aprovado
 
@@ -14,7 +14,7 @@ O experimento do Perfil teve funcionamento validado no Galaxy A26 no checkpoint 
 - protótipo local/fake antes de backend;
 - usuários iniciais: Lidianne e Vinícius;
 - direção visual rosa/azul sobre base creme;
-- identidade visual ilustrada de Lidianne, Vinícius e do casal aprovada em prancha própria (ADR-015); Perfil 1.1 aprovado visualmente no Galaxy A26 no alcance do ADR-017, após o checkpoint funcional do ADR-016;
+- identidade visual ilustrada de Lidianne, Vinícius e do casal aprovada em prancha própria (ADR-015); composição atual do Perfil B.1 aprovada visualmente no Galaxy A26 no alcance do ADR-018, após os checkpoints históricos dos ADR-016 e ADR-017;
 - Home de Lidianne focada em expressão/pedidos;
 - Home de Vinícius focada em contexto/resposta;
 - Personal Space separado de Care Request.

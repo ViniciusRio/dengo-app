@@ -11,7 +11,8 @@ Etapa 7 concluída e aprovada no Samsung. Próxima etapa de produto ainda não d
 ## Depois
 - [ ] definir conclusão de [[Pedidos]]
 - [x] corrigir o compositor de recados desenhados e concluir a validação no Samsung (evolução posterior aprovada; sem etapa definida)
-- [x] [[Perfil]] — checkpoint visual 1.1 aprovado no Galaxy A26, no alcance do ADR-017; evolução futura do Perfil não definida
+- [x] [[Perfil]] — checkpoint visual 1.1 aprovado no seu alcance histórico (ADR-017)
+- [x] [[Perfil]] — composição Opção 1/B.1 aprovada visualmente e validada com TalkBack e fonte `1.5×` nos cenários exercitados no Galaxy A26 (ADR-018); evolução futura do Perfil não definida
 
 ## Infraestrutura futura
 Persistência, backend, sincronização, autenticação e notificações.

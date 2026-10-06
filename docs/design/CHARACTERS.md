@@ -38,4 +38,4 @@ Ao criar novos assets, preservar a identidade visual reconhecível de cada pesso
 
 ## MVP
 
-Os avatares da prancha foram recortados para o Perfil, validado funcionalmente no Galaxy A26 no checkpoint do ADR-016 e aprovado visualmente no refinamento 1.1, no alcance do ADR-017. Essa aprovação não propaga avatares para Home, Mural ou Histórico. A ilustração do casal já em uso na Home de Lidianne permanece; ver `REFERENCES.md`, ADR-015, ADR-016 e ADR-017.
+Os avatares da prancha foram recortados para o Perfil e permanecem na composição B.1. A nova pose recortada do casal foi aprovada visualmente apenas no Perfil B.1, no alcance do ADR-018. Os checkpoints funcional e visual anteriores constam dos ADR-016 e ADR-017. Essas aprovações não propagam avatares nem a nova pose para Home, Mural ou Histórico. A ilustração do casal na Home de Lidianne permanece; ver `REFERENCES.md` e ADR-015 a ADR-018.
