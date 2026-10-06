@@ -2,9 +2,17 @@ package com.viniciusrio.dengo.ui.screens
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.isSelected
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -37,22 +45,31 @@ class PrototypePerspectiveScreenTest {
         composeRule.onNodeWithText("Em uso").assertIsDisplayed()
     }
 
-    @Test fun eachPersonKeepsTheExistingSelectionCallback() {
-        var selected: PrototypePerspective? = null
+    @Test fun bothChoicesRemainActionableAndOnlyTheActivePersonShowsInUse() {
+        var perspective by mutableStateOf(PrototypePerspective.VINICIUS)
         composeRule.setContent {
             DengoTheme {
                 PrototypePerspectiveScreen(
-                    perspective = PrototypePerspective.VINICIUS,
-                    onPerspectiveSelected = { selected = it },
+                    perspective = perspective,
+                    onPerspectiveSelected = { perspective = it },
                     contentPadding = PaddingValues(),
                 )
             }
         }
 
-        composeRule.onNodeWithText("Vinícius").assertIsSelected()
+        assertActivePerson(active = "Vinícius", inactive = "Lidianne")
         composeRule.onNodeWithText("Lidianne").performClick()
-        assertEquals(PrototypePerspective.LIDIANNE, selected)
+        assertEquals(PrototypePerspective.LIDIANNE, perspective)
+        assertActivePerson(active = "Lidianne", inactive = "Vinícius")
         composeRule.onNodeWithText("Vinícius").performClick()
-        assertEquals(PrototypePerspective.VINICIUS, selected)
+        assertEquals(PrototypePerspective.VINICIUS, perspective)
+        assertActivePerson(active = "Vinícius", inactive = "Lidianne")
+    }
+
+    private fun assertActivePerson(active: String, inactive: String) {
+        composeRule.onAllNodes(isSelected()).assertCountEquals(1)
+        composeRule.onAllNodesWithText("Em uso").assertCountEquals(1)
+        composeRule.onNodeWithText(active).assertIsSelected().assertTextContains("Em uso")
+        composeRule.onNodeWithText(inactive).assertIsNotSelected()
     }
 }

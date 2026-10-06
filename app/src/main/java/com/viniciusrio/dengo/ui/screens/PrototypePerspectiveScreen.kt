@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,7 +45,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.viniciusrio.dengo.R
 import com.viniciusrio.dengo.navigation.PrototypePerspective
-import com.viniciusrio.dengo.ui.theme.AppOutline
 import com.viniciusrio.dengo.ui.theme.AppSpacing
 import com.viniciusrio.dengo.ui.theme.AppSurfaceSoft
 import com.viniciusrio.dengo.ui.theme.LidianneAction
@@ -77,9 +77,9 @@ fun PrototypePerspectiveScreen(
         Text(
             stringResource(R.string.profile_perspective_heading),
             modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
         )
-        Spacer(Modifier.height(AppSpacing.Medium))
+        Spacer(Modifier.height(AppSpacing.Small))
         Column(
             modifier = Modifier.selectableGroup(),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.Small),
@@ -92,10 +92,10 @@ fun PrototypePerspectiveScreen(
                 )
             }
         }
-        Spacer(Modifier.height(AppSpacing.Base))
+        Spacer(Modifier.height(AppSpacing.Medium))
         Text(
             stringResource(R.string.perspective_explanation),
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.height(AppSpacing.Base))
@@ -160,13 +160,13 @@ private fun PerspectiveChoice(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
-        color = if (selected) soft else soft.copy(alpha = 0.42f),
-        border = BorderStroke(if (selected) 2.dp else 1.dp, if (selected) accent else AppOutline),
+        color = if (selected) soft else Color.Transparent,
+        border = if (selected) BorderStroke(1.dp, accent) else null,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 88.dp)
+                .heightIn(min = 76.dp)
                 .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
                 .padding(horizontal = AppSpacing.Medium, vertical = AppSpacing.Small),
             verticalAlignment = Alignment.CenterVertically,
@@ -175,7 +175,7 @@ private fun PerspectiveChoice(
             Image(
                 painter = painterResource(avatar),
                 contentDescription = null,
-                modifier = Modifier.size(64.dp).clip(CircleShape),
+                modifier = Modifier.size(56.dp).clip(CircleShape),
                 contentScale = ContentScale.Crop,
             )
             Column(modifier = Modifier.weight(1f)) {

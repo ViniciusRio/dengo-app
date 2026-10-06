@@ -38,4 +38,4 @@ Ao criar novos assets, preservar a identidade visual reconhecível de cada pesso
 
 ## MVP
 
-Os avatares da prancha foram recortados para o experimento atual do Perfil, validado funcionalmente no Galaxy A26; a aparência final da tela ainda não foi aprovada. A aprovação da identidade dos personagens não propaga avatares para Home, Mural ou Histórico. A ilustração do casal já em uso na Home de Lidianne permanece; ver `REFERENCES.md`, ADR-015 e ADR-016.
+Os avatares da prancha foram recortados para o Perfil, validado funcionalmente no Galaxy A26 no checkpoint do ADR-016 e aprovado visualmente no refinamento 1.1, no alcance do ADR-017. Essa aprovação não propaga avatares para Home, Mural ou Histórico. A ilustração do casal já em uso na Home de Lidianne permanece; ver `REFERENCES.md`, ADR-015, ADR-016 e ADR-017.
