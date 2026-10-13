@@ -8,6 +8,16 @@ O Perfil atual é a composição da Opção 1 refinada em B.1, aprovada visualme
 
 O Histórico afetivo agrupa acontecimentos reais por pedido e mantém mood e espaço pessoal independentes. A composição com cartões suaves, pontos por autoria e superfície ajustada à perspectiva foi aprovada visualmente no Galaxy A26. Passaram 67 testes unitários debug, 67 release e 11 instrumentados no aparelho; o responsável confirmou TalkBack e fonte aproximadamente `1,5×` como satisfatórios. A validação e seus limites estão no ADR-019; o estado permanece em memória.
 
+## Planejamento — persistência local
+
+**Escopo de produto aprovado para especificação:** persistir localmente, no mesmo aparelho, todos os dados publicados já existentes: pedidos e estados, eventos factuais do Histórico, o mood atual de Lidianne, espaço pessoal e recados publicados de texto e desenho. Rascunhos, perspectiva, identidade de sessão, backup/exportação, recuperação após desinstalação e comunicação entre aparelhos ficam fora do escopo.
+
+**Direção técnica proposta, ainda não aprovada como arquitetura final nem implementada:** Room como armazenamento local único, acessado por uma interface `CoupleRepository` assíncrona e independente de Room. A leitura deve emitir snapshots coerentes e reativos, obtidos em transação. Modelos de domínio continuam usando IDs `Long` locais ao banco. Desenhos publicados seriam codificados em formato binário versionado. O estado de leitura distingue `Loading`, `Ready` e `ReadError`; escritas distinguem resultado confirmado, revertido e incerto. Compositores de `OTHER` e do Mural mantêm seu conteúdo até confirmação do commit. Resultado incerto não dispara repetição automática.
+
+A revisão arquitetural identificou ajustes necessários na especificação antes de implementar: explicitar a semântica das falhas e cancelamentos, atualizar os ViewModels e callbacks hoje síncronos para aguardar a escrita, e testar geração/continuidade de IDs e leitura do snapshot completo. Não existe banco anterior com dados a migrar, e o protótipo não popula interações demonstrativas em runtime.
+
+**Próximo passo:** consolidar a especificação técnica incorporando esses ajustes. Iniciar o Incremento 1 somente após autorização explícita. Este checkpoint registra escopo aprovado e direção proposta; não aprova a arquitetura final nem marca implementação iniciada.
+
 ## Aprovado
 
 - visão do produto;
