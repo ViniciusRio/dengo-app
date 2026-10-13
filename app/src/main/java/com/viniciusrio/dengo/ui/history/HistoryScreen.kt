@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -35,9 +36,11 @@ import com.viniciusrio.dengo.R
 import com.viniciusrio.dengo.model.CareRequestType
 import com.viniciusrio.dengo.model.HistoryEvent
 import com.viniciusrio.dengo.model.MoodOption
+import com.viniciusrio.dengo.navigation.PrototypePerspective
 import com.viniciusrio.dengo.ui.theme.AppSpacing
 import com.viniciusrio.dengo.ui.theme.LidianneAction
 import com.viniciusrio.dengo.ui.theme.ViniciusAction
+import com.viniciusrio.dengo.ui.theme.ViniciusBlueSoft
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -52,6 +55,7 @@ internal fun formatHistoryTime(time: LocalTime): String = time.format(timeFormat
 @Composable
 fun HistoryScreen(
     state: HistoryUiState,
+    perspective: PrototypePerspective,
     contentPadding: PaddingValues = PaddingValues(),
     today: LocalDate = LocalDate.now(),
 ) {
@@ -91,7 +95,7 @@ fun HistoryScreen(
                     }
                 }) { entry ->
                     when (entry) {
-                        is RequestStory -> RequestStoryCard(entry, today)
+                        is RequestStory -> RequestStoryCard(entry, perspective, today)
                         is IndependentHistoryEntry -> HistoryEventRow(entry, dayLabel(day.date, today))
                     }
                 }
@@ -164,12 +168,14 @@ private fun HistoryEventRow(item: IndependentHistoryEntry, dayLabel: String) {
 }
 
 @Composable
-private fun RequestStoryCard(story: RequestStory, today: LocalDate) {
+private fun RequestStoryCard(story: RequestStory, perspective: PrototypePerspective, today: LocalDate) {
     val startsWithCreation = story.steps.firstOrNull()?.event is HistoryEvent.RequestCreated
+    val cardColor = if (perspective == PrototypePerspective.LIDIANNE) MaterialTheme.colorScheme.surfaceVariant
+        else lerp(MaterialTheme.colorScheme.surface, ViniciusBlueSoft, 0.4f)
     Surface(
         modifier = Modifier.fillMaxWidth().padding(bottom = AppSpacing.Medium),
         shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = cardColor,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
         Column(modifier = Modifier.padding(AppSpacing.Base)) {

@@ -6,6 +6,8 @@ A evolução de recados desenhados do Mural foi implementada no protótipo local
 
 O Perfil atual é a composição da Opção 1 refinada em B.1, aprovada visualmente pelo responsável no Galaxy A26 nas perspectivas de Lidianne e Vinícius. O painel curvo, a ilustração transparente, o lettering e as duas superfícies pessoais integram a direção vigente; a escolha ativa mantém contorno e “Em uso”. TalkBack e fonte `1.5×` foram exercitados no mesmo aparelho nos cenários descritos em `docs/features/profile.md`, sem auditoria exaustiva de acessibilidade. O checkpoint funcional inicial (ADR-016) e o refinamento 1.1 (ADR-017) permanecem como histórico; a precedência visual atual está no ADR-018.
 
+O Histórico afetivo agrupa acontecimentos reais por pedido e mantém mood e espaço pessoal independentes. A composição com cartões suaves, pontos por autoria e superfície ajustada à perspectiva foi aprovada visualmente no Galaxy A26. Passaram 67 testes unitários debug, 67 release e 11 instrumentados no aparelho; o responsável confirmou TalkBack e fonte aproximadamente `1,5×` como satisfatórios. A validação e seus limites estão no ADR-019; o estado permanece em memória.
+
 ## Aprovado
 
 - visão do produto;
@@ -21,6 +23,7 @@ O Perfil atual é a composição da Opção 1 refinada em B.1, aprovada visualme
 - Mural de recados da Etapa 7 aprovado visual e funcionalmente no Samsung.
 - Evolução posterior de recados desenhados aprovada no Galaxy A26, no alcance da validação relatada acima.
 - Ciclo afetivo dos pedidos aprovado funcional e visualmente no Samsung; sem evidência específica de teste com fonte ampliada ou TalkBack.
+- Histórico afetivo aprovado visualmente nas duas perspectivas e validado no alcance registrado no ADR-019, sem persistência ou sincronização.
 
 ## Ainda pode mudar após protótipo
 

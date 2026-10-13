@@ -101,7 +101,7 @@ fun DengoApp(
                 )
             } else if (currentDestination == AppDestination.History) {
                 val historyState by historyViewModel.state.collectAsState()
-                HistoryScreen(state = historyState, contentPadding = padding)
+                HistoryScreen(state = historyState, perspective = perspective, contentPadding = padding)
             } else if (currentDestination == AppDestination.Profile) {
                 PrototypePerspectiveScreen(
                     perspective = perspective,

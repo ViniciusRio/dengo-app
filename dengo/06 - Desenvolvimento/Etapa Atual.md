@@ -30,3 +30,9 @@ Recados desenhados à mão foram implementados como alternativa posterior aos re
 Status: 🟢 B.1 aprovado visualmente e validado nos cenários de acessibilidade exercitados no Galaxy A26; próxima etapa de produto ainda não definida.
 
 O ADR-016 registra o checkpoint funcional inicial e o ADR-017 registra a aprovação visual histórica do Perfil 1.1. Após a comparação com a Opção 1, a Fase B reconstruiu a composição com casal transparente, painel curvo, lettering e duas superfícies pessoais. O B.1 refinou proporção e hierarquia da explicação; o responsável aprovou visualmente os dois estados no A26. No checkpoint B.1 passaram 132 testes unitários, os builds debug e androidTest, `git diff --check` e 7/7 instrumentados no A26. Em validação posterior no aparelho, TalkBack e fonte `1.5×` foram exercitados nos cenários registrados em `docs/features/profile.md`; não houve auditoria exaustiva de acessibilidade nem nova verificação individual da autoria no Mural. O ADR-018 registra a decisão visual vigente. Esta evolução não define uma nova etapa de produto.
+
+## Histórico afetivo — histórias por pedido
+
+Status: 🟢 Composição aprovada visualmente nas perspectivas Lidianne e Vinícius no Galaxy A26; validação final registrada no alcance do ADR-019, pronta para revisão de commit.
+
+Os pedidos são agrupados por `requestId`, com criação, resposta e eventual agradecimento preservados como acontecimentos distintos. Mood e espaço pessoal permanecem independentes. Passaram 67 testes unitários debug, 67 release e 11 instrumentados no A26 (via ADB, após `adb install --no-streaming`). O responsável confirmou TalkBack e fonte aproximadamente `1,5×` como satisfatórios. O relato manual não discrimina todos os cenários individualmente. O Histórico continua somente leitura e em memória; esta evolução não define uma nova etapa de produto.
