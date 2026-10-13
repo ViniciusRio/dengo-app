@@ -82,13 +82,13 @@
     <string name="history_requested_medicine">Lidianne pediu remédio</string>
     <string name="history_requested_spend_time">Lidianne pediu para ficarem juntinhos</string>
     <string name="history_requested_generic">Lidianne fez um pedido</string>
+    <string name="history_story_generic">Um pedido</string>
     <string name="history_accepted">Vinícius respondeu: Estou indo ❤️</string>
     <string name="history_declined">Vinícius respondeu: Não consigo agora</string>
     <string name="history_acknowledged">Lidianne agradeceu pelo carinho ❤️</string>
     <string name="history_mood_changed">Lidianne compartilhou como estava</string>
     <string name="history_space_activated">Lidianne pediu um tempo só dela</string>
     <string name="history_space_ended">Lidianne encerrou seu tempo só dela</string>
-    <string name="history_request_context">Pedido: %1$s</string>
     <string name="profile_placeholder">Seu perfil aparecerá aqui.</string>
     <string name="profile_couple_subtitle">Um espaço para cuidar um do outro.</string>
     <string name="profile_couple_illustration">Ilustração de Lidianne e Vinícius abraçados</string>

@@ -7,6 +7,7 @@ import com.viniciusrio.dengo.model.HistoryEvent
 import com.viniciusrio.dengo.model.MoodOption
 import com.viniciusrio.dengo.model.PartnerId
 import com.viniciusrio.dengo.ui.history.HistoryViewModel
+import com.viniciusrio.dengo.ui.history.RequestStory
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -172,7 +173,9 @@ class ViniciusHomeViewModelTest {
         assertEquals(bag.id, vinicius.state.value.acknowledgedRequest?.id)
         assertEquals(
             listOf(bag.id, dengo.id),
-            history.state.value.days.single().items.mapNotNull { (it.event as? HistoryEvent.RequestAcknowledged)?.requestId },
+            history.state.value.days.single().entries.filterIsInstance<RequestStory>()
+                .filter { story -> story.steps.any { it.event is HistoryEvent.RequestAcknowledged } }
+                .map { it.requestId },
         )
 
         lidianne.setMood(MoodOption.HAPPY)

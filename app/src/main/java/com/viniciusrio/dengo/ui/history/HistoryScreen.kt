@@ -1,23 +1,29 @@
 package com.viniciusrio.dengo.ui.history
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.res.stringResource
@@ -78,8 +84,16 @@ fun HistoryScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                items(day.items, key = { it.originalIndex }) { item ->
-                    HistoryEventRow(item, dayLabel(day.date, today))
+                items(day.entries, key = { entry ->
+                    when (entry) {
+                        is RequestStory -> "request_${entry.requestId}"
+                        is IndependentHistoryEntry -> "event_${entry.originalIndex}"
+                    }
+                }) { entry ->
+                    when (entry) {
+                        is RequestStory -> RequestStoryCard(entry, today)
+                        is IndependentHistoryEntry -> HistoryEventRow(entry, dayLabel(day.date, today))
+                    }
                 }
                 item(key = "space_${day.date}") { Spacer(Modifier.height(AppSpacing.Medium)) }
             }
@@ -110,7 +124,7 @@ private fun EmptyHistory() {
 }
 
 @Composable
-private fun HistoryEventRow(item: HistoryItem, dayLabel: String) {
+private fun HistoryEventRow(item: IndependentHistoryEntry, dayLabel: String) {
     val title = itemTitle(item)
     val context = itemContext(item)
     val time = formatHistoryTime(item.time)
@@ -150,6 +164,122 @@ private fun HistoryEventRow(item: HistoryItem, dayLabel: String) {
 }
 
 @Composable
+private fun RequestStoryCard(story: RequestStory, today: LocalDate) {
+    val startsWithCreation = story.steps.firstOrNull()?.event is HistoryEvent.RequestCreated
+    Surface(
+        modifier = Modifier.fillMaxWidth().padding(bottom = AppSpacing.Medium),
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    ) {
+        Column(modifier = Modifier.padding(AppSpacing.Base)) {
+            if (!startsWithCreation) {
+                Text(
+                    text = storyTitle(story),
+                    modifier = Modifier.semantics { heading() },
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                story.requestMessage?.let { message ->
+                    Spacer(Modifier.height(AppSpacing.ExtraSmall))
+                    Text(text = message, style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                Spacer(Modifier.height(AppSpacing.Medium))
+            }
+            story.steps.forEachIndexed { index, step ->
+                RequestStoryStepRow(
+                    step = step,
+                    requestType = story.requestType,
+                    requestMessage = story.requestMessage.takeIf { index == 0 && startsWithCreation },
+                    storyDate = story.date,
+                    today = today,
+                    hasNext = index < story.steps.lastIndex,
+                    isOpening = index == 0 && startsWithCreation,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun RequestStoryStepRow(
+    step: RequestStoryStep,
+    requestType: CareRequestType?,
+    requestMessage: String?,
+    storyDate: LocalDate,
+    today: LocalDate,
+    hasNext: Boolean,
+    isOpening: Boolean,
+) {
+    val title = storyStepTitle(step.event, requestType)
+    val visibleTime = if (step.date == storyDate) formatHistoryTime(step.time)
+        else "${dayLabel(step.date, today)}, ${formatHistoryTime(step.time)}"
+    val spoken = listOfNotNull(title, requestMessage, "${formatHistoryDate(step.date)}, ${formatHistoryTime(step.time)}")
+        .joinToString(". ")
+    val accent = if (step.event is HistoryEvent.RequestAccepted || step.event is HistoryEvent.RequestDeclined)
+        ViniciusAction else LidianneAction
+    val outline = MaterialTheme.colorScheme.outline
+    Row(
+        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)
+            .semantics(mergeDescendants = true) {
+                contentDescription = spoken
+                if (isOpening) heading()
+            },
+        verticalAlignment = Alignment.Top,
+    ) {
+        Spacer(
+            Modifier.width(AppSpacing.Base).fillMaxHeight()
+                .drawBehind {
+                    val x = size.width / 2f
+                    drawCircle(color = accent, radius = 4.dp.toPx(), center = Offset(x, 10.dp.toPx()))
+                    if (hasNext) drawLine(
+                        color = outline,
+                        start = Offset(x, 18.dp.toPx()), end = Offset(x, size.height), strokeWidth = 1.dp.toPx(),
+                    )
+                },
+        )
+        Column(modifier = Modifier.weight(1f).padding(start = AppSpacing.Small, bottom = AppSpacing.Medium)) {
+            Text(text = title, style = if (isOpening) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface)
+            requestMessage?.let { message ->
+                Spacer(Modifier.height(AppSpacing.ExtraSmall))
+                Text(text = message, style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            Spacer(Modifier.height(AppSpacing.ExtraSmall))
+            Text(text = visibleTime, style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+@Composable
+private fun storyTitle(story: RequestStory): String = when (story.requestType) {
+    null -> stringResource(R.string.history_story_generic)
+    CareRequestType.OTHER -> stringResource(R.string.request_other)
+    else -> stringResource(story.requestType.labelRes())
+}
+
+@Composable
+private fun storyStepTitle(event: HistoryEvent, requestType: CareRequestType?): String = when (event) {
+    is HistoryEvent.RequestCreated -> requestCreatedTitle(requestType)
+    is HistoryEvent.RequestAccepted -> stringResource(R.string.history_accepted)
+    is HistoryEvent.RequestDeclined -> stringResource(R.string.history_declined)
+    is HistoryEvent.RequestAcknowledged -> stringResource(R.string.history_acknowledged)
+    else -> error("Only request events belong to a request story")
+}
+
+@Composable
+private fun requestCreatedTitle(requestType: CareRequestType?): String = when (requestType) {
+    CareRequestType.DENGO -> stringResource(R.string.history_requested_dengo)
+    CareRequestType.HOT_WATER_BAG -> stringResource(R.string.history_requested_hot_water_bag)
+    CareRequestType.MEDICINE -> stringResource(R.string.history_requested_medicine)
+    CareRequestType.SPEND_TIME_TOGETHER -> stringResource(R.string.history_requested_spend_time)
+    CareRequestType.OTHER, null -> stringResource(R.string.history_requested_generic)
+}
+
+@Composable
 private fun dayLabel(date: LocalDate, today: LocalDate): String = when (historyDayLabel(date, today)) {
     HistoryDayLabel.TODAY -> stringResource(R.string.history_today)
     HistoryDayLabel.YESTERDAY -> stringResource(R.string.history_yesterday)
@@ -157,14 +287,8 @@ private fun dayLabel(date: LocalDate, today: LocalDate): String = when (historyD
 }
 
 @Composable
-private fun itemTitle(item: HistoryItem): String = when (item.event) {
-    is HistoryEvent.RequestCreated -> when (item.requestType) {
-        CareRequestType.DENGO -> stringResource(R.string.history_requested_dengo)
-        CareRequestType.HOT_WATER_BAG -> stringResource(R.string.history_requested_hot_water_bag)
-        CareRequestType.MEDICINE -> stringResource(R.string.history_requested_medicine)
-        CareRequestType.SPEND_TIME_TOGETHER -> stringResource(R.string.history_requested_spend_time)
-        CareRequestType.OTHER, null -> stringResource(R.string.history_requested_generic)
-    }
+private fun itemTitle(item: IndependentHistoryEntry): String = when (item.event) {
+    is HistoryEvent.RequestCreated -> stringResource(R.string.history_requested_generic)
     is HistoryEvent.RequestAccepted -> stringResource(R.string.history_accepted)
     is HistoryEvent.RequestDeclined -> stringResource(R.string.history_declined)
     is HistoryEvent.RequestAcknowledged -> stringResource(R.string.history_acknowledged)
@@ -174,14 +298,9 @@ private fun itemTitle(item: HistoryItem): String = when (item.event) {
 }
 
 @Composable
-private fun itemContext(item: HistoryItem): String? = when (val event = item.event) {
-    is HistoryEvent.RequestCreated -> item.requestMessage
-    is HistoryEvent.RequestAccepted, is HistoryEvent.RequestDeclined, is HistoryEvent.RequestAcknowledged -> when (item.requestType) {
-        null -> null
-        CareRequestType.OTHER -> item.requestMessage?.let { stringResource(R.string.history_request_context, it) }
-            ?: stringResource(R.string.history_request_context, stringResource(R.string.request_other))
-        else -> stringResource(R.string.history_request_context, stringResource(item.requestType.labelRes()))
-    }
+private fun itemContext(item: IndependentHistoryEntry): String? = when (val event = item.event) {
+    is HistoryEvent.RequestCreated, is HistoryEvent.RequestAccepted,
+    is HistoryEvent.RequestDeclined, is HistoryEvent.RequestAcknowledged -> null
     is HistoryEvent.MoodChanged -> {
         val (emoji, labelRes) = event.option.presentation()
         "$emoji ${stringResource(labelRes)}"
