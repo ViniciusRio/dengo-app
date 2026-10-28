@@ -44,10 +44,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -66,6 +62,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.viniciusrio.dengo.R
+import com.viniciusrio.dengo.ui.ReadNotice
+import com.viniciusrio.dengo.ui.SubmissionState
+import com.viniciusrio.dengo.ui.components.ReadNoticeMessage
 import com.viniciusrio.dengo.model.CareRequest
 import com.viniciusrio.dengo.model.CareRequestStatus
 import com.viniciusrio.dengo.model.CareRequestType
@@ -115,8 +114,16 @@ private val moodChoices = listOf(
 @Composable
 fun LidianneHomeScreen(
     state: LidianneHomeState,
+    readNotice: ReadNotice? = null,
+    onRetryRead: () -> Unit = {},
     onQuickRequest: (CareRequestType) -> Unit,
     onOtherRequest: (String) -> Unit,
+    otherSubmission: SubmissionState = SubmissionState.Idle,
+    otherOpen: Boolean = false,
+    otherDraft: String = "",
+    onOpenOther: () -> Unit = {},
+    onDismissOther: () -> Unit = {},
+    onOtherDraftChanged: (String) -> Unit = {},
     onAcknowledgeRequest: (Long) -> Unit = {},
     onMoodSelected: (MoodOption) -> Unit,
     onPersonalSpaceActivated: () -> Unit,
@@ -124,8 +131,6 @@ fun LidianneHomeScreen(
     onOpenMural: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(),
 ) {
-    var showOtherDialog by rememberSaveable { mutableStateOf(false) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -212,7 +217,7 @@ fun LidianneHomeScreen(
                         activeRequest = state.activeRequests.firstOrNull { it.type == choice.type && choice.type != CareRequestType.OTHER },
                         onClick = {
                             if (choice.type == CareRequestType.OTHER) {
-                                showOtherDialog = true
+                                onOpenOther()
                             } else {
                                 onQuickRequest(choice.type)
                             }
@@ -244,13 +249,15 @@ fun LidianneHomeScreen(
         Spacer(Modifier.height(AppSpacing.Base))
     }
 
-    if (showOtherDialog) {
+    if (otherOpen) {
         OtherRequestDialog(
-            onDismiss = { showOtherDialog = false },
-            onSubmit = { text ->
-                onOtherRequest(text)
-                showOtherDialog = false
-            },
+            readNotice = readNotice,
+            onRetryRead = onRetryRead,
+            submission = otherSubmission,
+            text = otherDraft,
+            onTextChanged = onOtherDraftChanged,
+            onDismiss = onDismissOther,
+            onSubmit = onOtherRequest,
         )
     }
 }
@@ -519,30 +526,41 @@ private fun MuralPreview(note: MuralNote?, onOpenMural: () -> Unit) {
 }
 
 @Composable
-private fun OtherRequestDialog(onDismiss: () -> Unit, onSubmit: (String) -> Unit) {
-    var text by rememberSaveable { mutableStateOf("") }
+private fun OtherRequestDialog(
+    readNotice: ReadNotice?,
+    onRetryRead: () -> Unit,
+    submission: SubmissionState,
+    text: String,
+    onTextChanged: (String) -> Unit,
+    onDismiss: () -> Unit,
+    onSubmit: (String) -> Unit,
+) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.request_other_dialog_title)) },
         text = {
             Column {
                 Text(stringResource(R.string.request_other_dialog_description))
+                readNotice?.let { ReadNoticeMessage(it, onRetryRead) }
                 Spacer(Modifier.height(AppSpacing.Medium))
                 OutlinedTextField(
                     value = text,
-                    onValueChange = { text = it },
+                    onValueChange = onTextChanged,
+                    enabled = submission != SubmissionState.Sending,
                     label = { Text(stringResource(R.string.request_other_field_label)) },
                     maxLines = 3,
                     modifier = Modifier.fillMaxWidth(),
                 )
+                if (submission is SubmissionState.Reverted) Text(stringResource(R.string.publish_reverted), color = MaterialTheme.colorScheme.error)
+                if (submission is SubmissionState.Uncertain) Text(stringResource(R.string.publish_uncertain), color = MaterialTheme.colorScheme.error)
             }
         },
         confirmButton = {
             TextButton(
                 onClick = { onSubmit(text.trim()) },
-                enabled = text.isNotBlank(),
+                enabled = text.isNotBlank() && submission != SubmissionState.Sending,
             ) {
-                Text(stringResource(R.string.request_other_send))
+                Text(stringResource(if (submission == SubmissionState.Sending) R.string.publish_sending else R.string.request_other_send))
             }
         },
         dismissButton = {

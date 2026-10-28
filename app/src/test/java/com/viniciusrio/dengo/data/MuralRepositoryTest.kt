@@ -8,44 +8,42 @@ import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlinx.coroutines.test.runTest
 
 class MuralRepositoryTest {
     private val now = Instant.parse("2026-09-29T14:32:00Z")
     private val clock = Clock.fixed(now, ZoneOffset.UTC)
 
-    @Test fun initialMuralIsEmpty() {
-        assertTrue(FakeCoupleRepository(clock).state.value.muralNotes.isEmpty())
+    @Test fun initialMuralIsEmpty() = runTest {
+        assertTrue(FakeCoupleRepository(clock).snapshot().muralNotes.isEmpty())
     }
 
-    @Test fun drawingPublishesOnceWithAuthorTimeAndNoHistoryEvent() {
+    @Test fun drawingPublishesOnceWithAuthorTimeAndNoHistoryEvent() = runTest {
         val repository = FakeCoupleRepository(clock)
         val stroke = DrawingStroke(0xFFA63854.toInt(), listOf(DrawingPoint(0.2f, 0.3f)))
-        val note = repository.createMuralDrawing(PartnerId.VINICIUS, 1.5f, listOf(stroke))
+        val note = repository.createMuralDrawing(PartnerId.VINICIUS, 1.5f, listOf(stroke)).confirmed()
 
         assertEquals(1L, note.id)
         assertEquals(PartnerId.VINICIUS, note.authorId)
         assertEquals(now, note.createdAt)
         assertEquals(MuralContent.Drawing(1.5f, listOf(stroke)), note.content)
-        assertEquals(listOf(note), repository.state.value.muralNotes)
-        assertTrue(repository.state.value.history.isEmpty())
+        assertEquals(listOf(note), repository.snapshot().muralNotes)
+        assertTrue(repository.snapshot().history.isEmpty())
     }
 
-    @Test fun emptyDrawingDoesNotPublishOrConsumeId() {
+    @Test fun emptyDrawingDoesNotPublishOrConsumeId() = runTest {
         val repository = FakeCoupleRepository(clock)
-        assertThrows(IllegalArgumentException::class.java) {
-            repository.createMuralDrawing(PartnerId.LIDIANNE, 1f, emptyList())
-        }
-        assertTrue(repository.state.value.muralNotes.isEmpty())
-        assertEquals(1L, repository.createMuralNote(PartnerId.LIDIANNE, "Oi").id)
+        assertTrue(repository.createMuralDrawing(PartnerId.LIDIANNE, 1f, emptyList()) is WriteResult.Reverted)
+        assertTrue(repository.snapshot().muralNotes.isEmpty())
+        assertEquals(1L, repository.createMuralNote(PartnerId.LIDIANNE, "Oi").confirmed().id)
     }
 
-    @Test fun publishingStoresTrimmedTextAuthorSequentialIdAndFixedTime() {
+    @Test fun publishingStoresTrimmedTextAuthorSequentialIdAndFixedTime() = runTest {
         val repository = FakeCoupleRepository(clock)
-        val first = repository.createMuralNote(PartnerId.LIDIANNE, "  Oi, meu amor ❤️  ")
-        val second = repository.createMuralNote(PartnerId.VINICIUS, "  Também te amo  ")
+        val first = repository.createMuralNote(PartnerId.LIDIANNE, "  Oi, meu amor ❤️  ").confirmed()
+        val second = repository.createMuralNote(PartnerId.VINICIUS, "  Também te amo  ").confirmed()
 
         assertEquals(1L, first.id)
         assertEquals(2L, second.id)
@@ -54,61 +52,59 @@ class MuralRepositoryTest {
         assertEquals(MuralContent.Text("Oi, meu amor ❤️"), first.content)
         assertEquals(MuralContent.Text("Também te amo"), second.content)
         assertEquals(now, first.createdAt)
-        assertEquals(listOf(first, second), repository.state.value.muralNotes)
-        assertTrue(repository.state.value.history.isEmpty())
+        assertEquals(listOf(first, second), repository.snapshot().muralNotes)
+        assertTrue(repository.snapshot().history.isEmpty())
     }
 
-    @Test fun emptyAndWhitespaceOnlyTextDoNotChangeStateOrConsumeId() {
+    @Test fun emptyAndWhitespaceOnlyTextDoNotChangeStateOrConsumeId() = runTest {
         val repository = FakeCoupleRepository(clock)
-        assertThrows(IllegalArgumentException::class.java) { repository.createMuralNote(PartnerId.LIDIANNE, "") }
-        assertThrows(IllegalArgumentException::class.java) { repository.createMuralNote(PartnerId.LIDIANNE, "  \n  ") }
-        assertTrue(repository.state.value.muralNotes.isEmpty())
-        assertEquals(1L, repository.createMuralNote(PartnerId.LIDIANNE, "Oi").id)
+        assertTrue(repository.createMuralNote(PartnerId.LIDIANNE, "") is WriteResult.Reverted)
+        assertTrue(repository.createMuralNote(PartnerId.LIDIANNE, "  \n  ") is WriteResult.Reverted)
+        assertTrue(repository.snapshot().muralNotes.isEmpty())
+        assertEquals(1L, repository.createMuralNote(PartnerId.LIDIANNE, "Oi").confirmed().id)
     }
 
-    @Test fun accepts160CodePointsIncludingEmojiAndRejects161WithoutTruncation() {
+    @Test fun accepts160CodePointsIncludingEmojiAndRejects161WithoutTruncation() = runTest {
         val repository = FakeCoupleRepository(clock)
         val accepted = "a".repeat(159) + "❤️" // two code points, so this is 161
-        assertThrows(IllegalArgumentException::class.java) {
-            repository.createMuralNote(PartnerId.LIDIANNE, accepted)
-        }
+        assertTrue(repository.createMuralNote(PartnerId.LIDIANNE, accepted) is WriteResult.Reverted)
         val exact = "a".repeat(158) + "❤️"
-        val note = repository.createMuralNote(PartnerId.LIDIANNE, exact)
+        val note = repository.createMuralNote(PartnerId.LIDIANNE, exact).confirmed()
 
         assertEquals(MuralContent.Text(exact), note.content)
         assertEquals(160, (note.content as MuralContent.Text).value.codePointCount(0, exact.length))
         assertEquals(1L, note.id)
-        assertEquals(listOf(note), repository.state.value.muralNotes)
+        assertEquals(listOf(note), repository.snapshot().muralNotes)
 
         val supplementaryEmoji = "💗".repeat(160)
-        val emojiNote = repository.createMuralNote(PartnerId.VINICIUS, supplementaryEmoji)
+        val emojiNote = repository.createMuralNote(PartnerId.VINICIUS, supplementaryEmoji).confirmed()
         assertEquals(MuralContent.Text(supplementaryEmoji), emojiNote.content)
         assertEquals(160, (emojiNote.content as MuralContent.Text).value.codePointCount(0, supplementaryEmoji.length))
     }
 
-    @Test fun personalSpaceDoesNotBlockMuralOrCreateHistoryEvent() {
+    @Test fun personalSpaceDoesNotBlockMuralOrCreateHistoryEvent() = runTest {
         val repository = FakeCoupleRepository(clock)
         repository.activatePersonalSpace()
-        val historyBefore = repository.state.value.history
+        val historyBefore = repository.snapshot().history
 
-        val note = repository.createMuralNote(PartnerId.VINICIUS, "Estou por aqui")
+        val note = repository.createMuralNote(PartnerId.VINICIUS, "Estou por aqui").confirmed()
 
-        assertEquals(listOf(note), repository.state.value.muralNotes)
-        assertEquals(historyBefore, repository.state.value.history)
+        assertEquals(listOf(note), repository.snapshot().muralNotes)
+        assertEquals(historyBefore, repository.snapshot().history)
     }
 
-    @Test fun drawingDuringPersonalSpaceDoesNotAlterRequestsOrSpace() {
+    @Test fun drawingDuringPersonalSpaceDoesNotAlterRequestsOrSpace() = runTest {
         val repository = FakeCoupleRepository(clock)
         repository.activatePersonalSpace()
-        val before = repository.state.value
+        val before = repository.snapshot()
         val note = repository.createMuralDrawing(
             PartnerId.LIDIANNE, 1f,
             listOf(DrawingStroke(0xFF292426.toInt(), listOf(DrawingPoint(0.5f, 0.5f)))),
-        )
+        ).confirmed()
 
-        assertEquals(before.personalSpace, repository.state.value.personalSpace)
-        assertEquals(before.requests, repository.state.value.requests)
-        assertEquals(before.history, repository.state.value.history)
-        assertEquals(listOf(note), repository.state.value.muralNotes)
+        assertEquals(before.personalSpace, repository.snapshot().personalSpace)
+        assertEquals(before.requests, repository.snapshot().requests)
+        assertEquals(before.history, repository.snapshot().history)
+        assertEquals(listOf(note), repository.snapshot().muralNotes)
     }
 }

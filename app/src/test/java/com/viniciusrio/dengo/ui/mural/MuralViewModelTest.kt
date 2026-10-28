@@ -1,6 +1,9 @@
 package com.viniciusrio.dengo.ui.mural
 
 import com.viniciusrio.dengo.data.FakeCoupleRepository
+import com.viniciusrio.dengo.data.confirmed
+import com.viniciusrio.dengo.data.snapshot
+import com.viniciusrio.dengo.data.ready
 import com.viniciusrio.dengo.model.CoupleState
 import com.viniciusrio.dengo.model.MuralNote
 import com.viniciusrio.dengo.model.MuralContent
@@ -36,7 +39,7 @@ class MuralViewModelTest {
     @Test fun initialStateIsEmpty() = runTest {
         val viewModel = MuralViewModel(FakeCoupleRepository(clock))
         advanceUntilIdle()
-        assertTrue(viewModel.state.value.notes.isEmpty())
+        assertTrue(viewModel.state.value.ready().notes.isEmpty())
     }
 
     @Test fun drawingDraftKeepsStrokeColorsUndoClearAndDiscard() = runTest {
@@ -59,7 +62,7 @@ class MuralViewModelTest {
         assertTrue(viewModel.composer.value.strokes.isEmpty())
         assertEquals(false, viewModel.publishDrawing(PartnerId.LIDIANNE))
         assertEquals(true, viewModel.requestExit())
-        assertTrue(repository.state.value.muralNotes.isEmpty())
+        assertTrue(repository.snapshot().muralNotes.isEmpty())
     }
 
     @Test fun discardingNonEmptyDrawingNeverPublishes() = runTest {
@@ -71,7 +74,7 @@ class MuralViewModelTest {
         viewModel.discardDraft()
 
         assertEquals(ComposerMode.CLOSED, viewModel.composer.value.mode)
-        assertTrue(repository.state.value.muralNotes.isEmpty())
+        assertTrue(repository.snapshot().muralNotes.isEmpty())
     }
 
     @Test fun drawingPublishesOnlyOnceAndClosesComposer() = runTest {
@@ -82,19 +85,23 @@ class MuralViewModelTest {
         viewModel.addStroke(listOf(DrawingPoint(0.5f, 0.5f)), 1f)
         assertEquals(true, viewModel.publishDrawing(PartnerId.LIDIANNE))
         assertEquals(false, viewModel.publishDrawing(PartnerId.LIDIANNE))
-        assertEquals(1, repository.state.value.muralNotes.size)
+        advanceUntilIdle()
+        assertEquals(1, repository.snapshot().muralNotes.size)
         assertEquals(ComposerMode.CLOSED, viewModel.composer.value.mode)
     }
 
     @Test fun bothPerspectivesPublishIntoAndObserveOneSharedList() = runTest {
         val repository = FakeCoupleRepository(clock)
         val viewModel = MuralViewModel(repository)
+        viewModel.openText()
         viewModel.leaveNote(PartnerId.LIDIANNE, "Bom dia 💗")
+        advanceUntilIdle()
+        viewModel.openText()
         viewModel.leaveNote(PartnerId.VINICIUS, "Bom dia 💙")
         advanceUntilIdle()
 
-        assertEquals(listOf(PartnerId.VINICIUS, PartnerId.LIDIANNE), viewModel.state.value.notes.map { it.authorId })
-        assertEquals(repository.state.value.muralNotes.reversed(), viewModel.state.value.notes)
+        assertEquals(listOf(PartnerId.VINICIUS, PartnerId.LIDIANNE), viewModel.state.value.ready().notes.map { it.authorId })
+        assertEquals(repository.snapshot().muralNotes.reversed(), viewModel.state.value.ready().notes)
     }
 
     @Test fun newestTimestampWinsAndIdBreaksTies() {

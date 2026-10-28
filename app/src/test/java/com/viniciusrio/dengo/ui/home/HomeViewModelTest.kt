@@ -1,6 +1,9 @@
 package com.viniciusrio.dengo.ui.home
 
 import com.viniciusrio.dengo.data.FakeCoupleRepository
+import com.viniciusrio.dengo.data.confirmed
+import com.viniciusrio.dengo.data.snapshot
+import com.viniciusrio.dengo.data.ready
 import com.viniciusrio.dengo.model.CareRequestStatus
 import com.viniciusrio.dengo.model.CareRequestType
 import com.viniciusrio.dengo.model.MoodOption
@@ -41,10 +44,10 @@ class HomeViewModelTest {
         val viewModel = HomeViewModel(FakeCoupleRepository(clock))
         advanceUntilIdle()
 
-        assertNull(viewModel.state.value.latestRequest)
-        assertEquals(0, viewModel.state.value.otherRespondedRequestCount)
-        assertNull(viewModel.state.value.mood)
-        assertEquals(PersonalSpace(), viewModel.state.value.personalSpace)
+        assertNull(viewModel.state.value.ready().latestRequest)
+        assertEquals(0, viewModel.state.value.ready().otherRespondedRequestCount)
+        assertNull(viewModel.state.value.ready().mood)
+        assertEquals(PersonalSpace(), viewModel.state.value.ready().personalSpace)
     }
 
     @Test
@@ -55,8 +58,8 @@ class HomeViewModelTest {
         viewModel.createQuickRequest(CareRequestType.SPEND_TIME_TOGETHER)
         advanceUntilIdle()
 
-        assertEquals(CareRequestType.SPEND_TIME_TOGETHER, viewModel.state.value.latestRequest?.type)
-        assertEquals(repository.state.value.requests.last(), viewModel.state.value.latestRequest)
+        assertEquals(CareRequestType.SPEND_TIME_TOGETHER, viewModel.state.value.ready().latestRequest?.type)
+        assertEquals(repository.snapshot().requests.last(), viewModel.state.value.ready().latestRequest)
     }
 
     @Test
@@ -66,8 +69,8 @@ class HomeViewModelTest {
         viewModel.createOtherRequest("  Quero conversar  ")
         advanceUntilIdle()
 
-        assertEquals(CareRequestType.OTHER, viewModel.state.value.latestRequest?.type)
-        assertEquals("Quero conversar", viewModel.state.value.latestRequest?.message)
+        assertEquals(CareRequestType.OTHER, viewModel.state.value.ready().latestRequest?.type)
+        assertEquals("Quero conversar", viewModel.state.value.ready().latestRequest?.message)
     }
 
     @Test
@@ -77,7 +80,7 @@ class HomeViewModelTest {
         viewModel.setMood(MoodOption.HAPPY)
         advanceUntilIdle()
 
-        assertEquals(MoodOption.HAPPY, viewModel.state.value.mood?.option)
+        assertEquals(MoodOption.HAPPY, viewModel.state.value.ready().mood?.option)
     }
 
     @Test
@@ -86,11 +89,11 @@ class HomeViewModelTest {
 
         viewModel.activatePersonalSpace()
         advanceUntilIdle()
-        assertEquals(PersonalSpace.Status.ACTIVE, viewModel.state.value.personalSpace.status)
+        assertEquals(PersonalSpace.Status.ACTIVE, viewModel.state.value.ready().personalSpace.status)
 
         viewModel.endPersonalSpace()
         advanceUntilIdle()
-        assertEquals(PersonalSpace(), viewModel.state.value.personalSpace)
+        assertEquals(PersonalSpace(), viewModel.state.value.ready().personalSpace)
     }
 
     @Test
@@ -98,92 +101,92 @@ class HomeViewModelTest {
         val repository = FakeCoupleRepository(clock)
         val viewModel = HomeViewModel(repository)
 
-        repository.createRequest(CareRequestType.HOT_WATER_BAG)
+        repository.createRequest(CareRequestType.HOT_WATER_BAG).confirmed()
         repository.setMood(MoodOption.OKAY)
         repository.activatePersonalSpace()
         advanceUntilIdle()
 
-        assertEquals(repository.state.value.requests.last(), viewModel.state.value.latestRequest)
-        assertEquals(repository.state.value.mood, viewModel.state.value.mood)
-        assertEquals(repository.state.value.personalSpace, viewModel.state.value.personalSpace)
+        assertEquals(repository.snapshot().requests.last(), viewModel.state.value.ready().latestRequest)
+        assertEquals(repository.snapshot().mood, viewModel.state.value.ready().mood)
+        assertEquals(repository.snapshot().personalSpace, viewModel.state.value.ready().personalSpace)
     }
 
     @Test
     fun multipleResponsesKeepNewestRequestAsFeedbackAndCountOnlyOtherRespondedRequests() = runTest {
         val repository = FakeCoupleRepository(clock)
         val viewModel = HomeViewModel(repository)
-        val first = repository.createRequest(CareRequestType.DENGO)
-        val second = repository.createRequest(CareRequestType.MEDICINE)
+        val first = repository.createRequest(CareRequestType.DENGO).confirmed()
+        val second = repository.createRequest(CareRequestType.MEDICINE).confirmed()
         repository.acceptRequest(first.id)
         repository.declineRequest(second.id)
         advanceUntilIdle()
 
-        assertEquals(second.id, viewModel.state.value.latestRequest?.id)
-        assertEquals(CareRequestStatus.DECLINED, viewModel.state.value.latestRequest?.status)
-        assertEquals(1, viewModel.state.value.otherRespondedRequestCount)
+        assertEquals(second.id, viewModel.state.value.ready().latestRequest?.id)
+        assertEquals(CareRequestStatus.DECLINED, viewModel.state.value.ready().latestRequest?.status)
+        assertEquals(1, viewModel.state.value.ready().otherRespondedRequestCount)
 
-        val third = repository.createRequest(CareRequestType.HOT_WATER_BAG)
+        val third = repository.createRequest(CareRequestType.HOT_WATER_BAG).confirmed()
         advanceUntilIdle()
 
-        assertEquals(third.id, viewModel.state.value.latestRequest?.id)
-        assertEquals(CareRequestStatus.PENDING, viewModel.state.value.latestRequest?.status)
-        assertEquals(2, viewModel.state.value.otherRespondedRequestCount)
+        assertEquals(third.id, viewModel.state.value.ready().latestRequest?.id)
+        assertEquals(CareRequestStatus.PENDING, viewModel.state.value.ready().latestRequest?.status)
+        assertEquals(2, viewModel.state.value.ready().otherRespondedRequestCount)
 
         repository.acceptRequest(third.id)
         advanceUntilIdle()
-        assertEquals(third.id, viewModel.state.value.latestRequest?.id)
-        assertEquals(CareRequestStatus.ACCEPTED, viewModel.state.value.latestRequest?.status)
-        assertEquals(2, viewModel.state.value.otherRespondedRequestCount)
+        assertEquals(third.id, viewModel.state.value.ready().latestRequest?.id)
+        assertEquals(CareRequestStatus.ACCEPTED, viewModel.state.value.ready().latestRequest?.status)
+        assertEquals(2, viewModel.state.value.ready().otherRespondedRequestCount)
 
-        val fourth = repository.createRequest(CareRequestType.SPEND_TIME_TOGETHER)
+        val fourth = repository.createRequest(CareRequestType.SPEND_TIME_TOGETHER).confirmed()
         advanceUntilIdle()
-        assertEquals(fourth.id, viewModel.state.value.latestRequest?.id)
-        assertEquals(3, viewModel.state.value.otherRespondedRequestCount)
+        assertEquals(fourth.id, viewModel.state.value.ready().latestRequest?.id)
+        assertEquals(3, viewModel.state.value.ready().otherRespondedRequestCount)
     }
 
     @Test
     fun otherPendingRequestsDoNotInflateResponseCount() = runTest {
         val repository = FakeCoupleRepository(clock)
         val viewModel = HomeViewModel(repository)
-        repository.createRequest(CareRequestType.DENGO)
-        val latest = repository.createRequest(CareRequestType.MEDICINE)
+        repository.createRequest(CareRequestType.DENGO).confirmed()
+        val latest = repository.createRequest(CareRequestType.MEDICINE).confirmed()
         advanceUntilIdle()
 
-        assertEquals(latest.id, viewModel.state.value.latestRequest?.id)
-        assertEquals(0, viewModel.state.value.otherRespondedRequestCount)
+        assertEquals(latest.id, viewModel.state.value.ready().latestRequest?.id)
+        assertEquals(0, viewModel.state.value.ready().otherRespondedRequestCount)
     }
 
     @Test
     fun muralPreviewFollowsLatestNoteWithoutChangingRequestFeedback() = runTest {
         val repository = FakeCoupleRepository(clock)
         val viewModel = HomeViewModel(repository)
-        val request = repository.createRequest(CareRequestType.DENGO)
-        repository.createMuralNote(PartnerId.VINICIUS, "Primeiro")
-        val latest = repository.createMuralNote(PartnerId.LIDIANNE, "Segundo")
+        val request = repository.createRequest(CareRequestType.DENGO).confirmed()
+        repository.createMuralNote(PartnerId.VINICIUS, "Primeiro").confirmed()
+        val latest = repository.createMuralNote(PartnerId.LIDIANNE, "Segundo").confirmed()
         advanceUntilIdle()
 
-        assertEquals(latest, viewModel.state.value.latestMuralNote)
-        assertEquals(request, viewModel.state.value.latestRequest)
+        assertEquals(latest, viewModel.state.value.ready().latestMuralNote)
+        assertEquals(request, viewModel.state.value.ready().latestRequest)
     }
 
     @Test
     fun pendingAndMultipleAcceptedRequestsRemainIndividuallyAvailableForAcknowledgement() = runTest {
         val repository = FakeCoupleRepository(clock)
         val viewModel = HomeViewModel(repository)
-        val dengo = repository.createRequest(CareRequestType.DENGO)
-        val medicine = repository.createRequest(CareRequestType.MEDICINE)
-        val bag = repository.createRequest(CareRequestType.HOT_WATER_BAG)
+        val dengo = repository.createRequest(CareRequestType.DENGO).confirmed()
+        val medicine = repository.createRequest(CareRequestType.MEDICINE).confirmed()
+        val bag = repository.createRequest(CareRequestType.HOT_WATER_BAG).confirmed()
         repository.acceptRequest(medicine.id)
         repository.acceptRequest(dengo.id)
         advanceUntilIdle()
 
-        assertEquals(listOf(bag.id, medicine.id, dengo.id), viewModel.state.value.activeRequests.map { it.id })
+        assertEquals(listOf(bag.id, medicine.id, dengo.id), viewModel.state.value.ready().activeRequests.map { it.id })
         viewModel.acknowledgeRequest(dengo.id)
         advanceUntilIdle()
-        assertEquals(listOf(bag.id, medicine.id), viewModel.state.value.activeRequests.map { it.id })
+        assertEquals(listOf(bag.id, medicine.id), viewModel.state.value.ready().activeRequests.map { it.id })
         viewModel.acknowledgeRequest(medicine.id)
         repository.declineRequest(bag.id)
         advanceUntilIdle()
-        assertEquals(emptyList<Long>(), viewModel.state.value.activeRequests.map { it.id })
+        assertEquals(emptyList<Long>(), viewModel.state.value.ready().activeRequests.map { it.id })
     }
 }

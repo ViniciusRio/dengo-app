@@ -1,6 +1,9 @@
 package com.viniciusrio.dengo.ui.history
 
 import com.viniciusrio.dengo.data.FakeCoupleRepository
+import com.viniciusrio.dengo.data.confirmed
+import com.viniciusrio.dengo.data.snapshot
+import com.viniciusrio.dengo.data.ready
 import com.viniciusrio.dengo.model.CareRequest
 import com.viniciusrio.dengo.model.CareRequestStatus
 import com.viniciusrio.dengo.model.CareRequestType
@@ -43,16 +46,16 @@ class HistoryViewModelTest {
         val viewModel = HistoryViewModel(FakeCoupleRepository(clock), clock)
         advanceUntilIdle()
 
-        assertTrue(viewModel.state.value.days.isEmpty())
+        assertTrue(viewModel.state.value.ready().days.isEmpty())
     }
 
     @Test
-    fun requestAndResponseAppearAsOneHistoryEntry() {
+    fun requestAndResponseAppearAsOneHistoryEntry() = runTest {
         val repository = FakeCoupleRepository(clock)
-        val request = repository.createRequest(CareRequestType.DENGO)
+        val request = repository.createRequest(CareRequestType.DENGO).confirmed()
         repository.acceptRequest(request.id)
 
-        val entries = repository.state.value.toHistoryUiState(clock.zone).days.single().entries
+        val entries = repository.snapshot().toHistoryUiState(clock.zone).days.single().entries
         assertEquals(1, entries.size)
         val story = entries.single() as RequestStory
         assertEquals(request.id, story.requestId)
@@ -64,13 +67,13 @@ class HistoryViewModelTest {
     }
 
     @Test
-    fun sameTypeAndSameOtherTextStillProduceSeparateStoriesByRequestId() {
+    fun sameTypeAndSameOtherTextStillProduceSeparateStoriesByRequestId() = runTest {
         val repository = FakeCoupleRepository(clock)
-        val first = repository.createRequest(CareRequestType.OTHER, " Um abraço ")
-        val second = repository.createRequest(CareRequestType.OTHER, "Um abraço")
+        val first = repository.createRequest(CareRequestType.OTHER, " Um abraço ").confirmed()
+        val second = repository.createRequest(CareRequestType.OTHER, "Um abraço").confirmed()
         repository.acceptRequest(second.id)
 
-        val stories = repository.state.value.toHistoryUiState(clock.zone).days.single().entries
+        val stories = repository.snapshot().toHistoryUiState(clock.zone).days.single().entries
             .map { it as RequestStory }
         assertEquals(listOf(second.id, first.id), stories.map { it.requestId })
         assertEquals(listOf(2, 1), stories.map { it.steps.size })
@@ -79,7 +82,7 @@ class HistoryViewModelTest {
     }
 
     @Test
-    fun missingRequestKeepsAllRecordedStepsWithGenericContext() {
+    fun missingRequestKeepsAllRecordedStepsWithGenericContext() = runTest {
         val state = CoupleState(
             partners = emptyList(),
             history = listOf(
@@ -99,7 +102,7 @@ class HistoryViewModelTest {
     }
 
     @Test
-    fun latestRecordedStepAnchorsStoryAcrossLocalDays() {
+    fun latestRecordedStepAnchorsStoryAcrossLocalDays() = runTest {
         val zone = ZoneId.of("America/Fortaleza")
         val created = Instant.parse("2026-09-30T02:30:00Z") // 29/09, 23:30
         val accepted = Instant.parse("2026-09-30T03:15:00Z") // 30/09, 00:15
@@ -121,7 +124,7 @@ class HistoryViewModelTest {
     }
 
     @Test
-    fun storiesAndIndependentEventsSortByLatestInstantThenInsertionIndex() {
+    fun storiesAndIndependentEventsSortByLatestInstantThenInsertionIndex() = runTest {
         val earlier = now.minusSeconds(60)
         val later = now.plusSeconds(60)
         val state = CoupleState(
@@ -145,15 +148,15 @@ class HistoryViewModelTest {
     }
 
     @Test
-    fun moodChangesAndPersonalSpaceRemainIndividualWithoutJoiningRequestStory() {
+    fun moodChangesAndPersonalSpaceRemainIndividualWithoutJoiningRequestStory() = runTest {
         val repository = FakeCoupleRepository(clock)
-        repository.createRequest(CareRequestType.DENGO)
+        repository.createRequest(CareRequestType.DENGO).confirmed()
         repository.setMood(MoodOption.TIRED)
         repository.setMood(MoodOption.HAPPY)
         repository.activatePersonalSpace()
         repository.endPersonalSpace()
 
-        val entries = repository.state.value.toHistoryUiState(clock.zone).days.single().entries
+        val entries = repository.snapshot().toHistoryUiState(clock.zone).days.single().entries
         assertEquals(1, entries.count { it is RequestStory })
         assertEquals(4, entries.count { it is IndependentHistoryEntry })
         assertEquals(5, entries.size)
@@ -161,7 +164,7 @@ class HistoryViewModelTest {
     }
 
     @Test
-    fun currentRequestStatusDoesNotRewriteEarlierEvents() {
+    fun currentRequestStatusDoesNotRewriteEarlierEvents() = runTest {
         val request = CareRequest(
             id = 8, type = CareRequestType.DENGO, requesterId = PartnerId.LIDIANNE,
             recipientId = PartnerId.VINICIUS, status = CareRequestStatus.ACKNOWLEDGED, createdAt = now,
@@ -180,15 +183,15 @@ class HistoryViewModelTest {
     }
 
     @Test
-    fun acknowledgementIsOnlyShownWhenItsEventExists() {
+    fun acknowledgementIsOnlyShownWhenItsEventExists() = runTest {
         val repository = FakeCoupleRepository(clock)
-        val request = repository.createRequest(CareRequestType.DENGO)
+        val request = repository.createRequest(CareRequestType.DENGO).confirmed()
         repository.acceptRequest(request.id)
-        val before = repository.state.value.toHistoryUiState(clock.zone).days.single().entries.single() as RequestStory
+        val before = repository.snapshot().toHistoryUiState(clock.zone).days.single().entries.single() as RequestStory
         assertEquals(2, before.steps.size)
 
         repository.acknowledgeRequest(request.id, PartnerId.LIDIANNE)
-        val after = repository.state.value.toHistoryUiState(clock.zone).days.single().entries.single() as RequestStory
+        val after = repository.snapshot().toHistoryUiState(clock.zone).days.single().entries.single() as RequestStory
         assertEquals(
             listOf(HistoryEvent.RequestCreated::class, HistoryEvent.RequestAccepted::class,
                 HistoryEvent.RequestAcknowledged::class),
@@ -197,7 +200,7 @@ class HistoryViewModelTest {
     }
 
     @Test
-    fun absentCreationAndContradictoryEventsRemainVisibleWithoutInventedSteps() {
+    fun absentCreationAndContradictoryEventsRemainVisibleWithoutInventedSteps() = runTest {
         val state = CoupleState(
             partners = emptyList(),
             history = listOf(
@@ -222,20 +225,21 @@ class HistoryViewModelTest {
         val vinicius = ViniciusHomeViewModel(repository, clock)
         val history = HistoryViewModel(repository, clock)
         lidianne.createQuickRequest(CareRequestType.DENGO)
-        val requestId = repository.state.value.requests.single().id
+        advanceUntilIdle()
+        val requestId = repository.snapshot().requests.single().id
         vinicius.acceptRequest(requestId)
         lidianne.setMood(MoodOption.LOVING)
-        val before = repository.state.value
         advanceUntilIdle()
+        val before = repository.snapshot()
 
-        val entries = history.state.value.days.single().entries
+        val entries = history.state.value.ready().days.single().entries
         assertEquals(listOf(IndependentHistoryEntry::class, RequestStory::class), entries.map { it::class })
         assertEquals(3, entries.sumOf { if (it is RequestStory) it.steps.size else 1 })
-        assertEquals(before, repository.state.value)
+        assertEquals(before, repository.snapshot())
     }
 
     @Test
-    fun dayAndTimeLabelsRemainLocal() {
+    fun dayAndTimeLabelsRemainLocal() = runTest {
         val today = LocalDate.of(2026, 9, 30)
         assertEquals(HistoryDayLabel.TODAY, historyDayLabel(today, today))
         assertEquals(HistoryDayLabel.YESTERDAY, historyDayLabel(today.minusDays(1), today))

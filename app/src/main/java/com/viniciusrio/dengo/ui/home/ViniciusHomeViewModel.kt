@@ -2,7 +2,9 @@ package com.viniciusrio.dengo.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.viniciusrio.dengo.data.FakeCoupleRepository
+import com.viniciusrio.dengo.data.CoupleRepository
+import com.viniciusrio.dengo.ui.ScreenReadState
+import com.viniciusrio.dengo.ui.project
 import com.viniciusrio.dengo.model.CareRequest
 import com.viniciusrio.dengo.model.CareRequestStatus
 import com.viniciusrio.dengo.model.CoupleState
@@ -29,23 +31,27 @@ data class ViniciusHomeState(
 )
 
 class ViniciusHomeViewModel(
-    private val repository: FakeCoupleRepository,
+    private val repository: CoupleRepository,
     private val clock: Clock = Clock.systemDefaultZone(),
 ) : ViewModel() {
-    val state: StateFlow<ViniciusHomeState> = repository.state
-        .map(::toHomeState)
+    private val quickWrites = QuickWriteCoordinator(viewModelScope)
+    val quickSubmission = quickWrites.submission
+    val state: StateFlow<ScreenReadState<ViniciusHomeState>> = repository.state
+        .map { it.project(::toHomeState) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Eagerly,
-            initialValue = toHomeState(repository.state.value),
+            initialValue = repository.state.value.project(::toHomeState),
         )
 
+    fun retryRead() = repository.retryRead()
+
     fun acceptRequest(requestId: Long) {
-        repository.acceptRequest(requestId)
+        quickWrites.independent(requestId) { repository.acceptRequest(requestId) }
     }
 
     fun declineRequest(requestId: Long) {
-        repository.declineRequest(requestId)
+        quickWrites.independent(requestId) { repository.declineRequest(requestId) }
     }
 
     private fun toHomeState(couple: CoupleState): ViniciusHomeState {

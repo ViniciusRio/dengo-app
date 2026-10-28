@@ -49,6 +49,17 @@
     <string name="mural_discard_message">Seu recado ainda não foi publicado.</string>
     <string name="mural_discard">Descartar</string>
     <string name="mural_continue">Continuar desenhando</string>
+    <string name="publish_sending">Enviando…</string>
+    <string name="publish_reverted">Não foi possível publicar. Seu rascunho foi mantido; tente novamente.</string>
+    <string name="publish_uncertain">Não foi possível confirmar a publicação. Confira antes de tentar novamente para evitar duplicidade.</string>
+    <string name="quick_write_sending">Registrando ação…</string>
+    <string name="quick_write_reverted">Não foi possível registrar esta ação. Tente novamente.</string>
+    <string name="quick_write_uncertain">Não foi possível confirmar esta ação. Confira o estado antes de tentar novamente.</string>
+    <string name="read_loading">Carregando…</string>
+    <string name="read_failed">Não foi possível carregar os dados.</string>
+    <string name="read_retry">Tentar novamente</string>
+    <string name="read_stale_loading">Atualizando dados. As informações exibidas podem estar desatualizadas.</string>
+    <string name="read_stale_failed">Falha ao atualizar. As informações exibidas podem estar desatualizadas.</string>
     <string name="request_dengo">Dengo</string>
     <string name="request_hot_water_bag">Bolsa quente</string>
     <string name="request_medicine">Remédio</string>

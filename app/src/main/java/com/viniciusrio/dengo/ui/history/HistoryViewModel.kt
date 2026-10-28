@@ -2,7 +2,9 @@ package com.viniciusrio.dengo.ui.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.viniciusrio.dengo.data.FakeCoupleRepository
+import com.viniciusrio.dengo.data.CoupleRepository
+import com.viniciusrio.dengo.ui.ScreenReadState
+import com.viniciusrio.dengo.ui.project
 import com.viniciusrio.dengo.model.CareRequestType
 import com.viniciusrio.dengo.model.CoupleState
 import com.viniciusrio.dengo.model.HistoryEvent
@@ -59,16 +61,18 @@ internal fun historyDayLabel(date: LocalDate, today: LocalDate): HistoryDayLabel
 }
 
 class HistoryViewModel(
-    repository: FakeCoupleRepository,
+    private val repository: CoupleRepository,
     clock: Clock = Clock.systemDefaultZone(),
 ) : ViewModel() {
-    val state: StateFlow<HistoryUiState> = repository.state
-        .map { it.toHistoryUiState(clock.zone) }
+    val state: StateFlow<ScreenReadState<HistoryUiState>> = repository.state
+        .map { it.project { couple -> couple.toHistoryUiState(clock.zone) } }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Eagerly,
-            initialValue = repository.state.value.toHistoryUiState(clock.zone),
+            initialValue = repository.state.value.project { couple -> couple.toHistoryUiState(clock.zone) },
         )
+
+    fun retryRead() = repository.retryRead()
 }
 
 internal fun CoupleState.toHistoryUiState(zone: ZoneId): HistoryUiState {

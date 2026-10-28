@@ -35,10 +35,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -48,6 +44,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.viniciusrio.dengo.R
+import com.viniciusrio.dengo.ui.ReadNotice
+import com.viniciusrio.dengo.ui.SubmissionState
+import com.viniciusrio.dengo.ui.components.ReadNoticeMessage
 import com.viniciusrio.dengo.model.MURAL_NOTE_MAX_CODE_POINTS
 import com.viniciusrio.dengo.model.MuralNote
 import com.viniciusrio.dengo.model.MuralContent
@@ -80,8 +79,12 @@ internal fun formatMuralTimestamp(instant: Instant, today: LocalDate, zone: Zone
 fun MuralScreen(
     state: MuralUiState,
     composer: MuralComposerState,
+    readNotice: ReadNotice? = null,
+    onRetryRead: () -> Unit = {},
+    textSubmission: SubmissionState = SubmissionState.Idle,
     authorId: PartnerId,
     onLeaveNote: (PartnerId, String) -> Unit,
+    onTextDraftChanged: (String) -> Unit = {},
     onOpenChooser: () -> Unit,
     onOpenText: () -> Unit,
     onOpenDrawing: () -> Unit,
@@ -145,6 +148,7 @@ fun MuralScreen(
             title = { Text(stringResource(R.string.mural_leave_note)) },
             text = {
                 Column {
+                    readNotice?.let { ReadNoticeMessage(it, onRetryRead) }
                     TextButton(onClick = onOpenText, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
                         Text(stringResource(R.string.mural_write))
                     }
@@ -160,13 +164,18 @@ fun MuralScreen(
     if (composer.mode == ComposerMode.TEXT) {
         MuralComposer(
             accent = accent,
+            readNotice = readNotice,
+            onRetryRead = onRetryRead,
+            submission = textSubmission,
+            draft = composer.textDraft,
+            onDraftChanged = onTextDraftChanged,
             onDismiss = { onRequestExit() },
             onSubmit = { text -> onLeaveNote(authorId, text) },
         )
     }
     if (composer.mode == ComposerMode.DRAWING) {
         DrawingComposer(composer, authorId, accent, onSelectColor, onStroke, onUndo, onClear,
-            onPublishDrawing, onRequestExit)
+            onPublishDrawing, onRequestExit, readNotice, onRetryRead)
     }
     if (composer.confirmDiscard) {
         AlertDialog(
@@ -223,6 +232,8 @@ private fun DrawingComposer(
     onClear: () -> Unit,
     onPublish: (PartnerId) -> Boolean,
     onRequestExit: () -> Boolean,
+    readNotice: ReadNotice?,
+    onRetryRead: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(sheetState = sheetState, onDismissRequest = { onRequestExit() }) {
@@ -231,12 +242,13 @@ private fun DrawingComposer(
                 .padding(horizontal = AppSpacing.Large, vertical = AppSpacing.Base),
         ) {
             Text(stringResource(R.string.mural_draw_title), style = MaterialTheme.typography.titleLarge)
+            readNotice?.let { ReadNoticeMessage(it, onRetryRead) }
             Spacer(Modifier.height(AppSpacing.Base))
             MuralDrawing(
                 drawing = MuralContent.Drawing(composer.aspectRatio, composer.strokes),
                 description = stringResource(R.string.mural_drawing_surface),
                 modifier = Modifier.fillMaxWidth().aspectRatio(1.35f),
-                onStroke = onStroke,
+                onStroke = if (composer.submission == SubmissionState.Sending) null else onStroke,
                 selectedArgb = composer.selectedArgb,
             )
             Spacer(Modifier.height(AppSpacing.Base))
@@ -246,6 +258,7 @@ private fun DrawingComposer(
                     val selected = composer.selectedArgb == ink.argb
                     OutlinedButton(
                         onClick = { onSelectColor(ink.argb) },
+                        enabled = composer.submission != SubmissionState.Sending,
                         modifier = Modifier.weight(1f).heightIn(min = 48.dp).semantics { this.selected = selected },
                         contentPadding = PaddingValues(horizontal = AppSpacing.Small, vertical = AppSpacing.Small),
                     ) {
@@ -257,10 +270,10 @@ private fun DrawingComposer(
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.Small)) {
-                TextButton(onClick = onUndo, enabled = composer.strokes.isNotEmpty(), modifier = Modifier.heightIn(min = 48.dp)) {
+                TextButton(onClick = onUndo, enabled = composer.strokes.isNotEmpty() && composer.submission != SubmissionState.Sending, modifier = Modifier.heightIn(min = 48.dp)) {
                     Text(stringResource(R.string.mural_undo))
                 }
-                TextButton(onClick = onClear, enabled = composer.strokes.isNotEmpty(), modifier = Modifier.heightIn(min = 48.dp)) {
+                TextButton(onClick = onClear, enabled = composer.strokes.isNotEmpty() && composer.submission != SubmissionState.Sending, modifier = Modifier.heightIn(min = 48.dp)) {
                     Text(stringResource(R.string.mural_clear))
                 }
             }
@@ -270,23 +283,33 @@ private fun DrawingComposer(
                 }
                 Button(
                     onClick = { onPublish(authorId) },
-                    enabled = composer.strokes.isNotEmpty(),
+                    enabled = composer.strokes.isNotEmpty() && composer.submission != SubmissionState.Sending,
                     modifier = Modifier.heightIn(min = 48.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = accent),
-                ) { Text(stringResource(R.string.mural_submit)) }
+                ) { Text(stringResource(if (composer.submission == SubmissionState.Sending) R.string.publish_sending else R.string.mural_submit)) }
             }
+            if (composer.submission is SubmissionState.Reverted) Text(stringResource(R.string.publish_reverted), color = MaterialTheme.colorScheme.error)
+            if (composer.submission is SubmissionState.Uncertain) Text(stringResource(R.string.publish_uncertain), color = MaterialTheme.colorScheme.error)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MuralComposer(accent: Color, onDismiss: () -> Unit, onSubmit: (String) -> Unit) {
-    var draft by rememberSaveable { mutableStateOf("") }
+private fun MuralComposer(
+    accent: Color,
+    readNotice: ReadNotice?,
+    onRetryRead: () -> Unit,
+    submission: SubmissionState,
+    draft: String,
+    onDraftChanged: (String) -> Unit,
+    onDismiss: () -> Unit,
+    onSubmit: (String) -> Unit,
+) {
     val count = draft.trim().muralCodePointCount()
     val tooLong = count > MURAL_NOTE_MAX_CODE_POINTS
 
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    ModalBottomSheet(onDismissRequest = { if (submission != SubmissionState.Sending) onDismiss() }) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -295,10 +318,12 @@ private fun MuralComposer(accent: Color, onDismiss: () -> Unit, onSubmit: (Strin
                 .padding(horizontal = AppSpacing.Large, vertical = AppSpacing.Base),
         ) {
             Text(stringResource(R.string.mural_leave_note), style = MaterialTheme.typography.titleLarge)
+            readNotice?.let { ReadNoticeMessage(it, onRetryRead) }
             Spacer(Modifier.height(AppSpacing.Base))
             OutlinedTextField(
                 value = draft,
-                onValueChange = { draft = it },
+                onValueChange = onDraftChanged,
+                enabled = submission != SubmissionState.Sending,
                 label = { Text(stringResource(R.string.mural_note_label)) },
                 minLines = 3,
                 maxLines = 5,
@@ -317,6 +342,8 @@ private fun MuralComposer(accent: Color, onDismiss: () -> Unit, onSubmit: (Strin
                 style = MaterialTheme.typography.labelMedium,
                 color = if (tooLong) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            if (submission is SubmissionState.Reverted) Text(stringResource(R.string.publish_reverted), color = MaterialTheme.colorScheme.error)
+            if (submission is SubmissionState.Uncertain) Text(stringResource(R.string.publish_uncertain), color = MaterialTheme.colorScheme.error)
             Spacer(Modifier.height(AppSpacing.Base))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                 TextButton(onClick = onDismiss, modifier = Modifier.heightIn(min = 48.dp)) {
@@ -324,11 +351,11 @@ private fun MuralComposer(accent: Color, onDismiss: () -> Unit, onSubmit: (Strin
                 }
                 Button(
                     onClick = { onSubmit(draft) },
-                    enabled = count in 1..MURAL_NOTE_MAX_CODE_POINTS,
+                    enabled = count in 1..MURAL_NOTE_MAX_CODE_POINTS && submission != SubmissionState.Sending,
                     modifier = Modifier.heightIn(min = 48.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = accent),
                 ) {
-                    Text(stringResource(R.string.mural_submit))
+                    Text(stringResource(if (submission == SubmissionState.Sending) R.string.publish_sending else R.string.mural_submit))
                 }
             }
         }
