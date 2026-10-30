@@ -2,11 +2,14 @@ package com.viniciusrio.dengo.ui.home
 
 import com.viniciusrio.dengo.data.CoupleRepository
 import com.viniciusrio.dengo.data.FakeCoupleRepository
+import com.viniciusrio.dengo.data.RepositoryReadState
 import com.viniciusrio.dengo.data.WriteResult
 import com.viniciusrio.dengo.model.CareRequest
 import com.viniciusrio.dengo.model.CareRequestType
+import com.viniciusrio.dengo.model.HistoryEvent
 import com.viniciusrio.dengo.model.MoodOption
 import com.viniciusrio.dengo.model.PartnerId
+import com.viniciusrio.dengo.ui.ScreenReadState
 import com.viniciusrio.dengo.ui.SubmissionState
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CancellationException
@@ -43,6 +46,33 @@ class QuickWriteFeedbackTest {
         override suspend fun endPersonalSpace(): WriteResult<Unit> = answer()
         override suspend fun acceptRequest(requestId: Long): WriteResult<Unit> = answer()
         override suspend fun declineRequest(requestId: Long): WriteResult<Unit> = answer()
+    }
+
+    @Test fun committedRequestWithLostResponseRemainsVisibleWithoutRetry() = runTest {
+        val fake = FakeCoupleRepository()
+        val repository = object : CoupleRepository by fake {
+            var createCalls = 0
+
+            override suspend fun createRequest(type: CareRequestType, message: String?): WriteResult<CareRequest> {
+                createCalls++
+                val committed = fake.createRequest(type, message)
+                assertTrue(committed is WriteResult.Confirmed)
+                return WriteResult.Uncertain(IllegalStateException("response lost after commit"))
+            }
+        }
+        val home = HomeViewModel(repository)
+
+        home.createQuickRequest(CareRequestType.DENGO)
+        advanceUntilIdle()
+
+        assertTrue(home.quickSubmission.value is SubmissionState.Uncertain)
+        assertEquals(1, repository.createCalls)
+        val visible = home.state.value as ScreenReadState.Ready
+        assertEquals(CareRequestType.DENGO, visible.value.latestRequest?.type)
+        val saved = fake.state.value as RepositoryReadState.Ready
+        assertEquals(1, saved.value.requests.size)
+        assertEquals(1, saved.value.history.size)
+        assertTrue(saved.value.history.single() is HistoryEvent.RequestCreated)
     }
 
     @Test fun allQuickActionsExposeReversalAndUncertaintyWithoutRepeatingWrites() = runTest {

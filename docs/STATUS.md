@@ -24,6 +24,18 @@ O responsável aprovou Room para persistir pedidos e seus estados, eventos factu
 
 Em 2026-10-30, `./gradlew --quiet :app:testDebugUnitTest :app:testReleaseUnitTest :app:assembleDebug :app:assembleDebugAndroidTest` passou com 90 testes unitários debug e 90 release, sem falhas. A suíte instrumentada completa executada no Galaxy A26 terminou com `OK (23 tests)`, incluindo nove testes Room. `openspec validate persist-local-state-with-room --strict --no-interactive` e `git diff --check` passaram. O responsável criou pedido, mood, espaço pessoal e recados de texto e desenho; após encerramento forçado do processo e reabertura no A26, confirmou que pedido/estado, Histórico, mood, espaço pessoal, os dois recados e previews reapareceram. A aprovação humana cobre esses fluxos observados, sem evidência de teste manual de corrupção, falhas injetadas, TalkBack ou fonte ampliada. O Incremento 2 está concluído neste alcance.
 
+## Laboratório técnico posterior — escrita com resultado incerto
+
+Um exercício SDD/OpenSpec ampliou a evidência do contrato existente de `Uncertain` para criação de pedido predefinido: um teste simula perda da resposta após commit Room e verifica o pedido no estado da Home e após reabertura, sem reenvio automático; o teste de falha anterior ao commit agora confere também a ausência de pedido e evento após reabertura antes de uma nova tentativa explícita. Não houve alteração de código de produção, nova funcionalidade ou nova etapa de produto. A simulação ocorre na resposta do repository e não reproduz uma falha física do SQLite.
+
+Nesta sessão, passaram 91 testes unitários debug, 91 release, os builds debug e androidTest, a validação OpenSpec estrita e `git diff --check`. A suíte instrumentada completa no Galaxy A26 terminou com `OK (24 tests)`. Essa execução automatizada no aparelho não constitui revisão humana de UI; nenhuma nova aprovação visual ou funcional do produto foi registrada.
+
+## Laboratório backend isolado — primeiro recorte técnico
+
+Após escolha do responsável, foi criado `labs/backend/` com Kotlin/Spring Boot, build separado e wrapper Gradle único atualizado para 8.14.5 (ADR-022). A API em `127.0.0.1:8081` cria e consulta somente pedidos predefinidos sintéticos em memória; não se conecta ao app Android. A mesma coleção atende comando e consulta. Não há backend de produto, sincronização, banco remoto, mensageria ou nova etapa de produto.
+
+Nesta sessão, `./gradlew -p labs/backend test bootJar` passou com oito testes, e o smoke test local confirmou `200 []`, criação `201`, repetição `200` com o mesmo ID, escuta em loopback e `[]` após reinício. Com Gradle 8.14.5, passaram 91 testes unitários Android debug, 91 release e os builds debug/androidTest. Em rodada posterior, o A26 foi conectado, os dois APKs foram instalados e a suíte instrumentada completa terminou com `OK (24 tests)` após a troca do wrapper. Trata-se de execução automatizada, sem revisão humana nova de UI. A spec OpenSpec do laboratório e o roteiro de reprodução registram o alcance.
+
 ## Aprovado
 
 - visão do produto;

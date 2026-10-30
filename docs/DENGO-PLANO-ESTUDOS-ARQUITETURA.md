@@ -1,6 +1,6 @@
 # Dengo — Plano de evolução técnica e laboratório de arquitetura Kotlin
 
-> **Status:** PROPOSTA PARA ANÁLISE — não aprovada para implementação.
+> **Status:** roadmap de estudo revisado em 2026-10-30. O primeiro laboratório backend isolado foi implementado no alcance do ADR-022; as fases posteriores continuam propostas.
 > **Objetivo:** servir como briefing para análise humana e por agente de IA, sem substituir as especificações e decisões vigentes do repositório.
 > **Repositório:** https://github.com/ViniciusRio/dengo-app
 > **Data da proposta:** 2026-10-29
@@ -26,11 +26,13 @@ A meta não é adicionar tecnologias apenas para constarem no currículo. Cada e
 
 Antes de propor alterações, ler **AGENTS.md** e, na ordem definida por ele, a documentação de produto, MVP, fluxos, design, especificações de funcionalidades e ADRs. Verificar também `docs/STATUS.md`, `dengo/06 - Desenvolvimento/Etapa Atual.md`, o código-fonte e os testes atuais.
 
-**Esta proposta não autoriza**: iniciar MVP 2, adicionar backend, autenticação remota, sincronização, PostgreSQL, Redis ou mensageria; alterar comportamento de produto; executar commits ou push; declarar fases concluídas. Tudo isso exige decisão e aprovação humana conforme as regras do repositório.
+**Esta proposta não autoriza**: iniciar MVP 2, adicionar backend de produto, autenticação remota, sincronização, PostgreSQL, Redis ou mensageria; alterar comportamento de produto; executar commits ou push; declarar fases concluídas. Tudo isso exige decisão e aprovação humana conforme as regras do repositório. Em 2026-10-30, o responsável escolheu somente um laboratório backend isolado como próximo recorte técnico; essa escolha não amplia o escopo de produto.
 
 Em caso de divergência entre este briefing e documentação/código atual, **não presumir que este documento está correto**. Apontar a divergência, citar os arquivos e solicitar decisão.
 
 ## 3. Estado do projeto conhecido na análise inicial
+
+**Nota de atualização (2026-10-30):** esta seção preserva a fotografia de 2026-10-29. O estado vigente está em `docs/STATUS.md`, ADR-021 e `openspec/specs/local-couple-state/spec.md`: Room já persiste os dados publicados no mesmo aparelho. O laboratório posterior de retorno `Uncertain` foi especificado, testado no A26 e arquivado em OpenSpec, sem alterar código de produção. A próxima etapa de produto permanece indefinida. O HEAD conferido nesta revisão é `1f598b4`, com o laboratório anterior ainda sem commit.
 
 A inspeção do GitHub em 2026-10-29 indicou:
 
@@ -77,7 +79,7 @@ A inspeção do GitHub em 2026-10-29 indicou:
 ```text
 Android (Kotlin + Compose)
   ├── CoupleRepository (contrato atual; avaliar adaptação)
-  ├── Room (persistência local, após aprovação do Incremento 2)
+  ├── Room (persistência local concluída no Incremento 2)
   └── Cliente HTTP / sincronização (futuro, condicionado ao MVP 2)
            |
            v
@@ -96,38 +98,47 @@ Observabilidade: OpenTelemetry → backend de métricas/logs/traces
 Ambiente local: Docker Compose + Testcontainers
 ```
 
-**Decisões ainda abertas:** backend no mesmo repositório ou separado; Spring Boot vs Ktor (preferência inicial: Spring Boot com Kotlin); modelo de autenticação e pareamento; sincronização e resolução de conflitos; política de dados pessoais; infraestrutura local e eventual AWS; escopo de cada experimento. Não escolher silenciosamente.
+**Decisão implementada no laboratório:** Kotlin/Spring Boot isolado em `labs/backend/`, com `settings.gradle.kts` próprio, armazenamento em memória e dados sintéticos. O wrapper Gradle único da raiz subiu para 8.14.5; a regressão Android de testes unitários e builds passou, e uma rodada posterior da suíte instrumentada no A26 terminou com `OK (24 tests)`. O laboratório não é o backend do produto nem participa do fluxo Android. **Continuam abertas:** localização e stack de um eventual backend de produto, autenticação, pareamento, sincronização, resolução de conflitos, infraestrutura compartilhada e eventual AWS. Não transportar decisões do laboratório para o MVP 2 automaticamente.
 
 ## 7. Roadmap por fases e critérios de saída
 
-### Fase 0 — Diagnóstico e decisão arquitetural (PRIMEIRO PASSO)
+### Fase 0 — Diagnóstico e decisão arquitetural (CONCLUÍDA NO ALCANCE ATUAL)
 
 - Conferir branch/HEAD, `AGENTS.md`, documentação, ADRs, implementação e testes.
 - Produzir inventário do que existe, lacunas, divergências e dependências.
-- Avaliar se o próximo incremento vigente continua sendo **Room / persistência local Incremento 2**.
+- Confirmar que Room / Incremento 2 foi concluído e que o plano anterior estava defasado.
 - Definir fronteira entre evolução do produto e laboratório técnico.
 - Propor, **sem implementar**, ADR(s), especificação e plano de execução para aprovação.
 
-**Saída:** relatório de diagnóstico + opções de arquitetura + próximo incremento recomendado + riscos + perguntas de decisão. **Gate:** aprovação humana.
+**Saída:** diagnóstico e escolha humana de um laboratório backend isolado, sem aprovação de backend de produto.
 
-### Fase 1 — Persistência local real (Room), se aprovada
+### Fase 1 — Persistência local real (CONCLUÍDA)
 
 - Implementar o contrato de persistência já especificado, sem alterar fluxos de UX sem autorização.
 - Preservar pedidos, estados, eventos factuais, mood, espaço pessoal e recados publicados (inclusive desenhos).
 - Testar encerramento/reabertura, atomicidade, falha de escrita, migração se aplicável, cancelamento e preservação de rascunhos.
 - Executar testes unitários/instrumentados e revisão no dispositivo.
 
-**Saída:** dados publicados sobrevivem ao encerramento do processo, com evidência de testes e validação humana. **Gate:** aprovação e atualização documental.
+**Saída:** dados publicados recuperados após reabertura no A26, no alcance do ADR-021. Os testes e a aprovação humana históricos estão registrados em `docs/STATUS.md`.
 
-### Fase 2 — CQRS proporcional e SDD contínuo
+### Fase 2 — SDD contínuo e avaliação de CQRS (EM ANDAMENTO)
 
 - Identificar operações de escrita e consultas reais; propor separação apenas onde houver ganho de clareza/testabilidade.
 - Documentar invariantes e estados, especialmente resultados `Uncertain` e idempotência.
 - Aplicar especificação → implementação → testes → revisão em cada mudança.
 
-**Saída:** separação justificada e testada, sem impor dois bancos ou mensageria.
+**Estado:** o laboratório OpenSpec de `Uncertain` foi concluído. `CoupleRepository` já oferece leitura por fluxo e comandos suspensos; não há ganho demonstrado em separar mais interfaces ou criar projeções persistidas no Android. CQRS continua uma hipótese a testar onde houver uma consulta e um comando reais.
 
-### Fase 3 — Backend Kotlin + Spring Boot e sincronização (sujeito a ADR/MVP 2)
+### Fase 2A — Primeiro laboratório backend isolado (IMPLEMENTADO NO ALCANCE DO ADR-022)
+
+- Especificar em OpenSpec uma API HTTP de laboratório para criar e consultar pedidos predefinidos sintéticos.
+- Usar Kotlin/Spring Boot em build próprio dentro de `labs/backend/`, com o wrapper Gradle único da raiz atualizado e verificado nos dois builds, armazenamento em memória e execução local; não integrar ao app Android.
+- Demonstrar uma regra de duplicidade, a diferença entre comando e consulta, o resultado após reinício e os limites de um único armazenamento.
+- Testar contrato HTTP e regra de domínio com dados sintéticos; documentar comandos de reprodução e quando esta separação simples não justifica CQRS mais elaborado.
+
+**Saída:** laboratório reproduzível com oito testes, smoke test local e regressão Android de testes unitários/builds; em rodada posterior, 24 testes instrumentados passaram no A26 após atualizar Gradle. O resultado e os limites estão no ADR-022; o próximo experimento depende de nova escolha. Não aprova MVP 2.
+
+### Fase 3 — Backend de produto e sincronização (PROPOSTA, sujeita a ADR/MVP 2)
 
 - Especificar autenticação, autorização, pareamento, contrato REST e proteção de dados.
 - Criar persistência remota com PostgreSQL, migrações e testes de integração.
@@ -177,6 +188,8 @@ Cada tópico deve gerar, quando aplicável:
 
 ## 9. Questões que a análise deve responder antes de codificar
 
+As perguntas 1, 2, 6 e 7 receberam respostas parciais nos Incrementos 2 e no laboratório de `Uncertain`: Room foi concluído; o primeiro exercício posterior demonstrou os dois desfechos de escrita incerta; CQRS adicional no Android não mostrou ganho concreto. As perguntas de backend de produto, mensageria, AWS e sincronização permanecem abertas e não bloqueiam o laboratório isolado.
+
 1. A documentação atual ainda aponta Room como próximo incremento, ou houve mudança posterior?
 2. Qual a menor alteração que gera aprendizado real sem desviar o produto?
 3. O backend deve residir no mesmo repositório ou em repositório próprio? Quais custos de cada escolha?
@@ -189,6 +202,8 @@ Cada tópico deve gerar, quando aplicável:
 10. Quais ADRs e especificações precisam ser propostos antes de alterar arquitetura?
 
 ## 10. Instrução pronta para Codex / Claude Code
+
+**Registro histórico:** a instrução abaixo era adequada ao diagnóstico de 2026-10-29. Não deve ser reutilizada como comando para implementar Room nem para aprovar as fases futuras. O primeiro laboratório backend está registrado no ADR-022 e na mudança OpenSpec arquivada `2026-10-30-start-isolated-backend-lab`; o próximo recorte ainda não foi escolhido.
 
 > **Tarefa: análise e planejamento apenas. Não implemente ainda.**
 >
@@ -213,4 +228,4 @@ A iniciativa terá sucesso quando for possível explicar e demonstrar, com códi
 
 ---
 
-**Próxima ação sugerida:** entregar este arquivo à IA com a instrução da seção 10 e solicitar **somente diagnóstico e proposta de Fase 0**. Revisar o relatório antes de autorizar qualquer alteração no repositório.
+**Próxima ação:** escolher o próximo problema de estudo ou etapa de produto com base na evidência do laboratório, sem iniciar automaticamente backend de produto, CQRS adicional ou mensageria.

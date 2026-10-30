@@ -40,7 +40,7 @@ The current prototype includes the first seven product stages and later approved
 - A shared `CoupleRepository` contract with a Room adapter in the app and an in-memory fake for tests
 - JUnit tests for local logic and Android instrumentation tests for UI flows
 
-There is no backend or synchronization between devices. The local data layer uses Room; see [local persistence](docs/features/local-persistence.md).
+The Android product has no backend or synchronization between devices. The local data layer uses Room; see [local persistence](docs/features/local-persistence.md). A separate [Kotlin/Spring Boot study lab](labs/backend/README.md) uses synthetic, in-memory requests and does not connect to the app.
 
 ## Getting started
 

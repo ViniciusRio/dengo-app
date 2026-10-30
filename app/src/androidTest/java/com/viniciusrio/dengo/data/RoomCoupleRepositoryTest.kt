@@ -13,10 +13,14 @@ import com.viniciusrio.dengo.model.HistoryEvent
 import com.viniciusrio.dengo.model.MoodOption
 import com.viniciusrio.dengo.model.MuralContent
 import com.viniciusrio.dengo.model.PartnerId
+import com.viniciusrio.dengo.ui.ScreenReadState
+import com.viniciusrio.dengo.ui.SubmissionState
+import com.viniciusrio.dengo.ui.home.HomeViewModel
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -36,6 +40,54 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class RoomCoupleRepositoryTest {
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
+
+    private class LostResponseRepository(private val delegate: CoupleRepository) : CoupleRepository by delegate {
+        val createCalls = AtomicInteger()
+
+        override suspend fun createRequest(type: CareRequestType, message: String?): WriteResult<CareRequest> {
+            createCalls.incrementAndGet()
+            val committed = delegate.createRequest(type, message)
+            assertTrue(committed is WriteResult.Confirmed)
+            return WriteResult.Uncertain(IllegalStateException("Resposta perdida após commit simulado"))
+        }
+    }
+
+    @Test fun committedRequestWithLostResponseIsVisibleWithoutAutomaticRetry() = runBlocking {
+        val name = "dengo-test-${UUID.randomUUID()}"
+        val database = DengoDatabase.open(context, name)
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        try {
+            val room = RoomCoupleRepository(database, scope)
+            room.awaitReady()
+            val lostResponse = LostResponseRepository(room)
+            val home = HomeViewModel(lostResponse)
+
+            home.createQuickRequest(CareRequestType.DENGO)
+            withTimeout(10_000) { home.quickSubmission.first { it is SubmissionState.Uncertain } }
+            val visible = withTimeout(10_000) {
+                home.state.first { it is ScreenReadState.Ready && it.value.latestRequest != null }
+            } as ScreenReadState.Ready
+            assertEquals(CareRequestType.DENGO, visible.value.latestRequest?.type)
+            assertEquals(1, lostResponse.createCalls.get())
+            assertEquals(1, room.awaitReady().requests.size)
+            assertEquals(1, room.awaitReady().history.size)
+        } finally {
+            scope.cancel()
+            database.close()
+        }
+
+        val reopened = DengoDatabase.open(context, name)
+        val reopenedScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        try {
+            val restored = RoomCoupleRepository(reopened, reopenedScope).awaitReady()
+            assertEquals(1, restored.requests.size)
+            assertEquals(1, restored.history.size)
+            assertTrue(restored.history.single() is HistoryEvent.RequestCreated)
+        } finally {
+            reopenedScope.cancel()
+            reopened.close()
+        }
+    }
 
     @Test fun publishedStateSurvivesDatabaseReopen() = runBlocking {
         val name = "dengo-test-${UUID.randomUUID()}"
@@ -85,7 +137,8 @@ class RoomCoupleRepositoryTest {
     }
 
     @Test fun failedHistoryInsertRollsBackRequestAndKeepsReadableState() = runBlocking {
-        val database = DengoDatabase.open(context, "dengo-test-${UUID.randomUUID()}")
+        val name = "dengo-test-${UUID.randomUUID()}"
+        val database = DengoDatabase.open(context, name)
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         try {
             val repository = RoomCoupleRepository(database, scope)
@@ -99,7 +152,22 @@ class RoomCoupleRepositoryTest {
             val restored = repository.awaitReady()
             assertTrue(restored.requests.isEmpty())
             assertTrue(restored.history.isEmpty())
-            assertTrue(repository.createRequest(CareRequestType.DENGO) is WriteResult.Confirmed)
+            scope.cancel()
+            database.close()
+
+            val reopened = DengoDatabase.open(context, name)
+            val reopenedScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+            try {
+                val afterReopen = RoomCoupleRepository(reopened, reopenedScope)
+                assertTrue(afterReopen.awaitReady().requests.isEmpty())
+                assertTrue(afterReopen.awaitReady().history.isEmpty())
+                assertTrue(afterReopen.createRequest(CareRequestType.DENGO) is WriteResult.Confirmed)
+                assertEquals(1, afterReopen.awaitReady().requests.size)
+                assertEquals(1, afterReopen.awaitReady().history.size)
+            } finally {
+                reopenedScope.cancel()
+                reopened.close()
+            }
         } finally {
             scope.cancel()
             database.close()
