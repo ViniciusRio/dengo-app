@@ -12,10 +12,10 @@
 - [x] respostas aos pedidos
 - [x] Histórico compartilhado em memória
 - [x] Mural de recados em memória (aprovado no Samsung)
+- [x] Perfil B.1 e recados desenhados (evoluções posteriores aprovadas; ADR-014 e ADR-018)
+- [x] persistência local dos dados publicados (Incremento 2; ADR-021)
 
 ## Planejadas
-- [ ] Perfil
-- [ ] persistência
 - [ ] backend/sincronização
 - [ ] autenticação
 - [ ] notificações

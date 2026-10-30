@@ -15,4 +15,4 @@ Etapa 7 concluída e aprovada no Samsung. Próxima etapa de produto ainda não d
 - [x] [[Perfil]] — composição Opção 1/B.1 aprovada visualmente e validada com TalkBack e fonte `1.5×` nos cenários exercitados no Galaxy A26 (ADR-018); evolução futura do Perfil não definida
 
 ## Infraestrutura futura
-Persistência, backend, sincronização, autenticação e notificações.
+Persistência local dos dados publicados concluída no Incremento 2 (ADR-021). Backend, sincronização, autenticação e notificações continuam futuros, sem etapa aprovada.

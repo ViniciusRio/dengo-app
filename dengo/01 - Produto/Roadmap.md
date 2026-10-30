@@ -9,14 +9,12 @@
 - [x] Etapa 5 — [[Home Vinícius]] (aprovada no Samsung, incluindo o reteste de múltiplos pedidos)
 - [x] Etapa 6 — [[Histórico]] (aprovada no Samsung após refinamento do estado vazio)
 - [x] Etapa 7 — [[Mural]] de recados (aprovada no Samsung)
+- [x] Persistência local — Incrementos 1 e 2 concluídos; dados publicados recuperados após reabertura no Galaxy A26 (ADR-020 e ADR-021; sem nova etapa de produto)
 
 ## Atual
 Próxima etapa de produto ainda não definida; depende de novo planejamento.
 
 ## Futuro
-- [ ] recados desenhados à mão no [[Mural]] (especificados; implementação e validação no Samsung pendentes, sem etapa definida)
-- [ ] Perfil
-- [ ] persistência local
 - [ ] backend e sincronização
 - [ ] autenticação
 - [ ] notificações

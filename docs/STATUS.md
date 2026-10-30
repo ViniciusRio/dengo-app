@@ -6,17 +6,23 @@ A evolução de recados desenhados do Mural foi implementada no protótipo local
 
 O Perfil atual é a composição da Opção 1 refinada em B.1, aprovada visualmente pelo responsável no Galaxy A26 nas perspectivas de Lidianne e Vinícius. O painel curvo, a ilustração transparente, o lettering e as duas superfícies pessoais integram a direção vigente; a escolha ativa mantém contorno e “Em uso”. TalkBack e fonte `1.5×` foram exercitados no mesmo aparelho nos cenários descritos em `docs/features/profile.md`, sem auditoria exaustiva de acessibilidade. O checkpoint funcional inicial (ADR-016) e o refinamento 1.1 (ADR-017) permanecem como histórico; a precedência visual atual está no ADR-018.
 
-O Histórico afetivo agrupa acontecimentos reais por pedido e mantém mood e espaço pessoal independentes. A composição com cartões suaves, pontos por autoria e superfície ajustada à perspectiva foi aprovada visualmente no Galaxy A26. Passaram 67 testes unitários debug, 67 release e 11 instrumentados no aparelho; o responsável confirmou TalkBack e fonte aproximadamente `1,5×` como satisfatórios. A validação e seus limites estão no ADR-019; o estado permanece em memória.
+O Histórico afetivo agrupa acontecimentos reais por pedido e mantém mood e espaço pessoal independentes. A composição com cartões suaves, pontos por autoria e superfície ajustada à perspectiva foi aprovada visualmente no Galaxy A26. Naquela evolução passaram 67 testes unitários debug, 67 release e 11 instrumentados no aparelho; o responsável confirmou TalkBack e fonte aproximadamente `1,5×` como satisfatórios. A validação e seus limites estão no ADR-019; naquele checkpoint o estado ainda permanecia em memória.
 
 ## Persistência local — Incremento 1
 
 **Escopo de produto aprovado para especificação:** persistir localmente, no mesmo aparelho, todos os dados publicados já existentes: pedidos e estados, eventos factuais do Histórico, o mood atual de Lidianne, espaço pessoal e recados publicados de texto e desenho. Rascunhos, perspectiva, identidade de sessão, backup/exportação, recuperação após desinstalação e comunicação entre aparelhos ficam fora do escopo.
 
-**Incremento 1 implementado e validado neste checkpoint:** a interface `CoupleRepository` assíncrona, o Fake, os quatro ViewModels e a UI distinguem `Loading`, `Ready`, `ReadError` e resultados de escrita confirmados, revertidos ou incertos. Os compositores de `OTHER` e do Mural preservam o rascunho até a confirmação. Ações rápidas usam aviso da intenção mais recente; mood e espaço pessoal seguem a ordem dos toques. O responsável aceitou que uma falha anterior de ação independente possa ficar sem aviso após uma intenção mais recente. O armazenamento continua em memória; Room, snapshots transacionais e formato binário de desenhos pertencem a um incremento posterior ainda não iniciado. Ver [ADR-020](decisions/ADR-020-async-repository-increment-1.md).
+**Incremento 1 implementado e validado naquele checkpoint:** a interface `CoupleRepository` assíncrona, o Fake, os quatro ViewModels e a UI passaram a distinguir `Loading`, `Ready`, `ReadError` e resultados de escrita confirmados, revertidos ou incertos. Os compositores de `OTHER` e do Mural preservam o rascunho até a confirmação. Ações rápidas usam aviso da intenção mais recente; mood e espaço pessoal seguem a ordem dos toques. O responsável aceitou que uma falha anterior de ação independente possa ficar sem aviso após uma intenção mais recente. Naquele momento, o armazenamento ainda era em memória; Room e o formato durável dos desenhos ficaram para um incremento posterior. Ver [ADR-020](decisions/ADR-020-async-repository-increment-1.md).
 
 A revisão independente das correções não encontrou defeito confirmado. Nesta rodada, `./gradlew --quiet test assembleDebug` passou; a suíte instrumentada executada no Galaxy A26 terminou com `OK (14 tests)` após a correção do seletor dos testes de rascunho. `git diff --check` passou. O responsável percorreu o roteiro de Home, pedidos, mood, espaço pessoal, Mural e apresentação no A26 e relatou que tudo funcionou. É aprovação humana geral dos fluxos observados, sem evidência individual de estados de falha injetados, TalkBack ou fonte ampliada. Os instrumentados validam os cenários automatizados, não substituem essa revisão humana.
 
-O Incremento 2 não foi iniciado. Não existe banco anterior com dados a migrar, e o protótipo não popula interações demonstrativas em runtime.
+Não existe banco anterior com dados a migrar, e o protótipo não popula interações demonstrativas em runtime.
+
+## Persistência local — Incremento 2 concluído
+
+O responsável aprovou Room para persistir pedidos e seus estados, eventos factuais do Histórico, mood atual, espaço pessoal e recados publicados de texto ou desenho no mesmo aparelho. A spec consolidada está em `openspec/specs/local-couple-state/spec.md`, o comportamento de produto em [local-persistence.md](features/local-persistence.md) e a decisão técnica no [ADR-021](decisions/ADR-021-room-local-persistence.md). O adapter Room está integrado ao app. O armazenamento preserva o arquivo em falha de abertura/corrupção e não faz reset automático; duas rodadas de revisão independente terminaram sem defeito confirmado após correções.
+
+Em 2026-10-30, `./gradlew --quiet :app:testDebugUnitTest :app:testReleaseUnitTest :app:assembleDebug :app:assembleDebugAndroidTest` passou com 90 testes unitários debug e 90 release, sem falhas. A suíte instrumentada completa executada no Galaxy A26 terminou com `OK (23 tests)`, incluindo nove testes Room. `openspec validate persist-local-state-with-room --strict --no-interactive` e `git diff --check` passaram. O responsável criou pedido, mood, espaço pessoal e recados de texto e desenho; após encerramento forçado do processo e reabertura no A26, confirmou que pedido/estado, Histórico, mood, espaço pessoal, os dois recados e previews reapareceram. A aprovação humana cobre esses fluxos observados, sem evidência de teste manual de corrupção, falhas injetadas, TalkBack ou fonte ampliada. O Incremento 2 está concluído neste alcance.
 
 ## Aprovado
 
@@ -33,7 +39,8 @@ O Incremento 2 não foi iniciado. Não existe banco anterior com dados a migrar,
 - Mural de recados da Etapa 7 aprovado visual e funcionalmente no Samsung.
 - Evolução posterior de recados desenhados aprovada no Galaxy A26, no alcance da validação relatada acima.
 - Ciclo afetivo dos pedidos aprovado funcional e visualmente no Samsung; sem evidência específica de teste com fonte ampliada ou TalkBack.
-- Histórico afetivo aprovado visualmente nas duas perspectivas e validado no alcance registrado no ADR-019, sem persistência ou sincronização.
+- Histórico afetivo aprovado visualmente nas duas perspectivas no alcance do ADR-019; a persistência local posterior está no ADR-021, sem sincronização.
+- Persistência local dos dados publicados, aprovada no Galaxy A26 no alcance do ADR-021.
 
 ## Ainda pode mudar após protótipo
 

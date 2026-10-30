@@ -1,8 +1,18 @@
 package com.viniciusrio.dengo
 
-import androidx.lifecycle.ViewModel
-import com.viniciusrio.dengo.data.FakeCoupleRepository
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.viniciusrio.dengo.data.CoupleRepository
+import com.viniciusrio.dengo.data.local.DengoDatabase
+import com.viniciusrio.dengo.data.local.RoomCoupleRepository
 
-class PrototypeStateViewModel : ViewModel() {
-    val repository = FakeCoupleRepository()
+class PrototypeStateViewModel(application: Application) : AndroidViewModel(application) {
+    private val database = DengoDatabase.open(application)
+    val repository: CoupleRepository = RoomCoupleRepository(database, viewModelScope)
+
+    override fun onCleared() {
+        database.close()
+        super.onCleared()
+    }
 }

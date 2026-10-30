@@ -49,7 +49,7 @@ Lidianne e Vinícius veem a mesma coleção local e cada um publica com sua pró
 
 Os controles de escolha do formato, criação, cores, desfazer, limpar, cancelar e publicar precisam de rótulos/semântica compreensíveis, alvos de toque adequados e estados perceptíveis sem depender somente de cor. O conteúdo desenhado comunica minimamente que é um desenho, quem o fez e quando foi publicado, inclusive no preview. Não se exige descrição manual do significado nem se presume leitura automática da caligrafia.
 
-O experimento continua em memória. Ao reiniciar ou matar o processo, recados e rascunhos desenhados podem desaparecer, como o estado atual. Isso permite avaliar o valor afetivo imediato do gesto, mas não o valor de guardar e revisitar desenhos ao longo do tempo. Persistência e recuperação após morte do processo não integram esta evolução.
+Naquele experimento o estado ainda era em memória. Ao reiniciar ou matar o processo, recados e rascunhos desenhados podiam desaparecer. Isso permitia avaliar o valor afetivo imediato do gesto, mas não o valor de guardar e revisitar desenhos ao longo do tempo. Persistência e recuperação após morte do processo não integravam aquela evolução.
 
 ## Critérios de aceitação da evolução
 
@@ -78,4 +78,8 @@ Fotos, câmera, galeria, anexos, stickers, canvas colaborativo, desenho simultâ
 
 ## Decisões técnicas posteriores
 
-A representação técnica escolhida está no [ADR-014](../decisions/ADR-014-drawing-content-and-strokes.md). Este documento continua sendo a fonte do comportamento e dos critérios de aceitação. Limites de memória, serialização e armazenamento continuam sem decisão.
+A representação técnica escolhida para o desenho em memória está no [ADR-014](../decisions/ADR-014-drawing-content-and-strokes.md). Este documento continua sendo a fonte do comportamento e dos critérios de aceitação dessa evolução. Naquele checkpoint, limites de memória, serialização e armazenamento durável ainda não tinham decisão.
+
+## Persistência local posterior
+
+As afirmações de estado em memória acima descrevem o experimento original de recados desenhados. No estado atual, recados publicados de texto e desenho sobrevivem à reabertura no mesmo aparelho, conforme [persistência local](local-persistence.md) e ADR-021. Rascunhos continuam fora do armazenamento durável; não há sincronização entre aparelhos.

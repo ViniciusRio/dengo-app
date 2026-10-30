@@ -22,11 +22,11 @@ Captured directly from the app running on a Samsung Galaxy A26.
 
 - **Two Home perspectives:** Lidianne can share a mood, request care, or signal that she needs personal space. Vinícius can see that context and respond to active requests.
 - **Care requests:** requests can be accepted or declined; an accepted request can later be acknowledged. A response is not treated as proof that the requested care happened.
-- **Mural:** both perspectives can leave individual text or hand-drawn notes and see the same in-memory list.
+- **Mural:** both perspectives can leave individual text or hand-drawn notes and see the same locally stored list.
 - **History:** a read-only timeline provides context for requests, responses, mood changes, and personal space.
 - **Profile:** switch locally between Lidianne's and Vinícius's perspectives on the same device.
 
-This is a local prototype. Its shared state is held in memory and is lost when the app process ends. It does not provide account sign-in, remote communication, notifications, or synchronization between devices.
+This is a local prototype. Published requests, history, mood, personal space, and text or hand-drawn notes are stored on this device and survive the app process ending. Drafts and the selected perspective are not stored. The app does not provide account sign-in, remote communication, notifications, or synchronization between devices.
 
 ## Project status
 
@@ -37,10 +37,10 @@ The current prototype includes the first seven product stages and later approved
 - Kotlin, Jetpack Compose, and Material 3
 - A single Android application module: `:app`
 - Compose screens backed by screen-level ViewModels
-- A shared in-memory `FakeCoupleRepository` for the prototype state
+- A shared `CoupleRepository` contract with a Room adapter in the app and an in-memory fake for tests
 - JUnit tests for local logic and Android instrumentation tests for UI flows
 
-There is no backend or persistent data layer in the current prototype.
+There is no backend or synchronization between devices. The local data layer uses Room; see [local persistence](docs/features/local-persistence.md).
 
 ## Getting started
 

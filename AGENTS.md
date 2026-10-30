@@ -48,4 +48,4 @@ Leia, nesta ordem:
 
 ## Fase atual
 
-As Etapas 1–7 foram concluídas e aprovadas no dispositivo. Histórico e Mural permanecem em memória. A próxima etapa de produto ainda não foi definida. Consulte `dengo/06 - Desenvolvimento/Etapa Atual.md` e os ADRs mais recentes para o estado vigente; documentos iniciais podem descrever planos já superados.
+As Etapas 1–7 foram concluídas e aprovadas no dispositivo. Os Incrementos 1 e 2 da persistência local foram concluídos; dados publicados de pedidos, Histórico, mood, espaço pessoal e Mural agora usam Room no mesmo aparelho, conforme ADR-020 e ADR-021. Rascunhos e perspectiva não são persistidos. A próxima etapa de produto ainda não foi definida. Consulte `dengo/06 - Desenvolvimento/Etapa Atual.md` e os ADRs mais recentes para o estado vigente; documentos iniciais podem descrever planos já superados.
