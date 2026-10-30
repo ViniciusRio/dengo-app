@@ -1,6 +1,6 @@
 # Dengo — Plano de evolução técnica e laboratório de arquitetura Kotlin
 
-> **Status:** roadmap de estudo revisado em 2026-10-30. O primeiro laboratório backend isolado foi implementado no alcance do ADR-022; as fases posteriores continuam propostas.
+> **Status:** roadmap de estudo revisado em 2026-10-30. O primeiro laboratório backend está no ADR-022; o primeiro recorte de RabbitMQ isolado está no ADR-023. As fases posteriores continuam propostas.
 > **Objetivo:** servir como briefing para análise humana e por agente de IA, sem substituir as especificações e decisões vigentes do repositório.
 > **Repositório:** https://github.com/ViniciusRio/dengo-app
 > **Data da proposta:** 2026-10-29
@@ -26,7 +26,7 @@ A meta não é adicionar tecnologias apenas para constarem no currículo. Cada e
 
 Antes de propor alterações, ler **AGENTS.md** e, na ordem definida por ele, a documentação de produto, MVP, fluxos, design, especificações de funcionalidades e ADRs. Verificar também `docs/STATUS.md`, `dengo/06 - Desenvolvimento/Etapa Atual.md`, o código-fonte e os testes atuais.
 
-**Esta proposta não autoriza**: iniciar MVP 2, adicionar backend de produto, autenticação remota, sincronização, PostgreSQL, Redis ou mensageria; alterar comportamento de produto; executar commits ou push; declarar fases concluídas. Tudo isso exige decisão e aprovação humana conforme as regras do repositório. Em 2026-10-30, o responsável escolheu somente um laboratório backend isolado como próximo recorte técnico; essa escolha não amplia o escopo de produto.
+**Esta proposta não autoriza**: iniciar MVP 2, adicionar backend de produto, autenticação remota, sincronização, PostgreSQL, Redis ou mensageria de produto; alterar comportamento de produto; executar commits ou push; declarar fases concluídas. Tudo isso exige decisão e aprovação humana conforme as regras do repositório. Em 2026-10-30, o responsável escolheu o laboratório backend isolado e depois aprovou o recorte RabbitMQ sintético da mudança OpenSpec `study-rabbitmq-delivery-basics`. Essas escolhas não ampliam o escopo de produto.
 
 Em caso de divergência entre este briefing e documentação/código atual, **não presumir que este documento está correto**. Apontar a divergência, citar os arquivos e solicitar decisão.
 
@@ -149,6 +149,8 @@ Ambiente local: Docker Compose + Testcontainers
 
 ### Fase 4 — RabbitMQ como primeiro laboratório de mensageria
 
+**Primeiro recorte implementado (ADR-023):** perfil `rabbit-lab` com sinal sintético independente de pedidos, publisher confirm e roteamento obrigatório, ACK manual e teste de reentrega após falha anterior ao ACK. Não há outbox, retries limitados ou DLQ neste recorte. As linhas seguintes permanecem propostas para estudos posteriores, sem aprovação de integração com produto.
+
 - Publicar evento após confirmação da escrita (avaliar transactional outbox).
 - Consumir em worker Kotlin com ACK somente após sucesso.
 - Demonstrar duplicidade, falha antes do ACK, retries com limites, DLQ e reprocessamento manual seguro.
@@ -203,7 +205,7 @@ As perguntas 1, 2, 6 e 7 receberam respostas parciais nos Incrementos 2 e no lab
 
 ## 10. Instrução pronta para Codex / Claude Code
 
-**Registro histórico:** a instrução abaixo era adequada ao diagnóstico de 2026-10-29. Não deve ser reutilizada como comando para implementar Room nem para aprovar as fases futuras. O primeiro laboratório backend está registrado no ADR-022 e na mudança OpenSpec arquivada `2026-10-30-start-isolated-backend-lab`; o próximo recorte ainda não foi escolhido.
+**Registro histórico:** a instrução abaixo era adequada ao diagnóstico de 2026-10-29. Não deve ser reutilizada como comando para implementar Room nem para aprovar as fases futuras. O primeiro laboratório backend está registrado no ADR-022 e na mudança OpenSpec arquivada `2026-10-30-start-isolated-backend-lab`; o primeiro recorte RabbitMQ isolado está no ADR-023 e na mudança `study-rabbitmq-delivery-basics`.
 
 > **Tarefa: análise e planejamento apenas. Não implemente ainda.**
 >
@@ -228,4 +230,4 @@ A iniciativa terá sucesso quando for possível explicar e demonstrar, com códi
 
 ---
 
-**Próxima ação:** escolher o próximo problema de estudo ou etapa de produto com base na evidência do laboratório, sem iniciar automaticamente backend de produto, CQRS adicional ou mensageria.
+**Próxima ação:** revisar a evidência do primeiro recorte RabbitMQ e escolher um problema seguinte de estudo ou uma etapa de produto; não iniciar automaticamente backend de produto, CQRS adicional, outbox ou DLQ.

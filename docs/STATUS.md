@@ -36,6 +36,10 @@ Após escolha do responsável, foi criado `labs/backend/` com Kotlin/Spring Boot
 
 Nesta sessão, `./gradlew -p labs/backend test bootJar` passou com oito testes, e o smoke test local confirmou `200 []`, criação `201`, repetição `200` com o mesmo ID, escuta em loopback e `[]` após reinício. Com Gradle 8.14.5, passaram 91 testes unitários Android debug, 91 release e os builds debug/androidTest. Em rodada posterior, o A26 foi conectado, os dois APKs foram instalados e a suíte instrumentada completa terminou com `OK (24 tests)` após a troca do wrapper. Trata-se de execução automatizada, sem revisão humana nova de UI. A spec OpenSpec do laboratório e o roteiro de reprodução registram o alcance.
 
+## Laboratório RabbitMQ isolado
+
+O responsável aprovou a mudança OpenSpec `study-rabbitmq-delivery-basics`. O perfil opcional `rabbit-lab` usa sinais sintéticos, broker local e ACK manual; permanece separado de `/lab/requests` e do Android. O ADR-023 registra a decisão e seus limites. Testes do backend com broker real e smoke HTTP passaram em 2026-10-30; o perfil padrão foi verificado sem broker. Não há aprovação de backend de produto, sincronização ou nova etapa de produto.
+
 ## Aprovado
 
 - visão do produto;
