@@ -24,7 +24,7 @@ A meta não é adicionar tecnologias apenas para constarem no currículo. Cada e
 
 ## 2. Fontes de verdade e limites de autorização
 
-Antes de propor alterações, ler **AGENTS.md** e, na ordem definida por ele, a documentação de produto, MVP, fluxos, design, especificações de funcionalidades e ADRs. Verificar também `docs/STATUS.md`, `dengo/06 - Desenvolvimento/Etapa Atual.md`, o código-fonte e os testes atuais.
+Antes de propor alterações, ler **AGENTS.md** e, sob demanda conforme ele, a documentação de produto, MVP, fluxos, design, especificações de funcionalidades e ADRs. Verificar também `docs/STATUS.md`, o código-fonte e os testes atuais.
 
 **Esta proposta não autoriza**: iniciar MVP 2, adicionar backend de produto, autenticação remota, sincronização, PostgreSQL, Redis ou mensageria de produto; alterar comportamento de produto; executar commits ou push; declarar fases concluídas. Tudo isso exige decisão e aprovação humana conforme as regras do repositório. Em 2026-10-30, o responsável escolheu o laboratório backend isolado e depois aprovou o recorte RabbitMQ sintético da mudança OpenSpec `study-rabbitmq-delivery-basics`. Essas escolhas não ampliam o escopo de produto.
 
@@ -209,7 +209,7 @@ As perguntas 1, 2, 6 e 7 receberam respostas parciais nos Incrementos 2 e no lab
 
 > **Tarefa: análise e planejamento apenas. Não implemente ainda.**
 >
-> Analise este documento como proposta, não como decisão aprovada. Leia o `AGENTS.md` do repositório Dengo e siga sua ordem de leitura e suas regras. Inspecione a branch/HEAD atual, o código, testes, `docs/STATUS.md`, `dengo/06 - Desenvolvimento/Etapa Atual.md`, specs e ADRs, com atenção ao ADR-020.
+> Analise este documento como proposta, não como decisão aprovada. Leia o `AGENTS.md` do repositório Dengo e siga suas regras de leitura. Inspecione a branch/HEAD atual, o código, testes, `docs/STATUS.md`, specs e ADRs, com atenção ao ADR-020.
 >
 > Quero evoluir o Dengo para estudar SDD/OpenSpec, RabbitMQ, Kafka, Amazon SQS, CQRS, Redis/cache, disponibilidade/resiliência e observabilidade, utilizando Kotlin no Android e **preferencialmente Kotlin + Spring Boot** em um backend futuro. O objetivo é aprendizado demonstrável, sem introduzir complexidade artificial ou alterar o escopo do produto sem autorização.
 >
