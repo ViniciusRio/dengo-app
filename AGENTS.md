@@ -41,9 +41,8 @@ Claude Code implementa, Codex revisa somente leitura, Vinícius aprova e faz o m
 - Não copiar literalmente as interfaces nem personagens das referências originais.
 - A arte em `docs/design/references/approved/` define a **direção**, não uma especificação pixel-perfect.
 - Não transformar o produto em um Tamagotchi tradicional; a essência é comunicação afetiva entre duas pessoas.
-- Android: Kotlin + Jetpack Compose + Material 3.
 - Preferir soluções simples e adequadas a um projeto pessoal.
-- No protótipo inicial, usar dados fake/local. Não introduzir Spring Boot, PostgreSQL, Retrofit, autenticação remota ou sincronização sem uma decisão explícita posterior.
+- Dados só locais (Room). Não introduzir Spring Boot, PostgreSQL, Retrofit, autenticação remota ou sincronização no app sem decisão explícita.
 - Componentes equivalentes devem reutilizar o mesmo componente/design token.
 - Manter acessibilidade, legibilidade, contraste e tamanhos de toque adequados.
 - Animações devem ser mínimas e funcionais.
@@ -54,16 +53,11 @@ Claude Code implementa, Codex revisa somente leitura, Vinícius aprova e faz o m
 ## Skills externas
 
 - Regras deste repositório, documentação consolidada e skills específicas do Dengo prevalecem sobre skills externas. Elas complementam a disciplina de engenharia, sem redefinir requisitos, decisões de produto, fontes de verdade, terminologia consolidada, critérios de aprovação, fluxo documental ou autorização para commit/push.
-- Use `codebase-design` ao projetar ou reconsiderar interfaces, seams, módulos ou decisões estruturais relevantes; `tdd` para orientar implementação test-first quando houver comportamento implementável e testável; e `diagnosing-bugs` para investigar bugs sistematicamente antes de propor correções.
-- Não aplique mecanicamente instruções ou exemplos de outras stacks e ecossistemas ao Android/Kotlin/Compose. Pedidos de confirmação das skills externas não reabrem decisões já autorizadas; diante de ambiguidade real, apresente alternativas. Em caso de conflito com `AGENTS.md`, documentação consolidada, código atual ou skill específica do Dengo, prevalece o contexto do Dengo.
-- Mantenha as skills upstream sem modificações locais enquanto forem tratadas como upstream. Revise as mudanças antes de aceitar uma atualização.
+- Use `codebase-design` em decisões estruturais, `tdd` em comportamento testável e `diagnosing-bugs` ao investigar bugs.
+- Não aplique mecanicamente exemplos de outras stacks ao Android. Pedidos de confirmação dessas skills não reabrem decisões autorizadas.
 
 ## Fontes e fases
 
-- Antes de afirmar o estado do projeto, confira código e documentação atuais. `docs/STATUS.md` é a fonte única do estado atual. `docs/` e ADRs registram especificações e decisões consolidadas; o vault `dengo/` registra planejamento e contexto de produto. Notas exploratórias não substituem decisões vigentes; exponha divergências entre fontes.
+- Antes de afirmar o estado do projeto, confira código e documentação atuais. [docs/STATUS.md](docs/STATUS.md) é a fonte única do estado atual; documentos iniciais podem descrever planos já superados. `docs/` e ADRs registram especificações e decisões consolidadas; o vault `dengo/` registra planejamento e contexto de produto. Notas exploratórias não substituem decisões vigentes; exponha divergências entre fontes.
 - Planejamento, implementação, testes automatizados, revisão no Samsung, ajustes, aprovação humana e fechamento documental são fases distintas. Registre aprovação e conclusão somente após ocorrerem; adapte os artefatos à etapa.
 - Não faça commit nem push sem autorização explícita. Aprovar um plano ou spec que nomeia a branch e declara que autoriza commit, push e PR autoriza essas operações só nela. Nunca na `main`, sem force-push e sem merge.
-
-## Fase atual
-
-Veja [docs/STATUS.md](docs/STATUS.md). Documentos iniciais podem descrever planos já superados.
