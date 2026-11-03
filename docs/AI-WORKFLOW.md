@@ -78,6 +78,8 @@ No fluxo sequencial, o revisor somente leitura pode revisar o commit sem worktre
 
 Quando um agente repetir um erro já corrigido, acrescente-o às correções recorrentes do `AGENTS.md`. Deixe de fora o que o agente consegue ler no código.
 
+Mantenha as skills upstream (`tdd`, `codebase-design`, `diagnosing-bugs`) sem modificações locais enquanto forem tratadas como upstream. Revise as mudanças antes de aceitar uma atualização.
+
 ## Commits
 
 Conventional Commits (`feat(backend): ...`, `fix: ...`, `docs: ...`). O agente é identificado pelo trailer, não pelo prefixo:
