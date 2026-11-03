@@ -24,7 +24,7 @@ De tempos em tempos, inverta os papéis em uma tarefa para evitar pontos cegos.
 ### 2. Implementar
 - O trabalho acontece em branch própria (`feat/...`, `fix/...`, `chore/...`, `docs/...`), nunca na `main`.
 - O progresso fica no `tasks.md` da change.
-- Aprovar um plano ou spec que nomeia a branch autoriza commit e push só nela e a abertura do PR. Nunca autoriza push na `main`, force-push ou merge.
+- Aprovar um plano ou spec que nomeia a branch e declara que autoriza commit, push e PR autoriza essas operações só nela. Sem essa declaração, vale a autorização explícita. Nunca autoriza push na `main`, force-push ou merge.
 - **Pronto para o handoff:** lint, compilação e testes rodados pelo próprio implementador (comandos no `AGENTS.md`). Falha anterior à mudança é relatada, não escondida.
 
 ### 3. Handoff
@@ -33,7 +33,7 @@ O implementador abre o PR e escreve o handoff na descrição, com o formato de `
 ### 4. Revisar
 - O Codex revisa o diff com `/codex:adversarial-review` ou com o CLI em `--sandbox read-only`. A configuração padrão do Codex permite escrita, então o modo somente leitura precisa ser explícito.
 - O implementador dispara a revisão logo depois de abrir o PR, e também a segunda rodada, sem esperar pedido. Vinícius autorizou esse disparo em 2026-11-02; ele não autoriza merge.
-- Ele lê só a spec da mudança e os ADRs que ela cita, e devolve saída curta com `arquivo:linha`:
+- Ele começa pela spec da mudança e pelos ADRs que ela cita, e abre o código, as specs, as features e as decisões dos fluxos afetados pelo diff, mesmo que a spec não os cite. Não lê toda a documentação. Devolve saída curta com `arquivo:linha`:
   - **Bloqueante:** volta para o implementador corrigir.
   - **Sugestão:** fica registrada e não bloqueia o merge.
 - A rodada seguinte confere cada problema original contra o diff corrigido, não só o código novo.
@@ -43,7 +43,7 @@ O implementador abre o PR e escreve o handoff na descrição, com o formato de `
 
 ### 5. Aprovar
 - Só Vinícius faz merge. O `gh` usa a conta dele e o GitHub não permite aprovar o próprio PR, então **o merge é a aprovação**.
-- A proteção da `main` exige PR e 0 aprovações, vale para administradores e bloqueia force-push. Ela é a garantia real, porque instrução no `AGENTS.md` é só contexto.
+- A regra de merge precisa de proteção na `main`: PR obrigatório, 0 aprovações, valendo para administradores e sem force-push. Confira com `gh api repos/ViniciusRio/dengo-app/branches/main/protection`; se ela não existir, nada impede um push ou merge indevido, porque instrução no `AGENTS.md` é só contexto.
 - **O merge não prova aprovação no aparelho.** Em mudança de UI, a revisão no Samsung acontece antes do merge. Planejamento, testes, revisão no aparelho, aprovação humana e fechamento documental continuam sendo fases distintas.
 
 ### 6. Modo reserva (limite do Claude Code)

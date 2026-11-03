@@ -62,7 +62,7 @@ Claude Code implementa, Codex revisa somente leitura, Vinícius aprova e faz o m
 
 - Antes de afirmar o estado do projeto, confira código e documentação atuais. `docs/STATUS.md` é a fonte única do estado atual. `docs/` e ADRs registram especificações e decisões consolidadas; o vault `dengo/` registra planejamento e contexto de produto. Notas exploratórias não substituem decisões vigentes; exponha divergências entre fontes.
 - Planejamento, implementação, testes automatizados, revisão no Samsung, ajustes, aprovação humana e fechamento documental são fases distintas. Registre aprovação e conclusão somente após ocorrerem; adapte os artefatos à etapa.
-- Não faça commit nem push sem autorização explícita. Aprovar um plano ou spec que nomeia a branch autoriza commit e push só nela e a abertura do PR. Nunca na `main`, sem force-push e sem merge.
+- Não faça commit nem push sem autorização explícita. Aprovar um plano ou spec que nomeia a branch e declara que autoriza commit, push e PR autoriza essas operações só nela. Nunca na `main`, sem force-push e sem merge.
 
 ## Fase atual
 

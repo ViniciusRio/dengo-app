@@ -11,7 +11,7 @@ Compare **requisito aprovado → comportamento implementado**. Código, testes v
 
 ## Apuração
 
-1. Leia `AGENTS.md`. Localize a especificação/plano aprovado e os ADRs que ele cita. Abra outros documentos só quando a spec remeter a eles ou houver conflito a esclarecer. Registre versão, escopo e conflitos. Nota exploratória não revoga decisão consolidada; conflito oficial sem precedência demonstrável pede decisão humana.
+1. Leia `AGENTS.md`. Localize a especificação/plano aprovado e os ADRs que ele cita. Abra também código, specs, features e decisões dos fluxos afetados pelo diff, mesmo que a spec não os cite; os demais documentos, só quando a spec remeter a eles ou houver conflito a esclarecer. Registre versão, escopo e conflitos. Nota exploratória não revoga decisão consolidada; conflito oficial sem precedência demonstrável pede decisão humana.
 2. Separe cada afirmação da spec em **obrigatório**, **escolha permitida**, **exemplo**, **hipótese**, **adiado** ou **fora de escopo**. Não cobre uma solução literal onde houve liberdade deliberada.
 3. Inspecione código e testes reais, além de diff/commits pertinentes quando existirem. Trace cada requisito obrigatório até arquivos, trechos e testes; verifique também invariantes, casos de borda, efeitos colaterais e ausências exigidas. Um teste que confirma o comportamento atual sem testar o contrato não fecha a lacuna.
 4. Procure omissão, implementação parcial, desvio semântico, escopo extra, regressão, arquitetura sem justificativa, decisão de produto silenciosa e documentação ou alegação de aprovação prematura. Execute verificações automatizadas proporcionais à mudança quando úteis; registre comando e resultado. Testes verdes nunca substituem a comparação com a spec.
