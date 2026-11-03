@@ -30,7 +30,7 @@
 
 ## 4. Sincronização no app (`feat/app-remote-sync`)
 
-- [ ] 4.1 Criar `dengo-sync.db` com IDs do servidor e revisão, mantendo `dengo-local.db` intacto; verificar por teste que o arquivo antigo não é aberto nem alterado.
+- [ ] 4.1 Criar `dengo-sync.db` com IDs do servidor e revisão, mantendo `dengo-local.db` intacto e apagando os arquivos `dengo-session-*.db` da etapa 3; verificar por teste que o arquivo antigo não é aberto nem alterado.
 - [ ] 4.2 Implementar a nova implementação de `CoupleRepository` sobre a API, com as regras de resultado da spec e a tabela de tentativas pendentes; verificar com servidor falso cada linha da tabela de resultados, tentar de novo e descartar, inclusive depois de reabrir o app, com descarte que encontra escrita confirmada e comando igual antes de a cópia alcançar a revisão.
 - [ ] 4.3 Implementar os gatilhos de sincronização e o aplicar por página em transação; verificar interrupção no meio da paginação.
 - [ ] 4.4 Comunicar dados possivelmente desatualizados e falta de conexão, sem criar novo componente se um aviso existente servir; verificar leitura sem internet.
