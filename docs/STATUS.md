@@ -8,7 +8,7 @@ Fonte única do estado atual. Atualize ao parar um agente e mantenha em ~15 linh
 
 **Alcance das aprovações:** cada aprovação humana vale só para o que o ADR ou a feature descreve. TalkBack e fonte ampliada não foram validados em todas as telas.
 
-**Próximo:** dois aparelhos com backend próprio, escolhidos em 2026-11-03 (ADR-025). A spec `sync-couple-between-devices` foi aprovada; nada foi implementado. Próxima etapa: `feat/backend-core`.
+**Próximo:** dois aparelhos com backend próprio, escolhidos em 2026-11-03 (ADR-025). A spec `sync-couple-between-devices` foi aprovada. A etapa 1, `backend/` em `feat/backend-core`, está em revisão, testada só localmente com dados sintéticos e sem ligação com o app. Próxima etapa, depois do merge: `chore/backend-deploy`.
 
 **Bloqueios:** nenhum.
 

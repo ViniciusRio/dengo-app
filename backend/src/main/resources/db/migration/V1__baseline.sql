@@ -73,3 +73,16 @@ INSERT INTO personal_space (id, status, revision) VALUES (1, 'INACTIVE', 0);
 -- Segunda defesa da regra de duplicidade, além da serialização das escritas.
 CREATE UNIQUE INDEX one_active_request_per_predefined_type ON care_request (type)
     WHERE type <> 'OTHER' AND status IN ('PENDING', 'ACCEPTED');
+
+-- Chaves sem prazo: uma tentativa incerta pode ficar pendente por tempo indeterminado.
+-- A linha só fica visível no commit da escrita, e a unicidade faz outro envio esperar por ele.
+CREATE TABLE operation (
+    person        TEXT NOT NULL,
+    op_key        TEXT NOT NULL,
+    state         TEXT NOT NULL CHECK (state IN ('COMPLETED', 'CANCELLED')),
+    fingerprint   TEXT,
+    http_status   INT,
+    response_body TEXT,
+    revision      BIGINT,
+    PRIMARY KEY (person, op_key)
+);

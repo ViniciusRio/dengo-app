@@ -28,7 +28,7 @@ private const val CODE_LENGTH = 8
 // Sem 0, O, 1, I e L, que se confundem ao digitar.
 private const val CODE_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"
 
-private fun sha256(value: String): String =
+internal fun sha256(value: String): String =
     HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(value.toByteArray()))
 
 /** Vínculo, sessões e revogação. Só hashes de código e de token chegam ao banco. */

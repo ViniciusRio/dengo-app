@@ -18,7 +18,7 @@ Build Gradle próprio, com o wrapper da raiz, Kotlin, Spring Boot, Java 21, Post
 
 ### 2. O servidor é a fonte da verdade; o Room é cópia
 
-As regras de transição, duplicidade, espaço pessoal, autoria e limites passam ao servidor. O app valida só para dar retorno imediato na interface. **Alternativa descartada:** Room como fonte e sincronização bidirecional, que exigiria resolver conflitos para um caso em que escrever sem internet não é requisito.
+As regras de transição, duplicidade, espaço pessoal, autoria e limites passam ao servidor. O texto de `OTHER` continua sem teto de regra, como no app, por decisão de Vinícius em 2026-11-03. O app valida só para dar retorno imediato na interface. **Alternativa descartada:** Room como fonte e sincronização bidirecional, que exigiria resolver conflitos para um caso em que escrever sem internet não é requisito.
 
 ### 3. Sem escrita offline
 
@@ -26,7 +26,7 @@ Sem conexão, o app mostra a última cópia e a ação falha com aviso. **Motivo
 
 ### 4. Identidade por código de uso único
 
-Um comando administrativo no servidor gera um código curto para uma pessoa, válido por 15 minutos, com tentativas limitadas. O app troca o código por um token aleatório de 256 bits. O servidor guarda só o hash, e o app guarda o token cifrado com chave do Android Keystore. Vincular de novo revoga o aparelho anterior da mesma pessoa, o que cobre troca e perda de celular. Um comando administrativo também revoga diretamente. **Alternativa descartada:** login com senha, que traria recuperação de senha e cadastro sem benefício para duas pessoas.
+Um comando administrativo no servidor gera um código curto para uma pessoa, válido por 15 minutos, com tentativas limitadas. O app troca o código por um token aleatório de 256 bits. O servidor guarda só o hash, e o app guarda o token cifrado com chave do Android Keystore. Vincular de novo revoga o aparelho anterior da mesma pessoa, o que cobre troca e perda de celular. Um comando administrativo também revoga diretamente. O limite, definido por Vinícius em 2026-11-03, usa um contador global no banco: depois de 5 tentativas inválidas, o vínculo fica recusado por 15 minutos, mesmo com código correto. Quem conhecer o endereço pode atrasar um vínculo, mas não obtém acesso; o limite por IP foi descartado porque dependeria de confiar em cabeçalhos do proxy. **Alternativa descartada:** login com senha, que traria recuperação de senha e cadastro sem benefício para duas pessoas.
 
 ### 5. A API deriva quem age da sessão
 

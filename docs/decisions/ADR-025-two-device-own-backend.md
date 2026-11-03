@@ -2,7 +2,7 @@
 
 ## Status
 
-Escolhas de produto e de direção tomadas pelo responsável em 2026-11-03. O desenho técnico detalhado está em `openspec/changes/sync-couple-between-devices/`, com spec aprovada pelo responsável em 2026-11-03. Nada foi implementado. Quando a implementação for concluída, este ADR recebe a evidência e substitui em parte o ADR-021 e o ADR-002.
+Escolhas de produto e de direção tomadas pelo responsável em 2026-11-03. O desenho técnico detalhado está em `openspec/changes/sync-couple-between-devices/`, com spec aprovada pelo responsável em 2026-11-03. A implementação segue por etapas, e o estado atual está em `docs/STATUS.md`. Quando ela for concluída, este ADR recebe a evidência e substitui em parte o ADR-021 e o ADR-002.
 
 ## Contexto
 

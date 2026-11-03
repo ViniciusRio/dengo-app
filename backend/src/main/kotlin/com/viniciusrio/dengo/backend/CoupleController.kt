@@ -2,14 +2,17 @@ package com.viniciusrio.dengo.backend
 
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestAttribute
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
 
 data class CreateRequestBody(val type: CareRequestType, val message: String? = null)
+data class SetMoodBody(val option: MoodOption)
 
 private fun StoredResponse.toEntity(): ResponseEntity<String> =
     ResponseEntity.status(status).contentType(MediaType.APPLICATION_JSON).body(json)
@@ -21,7 +24,7 @@ class CoupleController(private val operations: Operations, private val commands:
         @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
         @RequestHeader("Idempotency-Key") key: String,
         @RequestBody body: CreateRequestBody,
-    ): ResponseEntity<String> = operations.execute { context ->
+    ) = operations.execute(actor, key, listOf("createRequest", body.type, body.message)) { context ->
         commands.createRequest(context, actor, body.type, body.message)
     }.toEntity()
 
@@ -30,25 +33,47 @@ class CoupleController(private val operations: Operations, private val commands:
         @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
         @RequestHeader("Idempotency-Key") key: String,
         @PathVariable id: Long,
-    ): ResponseEntity<String> = operations.execute { context -> commands.acceptRequest(context, actor, id) }.toEntity()
+    ) = operations.execute(actor, key, listOf("accept", id)) { commands.acceptRequest(it, actor, id) }.toEntity()
 
     @PostMapping("/v1/requests/{id}/decline")
     fun decline(
         @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
         @RequestHeader("Idempotency-Key") key: String,
         @PathVariable id: Long,
-    ): ResponseEntity<String> = operations.execute { context -> commands.declineRequest(context, actor, id) }.toEntity()
+    ) = operations.execute(actor, key, listOf("decline", id)) { commands.declineRequest(it, actor, id) }.toEntity()
 
     @PostMapping("/v1/requests/{id}/acknowledge")
     fun acknowledge(
         @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
         @RequestHeader("Idempotency-Key") key: String,
         @PathVariable id: Long,
-    ): ResponseEntity<String> = operations.execute { context -> commands.acknowledgeRequest(context, actor, id) }.toEntity()
+    ) = operations.execute(actor, key, listOf("acknowledge", id)) { commands.acknowledgeRequest(it, actor, id) }.toEntity()
+
+    @PutMapping("/v1/mood")
+    fun setMood(
+        @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
+        @RequestHeader("Idempotency-Key") key: String,
+        @RequestBody body: SetMoodBody,
+    ) = operations.execute(actor, key, listOf("setMood", body.option)) { commands.setMood(it, actor, body.option) }.toEntity()
 
     @PostMapping("/v1/personal-space")
     fun activatePersonalSpace(
         @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
         @RequestHeader("Idempotency-Key") key: String,
-    ): ResponseEntity<String> = operations.execute { context -> commands.activatePersonalSpace(context, actor) }.toEntity()
+    ) = operations.execute(actor, key, listOf("activatePersonalSpace")) { commands.activatePersonalSpace(it, actor) }.toEntity()
+
+    @DeleteMapping("/v1/personal-space")
+    fun endPersonalSpace(
+        @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
+        @RequestHeader("Idempotency-Key") key: String,
+    ) = operations.execute(actor, key, listOf("endPersonalSpace")) { commands.endPersonalSpace(it, actor) }.toEntity()
+
+    @DeleteMapping("/v1/operations/{key}")
+    fun discard(
+        @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
+        @PathVariable key: String,
+    ): ResponseEntity<Any> {
+        if (!isValidOperationKey(key)) return ResponseEntity.badRequest().body(ApiError("IDEMPOTENCY_KEY_INVALID"))
+        return ResponseEntity.ok(operations.discard(actor, key))
+    }
 }
