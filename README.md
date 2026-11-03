@@ -82,3 +82,4 @@ The project has local unit tests under `app/src/test` and Android instrumentatio
 - [Feature specifications](docs/features/)
 - [Screen and design documentation](docs/design/)
 - [Architecture and product decisions](docs/decisions/)
+- [Working with AI agents](docs/AI-WORKFLOW.md)
