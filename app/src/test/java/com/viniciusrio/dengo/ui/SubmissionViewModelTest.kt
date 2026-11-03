@@ -60,11 +60,11 @@ class SubmissionViewModelTest {
             requestWrites++
             return requestResult.await()
         }
-        override suspend fun createMuralNote(authorId: PartnerId, text: String): WriteResult<MuralNote> {
+        override suspend fun createMuralNote(text: String): WriteResult<MuralNote> {
             textWrites++
             return textResult.await()
         }
-        override suspend fun createMuralDrawing(authorId: PartnerId, aspectRatio: Float, strokes: List<DrawingStroke>): WriteResult<MuralNote> {
+        override suspend fun createMuralDrawing(aspectRatio: Float, strokes: List<DrawingStroke>): WriteResult<MuralNote> {
             drawingWrites++
             return drawingResult.await()
         }
@@ -171,8 +171,8 @@ class SubmissionViewModelTest {
         val mural = MuralViewModel(repository)
         mural.openText()
         mural.updateTextDraft("Oi")
-        mural.leaveNote(PartnerId.LIDIANNE, "Oi")
-        mural.leaveNote(PartnerId.LIDIANNE, "Oi")
+        mural.leaveNote("Oi")
+        mural.leaveNote("Oi")
         advanceUntilIdle()
         assertEquals(1, repository.textWrites)
         assertEquals(ComposerMode.TEXT, mural.composer.value.mode)
@@ -187,7 +187,7 @@ class SubmissionViewModelTest {
         assertTrue(mural.textSubmission.value is SubmissionState.Reverted)
         assertEquals("Oi", mural.composer.value.textDraft)
         repository.textResult = CompletableDeferred()
-        mural.leaveNote(PartnerId.LIDIANNE, "Oi")
+        mural.leaveNote("Oi")
         advanceUntilIdle()
         repository.textResult.complete(WriteResult.Uncertain(IllegalStateException("unknown")))
         advanceUntilIdle()
@@ -195,7 +195,7 @@ class SubmissionViewModelTest {
         assertTrue(mural.textSubmission.value is SubmissionState.Uncertain)
         assertEquals("Oi", mural.composer.value.textDraft)
         repository.textResult = CompletableDeferred()
-        mural.leaveNote(PartnerId.LIDIANNE, "Oi")
+        mural.leaveNote("Oi")
         advanceUntilIdle()
         repository.textResult.complete(WriteResult.Confirmed(MuralNote(1, PartnerId.LIDIANNE, MuralContent.Text("Oi"), Instant.EPOCH), true))
         advanceUntilIdle()
@@ -207,14 +207,14 @@ class SubmissionViewModelTest {
         val mural = MuralViewModel(repository)
         mural.openText()
         mural.updateTextDraft("Ainda escrevendo")
-        mural.leaveNote(PartnerId.LIDIANNE, "Ainda escrevendo")
+        mural.leaveNote("Ainda escrevendo")
         advanceUntilIdle()
 
         mural.openText()
         mural.openDrawing()
         mural.discardDraft()
-        mural.leaveNote(PartnerId.LIDIANNE, "Ainda escrevendo")
-        assertTrue(!mural.publishDrawing(PartnerId.LIDIANNE))
+        mural.leaveNote("Ainda escrevendo")
+        assertTrue(!mural.publishDrawing())
         advanceUntilIdle()
 
         assertEquals(ComposerMode.TEXT, mural.composer.value.mode)
@@ -229,14 +229,14 @@ class SubmissionViewModelTest {
         val mural = MuralViewModel(repository)
         mural.openDrawing()
         mural.addStroke(listOf(DrawingPoint(0.5f, 0.5f)), 1f)
-        assertTrue(mural.publishDrawing(PartnerId.VINICIUS))
+        assertTrue(mural.publishDrawing())
         advanceUntilIdle()
 
         mural.openDrawing()
         mural.openText()
         mural.discardDraft()
-        mural.leaveNote(PartnerId.VINICIUS, "Não publicar")
-        assertTrue(!mural.publishDrawing(PartnerId.VINICIUS))
+        mural.leaveNote("Não publicar")
+        assertTrue(!mural.publishDrawing())
         advanceUntilIdle()
 
         assertEquals(ComposerMode.DRAWING, mural.composer.value.mode)
@@ -251,8 +251,8 @@ class SubmissionViewModelTest {
         val mural = MuralViewModel(repository)
         mural.openDrawing()
         mural.addStroke(listOf(DrawingPoint(0.5f, 0.5f)), 1f)
-        assertTrue(mural.publishDrawing(PartnerId.VINICIUS))
-        assertTrue(!mural.publishDrawing(PartnerId.VINICIUS))
+        assertTrue(mural.publishDrawing())
+        assertTrue(!mural.publishDrawing())
         advanceUntilIdle()
         assertEquals(1, repository.drawingWrites)
         assertEquals(1, mural.composer.value.strokes.size)
@@ -262,14 +262,14 @@ class SubmissionViewModelTest {
         advanceUntilIdle()
         assertEquals(1, mural.composer.value.strokes.size)
         repository.drawingResult = CompletableDeferred()
-        mural.publishDrawing(PartnerId.VINICIUS)
+        mural.publishDrawing()
         advanceUntilIdle()
         repository.drawingResult.complete(WriteResult.Uncertain(IllegalStateException("unknown")))
         advanceUntilIdle()
         assertEquals(1, mural.composer.value.strokes.size)
         assertTrue(mural.composer.value.submission is SubmissionState.Uncertain)
         repository.drawingResult = CompletableDeferred()
-        mural.publishDrawing(PartnerId.VINICIUS)
+        mural.publishDrawing()
         advanceUntilIdle()
         repository.drawingResult.complete(WriteResult.Confirmed(MuralNote(1, PartnerId.VINICIUS,
             MuralContent.Drawing(1f, mural.composer.value.strokes), Instant.EPOCH), true))

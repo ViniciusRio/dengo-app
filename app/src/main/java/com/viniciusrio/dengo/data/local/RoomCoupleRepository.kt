@@ -30,6 +30,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 internal class RoomCoupleRepository(
+    private val actor: PartnerId,
     private val database: DengoDatabase,
     private val scope: CoroutineScope,
     private val clock: Clock = Clock.systemDefaultZone(),
@@ -128,14 +129,14 @@ internal class RoomCoupleRepository(
         WriteResult.Confirmed(Unit, true)
     }
 
-    override suspend fun acknowledgeRequest(requestId: Long, actorId: PartnerId): WriteResult<Unit> = write { current ->
+    override suspend fun acknowledgeRequest(requestId: Long): WriteResult<Unit> = write { current ->
         val request = current.requests.firstOrNull { it.id == requestId }
-        if (actorId != PartnerId.LIDIANNE || request?.requesterId != actorId ||
+        if (actor != PartnerId.LIDIANNE || request?.requesterId != actor ||
             request.status != CareRequestStatus.ACCEPTED
         ) return@write WriteResult.Reverted("Request cannot be acknowledged")
         val now = clock.instant()
         dao.updateRequestStatus(requestId, CareRequestStatus.ACKNOWLEDGED.name)
-        dao.insertHistory(HistoryEvent.RequestAcknowledged(requestId, actorId, now).toRow())
+        dao.insertHistory(HistoryEvent.RequestAcknowledged(requestId, actor, now).toRow())
         WriteResult.Confirmed(Unit, true)
     }
 
@@ -164,20 +165,20 @@ internal class RoomCoupleRepository(
         WriteResult.Confirmed(Unit, true)
     }
 
-    override suspend fun createMuralNote(authorId: PartnerId, text: String): WriteResult<MuralNote> = write {
+    override suspend fun createMuralNote(text: String): WriteResult<MuralNote> = write {
         val normalized = text.trim()
         if (normalized.isEmpty() || normalized.muralCodePointCount() > MURAL_NOTE_MAX_CODE_POINTS) {
             return@write WriteResult.Reverted("Invalid mural text")
         }
         val now = clock.instant()
         val id = dao.insertMuralNote(MuralNoteRow(
-            authorId = authorId.name, kind = "TEXT", text = normalized, aspectRatio = null,
+            authorId = actor.name, kind = "TEXT", text = normalized, aspectRatio = null,
             createdAtIso = now.toString(),
         ))
-        WriteResult.Confirmed(MuralNote(id, authorId, MuralContent.Text(normalized), now), true)
+        WriteResult.Confirmed(MuralNote(id, actor, MuralContent.Text(normalized), now), true)
     }
 
-    override suspend fun createMuralDrawing(authorId: PartnerId, aspectRatio: Float, strokes: List<DrawingStroke>): WriteResult<MuralNote> = write {
+    override suspend fun createMuralDrawing(aspectRatio: Float, strokes: List<DrawingStroke>): WriteResult<MuralNote> = write {
         if (!aspectRatio.isFinite() || aspectRatio <= 0f || strokes.isEmpty() || !strokes.all { stroke ->
             (stroke.aspectRatio == null || (stroke.aspectRatio.isFinite() && stroke.aspectRatio > 0f)) &&
                 stroke.points.isNotEmpty() && stroke.points.all { point ->
@@ -187,13 +188,13 @@ internal class RoomCoupleRepository(
         val now = clock.instant()
         val copy = strokes.map { it.copy(points = it.points.toList()) }
         val id = dao.insertMuralNote(MuralNoteRow(
-            authorId = authorId.name, kind = "DRAWING", text = null, aspectRatio = aspectRatio,
+            authorId = actor.name, kind = "DRAWING", text = null, aspectRatio = aspectRatio,
             createdAtIso = now.toString(),
         ))
         dao.insertStrokes(copy.mapIndexed { index, stroke -> DrawingStrokeRow(id, index, stroke.argb, stroke.aspectRatio) })
         dao.insertPoints(copy.flatMapIndexed { strokeIndex, stroke ->
             stroke.points.mapIndexed { pointIndex, point -> DrawingPointRow(id, strokeIndex, pointIndex, point.x, point.y) }
         })
-        WriteResult.Confirmed(MuralNote(id, authorId, MuralContent.Drawing(aspectRatio, copy), now), true)
+        WriteResult.Confirmed(MuralNote(id, actor, MuralContent.Drawing(aspectRatio, copy), now), true)
     }
 }

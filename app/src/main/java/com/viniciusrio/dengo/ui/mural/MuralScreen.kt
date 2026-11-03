@@ -83,7 +83,7 @@ fun MuralScreen(
     onRetryRead: () -> Unit = {},
     textSubmission: SubmissionState = SubmissionState.Idle,
     authorId: PartnerId,
-    onLeaveNote: (PartnerId, String) -> Unit,
+    onLeaveNote: (String) -> Unit,
     onTextDraftChanged: (String) -> Unit = {},
     onOpenChooser: () -> Unit,
     onOpenText: () -> Unit,
@@ -92,7 +92,7 @@ fun MuralScreen(
     onStroke: (List<DrawingPoint>, Float, Int) -> Unit,
     onUndo: () -> Unit,
     onClear: () -> Unit,
-    onPublishDrawing: (PartnerId) -> Boolean,
+    onPublishDrawing: () -> Boolean,
     onRequestExit: () -> Boolean,
     onContinueDrawing: () -> Unit,
     onDiscard: () -> Unit,
@@ -170,7 +170,7 @@ fun MuralScreen(
             draft = composer.textDraft,
             onDraftChanged = onTextDraftChanged,
             onDismiss = { onRequestExit() },
-            onSubmit = { text -> onLeaveNote(authorId, text) },
+            onSubmit = onLeaveNote,
         )
     }
     if (composer.mode == ComposerMode.DRAWING) {
@@ -230,7 +230,7 @@ private fun DrawingComposer(
     onStroke: (List<DrawingPoint>, Float, Int) -> Unit,
     onUndo: () -> Unit,
     onClear: () -> Unit,
-    onPublish: (PartnerId) -> Boolean,
+    onPublish: () -> Boolean,
     onRequestExit: () -> Boolean,
     readNotice: ReadNotice?,
     onRetryRead: () -> Unit,
@@ -282,7 +282,7 @@ private fun DrawingComposer(
                     Text(stringResource(R.string.mural_cancel))
                 }
                 Button(
-                    onClick = { onPublish(authorId) },
+                    onClick = { onPublish() },
                     enabled = composer.strokes.isNotEmpty() && composer.submission != SubmissionState.Sending,
                     modifier = Modifier.heightIn(min = 48.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = accent),

@@ -106,8 +106,8 @@ class ViniciusHomeViewModelTest {
         val repository = FakeCoupleRepository(clock)
         val lidianne = HomeViewModel(repository)
         val vinicius = ViniciusHomeViewModel(repository, clock)
-        repository.createMuralNote(PartnerId.LIDIANNE, "Um recado").confirmed()
-        val latest = repository.createMuralNote(PartnerId.VINICIUS, "Outro recado").confirmed()
+        repository.actingAs(PartnerId.LIDIANNE).createMuralNote("Um recado").confirmed()
+        val latest = repository.actingAs(PartnerId.VINICIUS).createMuralNote("Outro recado").confirmed()
         advanceUntilIdle()
 
         assertEquals(latest, lidianne.state.value.ready().latestMuralNote)
@@ -119,10 +119,8 @@ class ViniciusHomeViewModelTest {
         val repository = FakeCoupleRepository(clock)
         val lidianne = HomeViewModel(repository)
         val vinicius = ViniciusHomeViewModel(repository, clock)
-        repository.createMuralNote(PartnerId.LIDIANNE, "Texto").confirmed()
-        val latest = repository.createMuralDrawing(
-            PartnerId.VINICIUS,
-            1.5f,
+        repository.actingAs(PartnerId.LIDIANNE).createMuralNote("Texto").confirmed()
+        val latest = repository.actingAs(PartnerId.VINICIUS).createMuralDrawing(1.5f,
             listOf(com.viniciusrio.dengo.model.DrawingStroke(
                 0xFF315F91.toInt(),
                 listOf(com.viniciusrio.dengo.model.DrawingPoint(0.4f, 0.5f)),
@@ -147,7 +145,7 @@ class ViniciusHomeViewModelTest {
         assertEquals(listOf(accepted.id, pending.id), viewModel.state.value.ready().requests.map { it.id })
         assertNull(viewModel.state.value.ready().acknowledgedRequest)
 
-        repository.acknowledgeRequest(accepted.id, PartnerId.LIDIANNE)
+        repository.actingAs(PartnerId.LIDIANNE).acknowledgeRequest(accepted.id)
         advanceUntilIdle()
         assertEquals(listOf(pending.id), viewModel.state.value.ready().requests.map { it.id })
         assertEquals(accepted.id, viewModel.state.value.ready().acknowledgedRequest?.id)

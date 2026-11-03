@@ -40,7 +40,7 @@ class QuickWriteFeedbackTest {
             return result.await() as WriteResult<T>
         }
         override suspend fun createRequest(type: CareRequestType, message: String?): WriteResult<CareRequest> = answer()
-        override suspend fun acknowledgeRequest(requestId: Long, actorId: PartnerId): WriteResult<Unit> = answer()
+        override suspend fun acknowledgeRequest(requestId: Long): WriteResult<Unit> = answer()
         override suspend fun setMood(option: MoodOption): WriteResult<Unit> = answer()
         override suspend fun activatePersonalSpace(): WriteResult<Unit> = answer()
         override suspend fun endPersonalSpace(): WriteResult<Unit> = answer()

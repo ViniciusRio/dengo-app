@@ -23,7 +23,7 @@
 
 ## 3. Identidade no app (`feat/app-device-identity`)
 
-- [ ] 3.1 Adicionar a permissão de internet e bloquear tráfego sem HTTPS, com exceção só no build debug para servidor local.
+- [x] 3.1 Adicionar a permissão de internet e bloquear tráfego sem HTTPS, com exceção só no build debug para servidor local.
 - [ ] 3.2 Guardar o token cifrado com o Keystore; verificar que `allowBackup` e as regras de extração continuam excluindo os dados.
 - [ ] 3.3 Criar a tela de vínculo, com estados de erro, código expirado e sem conexão, consultando `docs/design/*`; verificar acessibilidade e toque.
 - [ ] 3.4 Derivar a perspectiva da sessão, retirar a troca do Perfil e retirar quem age de `CoupleRepository`; adaptar Fake, ViewModels e testes; verificar a suíte unitária e instrumentada.

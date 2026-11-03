@@ -1,3 +1,4 @@
+import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -10,6 +11,10 @@ plugins {
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+val localProperties = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
 }
 
 android {
@@ -33,6 +38,18 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+    buildTypes {
+        debug {
+            // Backend local, alcançado no aparelho com `adb reverse tcp:8080 tcp:8080`.
+            buildConfigField("String", "DENGO_API_URL", "\"${localProperties.getProperty("dengo.api.url.debug", "http://localhost:8080")}\"")
+        }
+        release {
+            // Sem servidor definitivo ainda: o domínio é decidido na etapa 2, e este endereço nunca resolve.
+            buildConfigField("String", "DENGO_API_URL", "\"${localProperties.getProperty("dengo.api.url", "https://api.dengo.invalid")}\"")
+        }
     }
 }
 
@@ -61,6 +78,9 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    // No aparelho, org.json vem do Android; nos testes da JVM o android.jar só tem stubs.
+    testImplementation(libs.org.json)
+    testImplementation(libs.okhttp.mockwebserver)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.test.runner)

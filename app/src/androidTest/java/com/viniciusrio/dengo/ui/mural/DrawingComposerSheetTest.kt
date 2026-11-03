@@ -38,7 +38,7 @@ class DrawingComposerSheetTest {
                     state = MuralUiState(),
                     composer = composer,
                     authorId = PartnerId.LIDIANNE,
-                    onLeaveNote = { _, _ -> },
+                    onLeaveNote = {},
                     onOpenChooser = {},
                     onOpenText = {},
                     onOpenDrawing = {},

@@ -190,7 +190,7 @@ class HistoryViewModelTest {
         val before = repository.snapshot().toHistoryUiState(clock.zone).days.single().entries.single() as RequestStory
         assertEquals(2, before.steps.size)
 
-        repository.acknowledgeRequest(request.id, PartnerId.LIDIANNE)
+        repository.actingAs(PartnerId.LIDIANNE).acknowledgeRequest(request.id)
         val after = repository.snapshot().toHistoryUiState(clock.zone).days.single().entries.single() as RequestStory
         assertEquals(
             listOf(HistoryEvent.RequestCreated::class, HistoryEvent.RequestAccepted::class,
