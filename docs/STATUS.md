@@ -8,10 +8,10 @@ Fonte única do estado atual. Atualize ao parar um agente e mantenha em ~15 linh
 
 **Alcance das aprovações:** cada aprovação humana vale só para o que o ADR ou a feature descreve. TalkBack e fonte ampliada não foram validados em todas as telas.
 
-**Próximo:** a próxima etapa de produto não foi definida e depende de planejamento e decisão humana.
+**Próximo:** dois aparelhos com backend próprio, escolhidos em 2026-11-03 (ADR-025). A spec `sync-couple-between-devices` foi aprovada; nada foi implementado. Próxima etapa: `feat/backend-core`.
 
 **Bloqueios:** nenhum.
 
-**Não mexer sem decisão registrada:** backend de produto, sincronização e autenticação remota; persistência de rascunhos e perspectiva; o banco não é apagado em falha de leitura. Decisões de produto vigentes: rosa e azul sobre base creme, e espaço pessoal separado de pedido de cuidado.
+**Não mexer sem decisão registrada:** backend de produto, sincronização e autenticação remota fora do que a spec aprovada definir; persistência de rascunhos e perspectiva; o banco não é apagado em falha de leitura. Decisões de produto vigentes: rosa e azul sobre base creme, e espaço pessoal separado de pedido de cuidado.
 
 **Ainda pode mudar:** nome definitivo do app, textos finais dos CTAs, pequenos ajustes de paleta e contraste, recortes dos personagens como assets de runtime e arquitetura do backend futuro.
