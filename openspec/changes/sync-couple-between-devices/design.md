@@ -137,9 +137,12 @@ VPS pequena com pelo menos 2 GB de RAM, Docker Compose, PostgreSQL local à VPS 
 
 Cada etapa segue o fluxo de `docs/AI-WORKFLOW.md`: PR próprio, revisão do Codex e merge por Vinícius.
 
+**Ordem de execução:** em 2026-11-03, depois do merge da etapa 1, Vinícius decidiu adiar a VPS. A ordem passa a ser 3, 4, 6, 5, 2 e 7, com os números e as branches mantidos. As etapas 3, 4, 6 e 5 usam o backend no computador de desenvolvimento, com dados sintéticos e a exceção de HTTP só no build debug. **Motivo:** o uso diário só começa com tudo pronto, então um servidor contratado antes ficaria parado e custando. **Limite aceito:** uso fora da rede local, HTTPS público, proxy e limite de memória só são exercitados na etapa 2, e o teste de notificações em repouso precisa ser repetido com o servidor definitivo. **Alternativa descartada:** manter a VPS antes do app, que anteciparia esses problemas ao custo de mensalidades sem uso.
+
 ## Decisões em aberto
 
 - Domínio a usar e VPS exata, com preço conferido na hora de contratar.
 - Modelo e versão do Android do Motorola.
 - Textos finais de notificações e da tela de vínculo.
 - Teto de tamanho do desenho, depois da medição.
+- Teto técnico do corpo JSON da API, antes de expor o servidor na etapa 2. Hoje não há limite: um pedido `OTHER` de 5 MB foi aceito com uma sessão válida.
