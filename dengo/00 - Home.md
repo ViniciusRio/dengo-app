@@ -3,7 +3,7 @@
 App afetivo para comunicação entre Lidianne e Vinícius.
 
 ## Estado atual
-Última etapa concluída e aprovada no dispositivo: Etapa 7 — [[Mural]]. Próxima etapa de produto ainda não definida.
+Veja [docs/STATUS.md](../docs/STATUS.md).
 
 ## Produto
 - [[Visão do Produto]]

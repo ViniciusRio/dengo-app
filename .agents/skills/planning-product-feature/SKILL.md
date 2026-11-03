@@ -12,7 +12,7 @@ Recomende após reconstruir o estado vigente. Recomendação não aprova etapa: 
 ## Apuração antes da recomendação
 
 1. Leia `AGENTS.md`. Confira código e testes relevantes para distinguir implementação de descrição.
-2. Consulte `docs/` consolidado: visão, MVP, fluxos, feature pertinente e ADRs recentes. Confira no vault `dengo/` Roadmap, Backlog, Etapa Atual e Decisões de Produto; abra notas de UX, regras e histórico pertinentes.
+2. Consulte `docs/STATUS.md` para o estado atual e o `docs/` consolidado: visão, MVP, fluxos, feature pertinente e ADRs recentes. Confira no vault `dengo/` Roadmap, Backlog e Decisões de Produto; abra notas de UX, regras e histórico pertinentes.
 3. Separe as evidências em: **decisão aprovada**, **comportamento implementado**, **ideia exploratória**, **dívida ou inconsistência** e **decisão pendente**. Use o código para afirmar implementação; use decisões registradas e o estado vigente para afirmar aprovação. Se as fontes divergirem, exponha a divergência e sua consequência.
 4. Compare alternativas reais para a próxima entrega por valor para o casal, dependências, risco, tamanho e impacto arquitetural. Inclua a opção de não acrescentar funcionalidade quando ela for plausível. Indique evidências e incertezas; não transforme prioridade de backlog, proposta inicial ou ideia do vault em requisito fechado.
 

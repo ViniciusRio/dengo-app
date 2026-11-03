@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./build/**)",
+      "Read(./app/build/**)",
+      "Read(./.gradle/**)",
+      "Read(./.kotlin/**)",
+      "Read(./labs/backend/build/**)",
+      "Read(./labs/backend/.gradle/**)",
+      "Read(./docs/assets/**)"
+    ]
+  }
+}

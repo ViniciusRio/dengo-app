@@ -6,17 +6,35 @@ Este repositório contém o app Android **Dengo**, de interação afetiva entre 
 
 ## Antes de programar
 
-Leia, nesta ordem:
-1. `docs/PRODUCT.md`
-2. `docs/MVP.md`
-3. `docs/USER-FLOWS.md`
-4. `docs/design/SCREENS.md`
-5. `docs/design/REFERENCES.md`
-6. `docs/design/DESIGN-SYSTEM.md`
-7. `docs/design/CHARACTERS.md`
-8. `docs/design/COMPONENTS.md`
-9. a especificação relevante em `docs/features/`
-10. os ADRs em `docs/decisions/`
+Leia sob demanda:
+- A spec da mudança em `openspec/changes/<change>/` ou, sem change ativa, em `openspec/specs/`; e a feature relevante em `docs/features/`.
+- `docs/design/*` e imagens de referência somente se a tarefa mexer em UI.
+- Um ADR somente quando a tarefa tocar a decisão dele. Índice: `docs/decisions/README.md`.
+- `docs/PRODUCT.md`, `docs/MVP.md` e `docs/USER-FLOWS.md` somente em tarefas de produto, fluxo ou planejamento.
+
+## Estrutura
+
+`app/`: Android (`:app`). `labs/backend/`: laboratório isolado, sem ligação com o app. `openspec/`: specs e changes. `docs/`: documentação consolidada. `dengo/`: vault de produto.
+
+## Comandos
+
+Rode com `set -o pipefail; <comando> 2>&1 | tail -50`:
+- Teste focado: `./gradlew :app:testDebugUnitTest --tests "*HomeViewModelTest*" -q`
+- Lab focado: `./gradlew -p labs/backend test --tests "*CareRequestCatalog*" -q`
+- Antes do handoff: `./gradlew -q :app:testDebugUnitTest :app:testReleaseUnitTest :app:lintDebug :app:assembleDebug :app:assembleDebugAndroidTest`
+- Se tocar o lab: `./gradlew -p labs/backend test -q`
+- No aparelho, só se mexer em UI ou Room: `adb shell am instrument -w com.viniciusrio.dengo.test/androidx.test.runner.AndroidJUnitRunner`
+
+Se falhar, procure o erro (`grep -n "FAILED\|error:"`) antes de abrir o relatório. Nunca imprima o relatório HTML nem o logcat completo.
+
+## Fluxo
+
+Claude Code implementa, Codex revisa somente leitura, Vinícius aprova e faz o merge. Detalhes: [docs/AI-WORKFLOW.md](docs/AI-WORKFLOW.md).
+
+## Correções recorrentes
+
+- Teste verde, build ou screenshot não é aprovação humana.
+- Se a instalação do Gradle falhar no A26: `adb install --no-streaming`.
 
 ## Regras
 
@@ -42,10 +60,10 @@ Leia, nesta ordem:
 
 ## Fontes e fases
 
-- Antes de afirmar o estado do projeto, confira código e documentação atuais. `docs/` e ADRs registram especificações e decisões consolidadas; o vault `dengo/` registra planejamento e contexto de produto. Notas exploratórias não substituem decisões vigentes; exponha divergências entre fontes.
+- Antes de afirmar o estado do projeto, confira código e documentação atuais. `docs/STATUS.md` é a fonte única do estado atual. `docs/` e ADRs registram especificações e decisões consolidadas; o vault `dengo/` registra planejamento e contexto de produto. Notas exploratórias não substituem decisões vigentes; exponha divergências entre fontes.
 - Planejamento, implementação, testes automatizados, revisão no Samsung, ajustes, aprovação humana e fechamento documental são fases distintas. Registre aprovação e conclusão somente após ocorrerem; adapte os artefatos à etapa.
-- Não faça commit nem push sem autorização explícita.
+- Não faça commit nem push sem autorização explícita. Aprovar um plano ou spec que nomeia a branch e declara que autoriza commit, push e PR autoriza essas operações só nela. Nunca na `main`, sem force-push e sem merge.
 
 ## Fase atual
 
-As Etapas 1–7 foram concluídas e aprovadas no dispositivo. Os Incrementos 1 e 2 da persistência local foram concluídos; dados publicados de pedidos, Histórico, mood, espaço pessoal e Mural agora usam Room no mesmo aparelho, conforme ADR-020 e ADR-021. Rascunhos e perspectiva não são persistidos. A próxima etapa de produto ainda não foi definida. Consulte `dengo/06 - Desenvolvimento/Etapa Atual.md` e os ADRs mais recentes para o estado vigente; documentos iniciais podem descrever planos já superados.
+Veja [docs/STATUS.md](docs/STATUS.md). Documentos iniciais podem descrever planos já superados.
