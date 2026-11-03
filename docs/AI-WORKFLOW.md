@@ -32,6 +32,7 @@ O implementador abre o PR e escreve o handoff na descrição, com o formato de `
 
 ### 4. Revisar
 - O Codex revisa o diff com `/codex:adversarial-review` ou com o CLI em `--sandbox read-only`. A configuração padrão do Codex permite escrita, então o modo somente leitura precisa ser explícito.
+- O implementador dispara a revisão logo depois de abrir o PR, e também a segunda rodada, sem esperar pedido. Vinícius autorizou esse disparo em 2026-11-02; ele não autoriza merge.
 - Ele lê só a spec da mudança e os ADRs que ela cita, e devolve saída curta com `arquivo:linha`:
   - **Bloqueante:** volta para o implementador corrigir.
   - **Sugestão:** fica registrada e não bloqueia o merge.
