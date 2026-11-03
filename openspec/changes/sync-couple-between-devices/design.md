@@ -66,7 +66,7 @@ A cópia usa um arquivo novo, `dengo-sync.db`, com IDs vindos do servidor e a re
 
 A regra atual continua: falha de leitura não recria o banco.
 
-**Revogação:** quando o servidor informa que a sessão foi revogada, o app apaga o token, `dengo-sync.db` e as tentativas pendentes antes de voltar à tela de vínculo. Só esse código explícito apaga dados; erros de rede ou de servidor nunca fazem isso. Vincular outra pessoa no mesmo aparelho também começa por apagar a cópia anterior. **Limite inevitável:** um aparelho perdido que nunca volta a se conectar não recebe a revogação e continua com a última cópia, protegida só pelo sandbox do Android e pelo bloqueio do celular. Bloqueio adicional dentro do app fica fora deste escopo e precisa ser dito a Lidianne, junto das demais informações de privacidade.
+**Revogação:** quando o servidor informa que a sessão foi revogada, o app apaga o token, `dengo-sync.db` e as tentativas pendentes antes de voltar à tela de vínculo. A revogação cancela as chamadas em andamento, e cada resposta só é gravada depois de conferir, na mesma transação, se a sessão que a pediu ainda é a ativa; assim, uma resposta atrasada não recria a cópia apagada. Só esse código explícito apaga dados; erros de rede ou de servidor nunca fazem isso. Vincular outra pessoa no mesmo aparelho também começa por apagar a cópia anterior. **Limite inevitável:** um aparelho perdido que nunca volta a se conectar não recebe a revogação e continua com a última cópia, protegida só pelo sandbox do Android e pelo bloqueio do celular. Bloqueio adicional dentro do app fica fora deste escopo e precisa ser dito a Lidianne, junto das demais informações de privacidade.
 
 ### 9. Notificações com aviso sem conteúdo
 

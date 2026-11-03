@@ -34,7 +34,7 @@
 - [ ] 4.2 Implementar a nova implementação de `CoupleRepository` sobre a API, com as regras de resultado da spec e a tabela de tentativas pendentes; verificar com servidor falso cada linha da tabela de resultados, tentar de novo e descartar, inclusive depois de reabrir o app, com descarte que encontra escrita confirmada e comando igual antes de a cópia alcançar a revisão.
 - [ ] 4.3 Implementar os gatilhos de sincronização e o aplicar por página em transação; verificar interrupção no meio da paginação.
 - [ ] 4.4 Comunicar dados possivelmente desatualizados e falta de conexão, sem criar novo componente se um aviso existente servir; verificar leitura sem internet.
-- [ ] 4.7 Apagar token, cópia e tentativas pendentes somente diante do código explícito de revogação ou ao vincular outra pessoa; verificar por teste que erros de rede e 5xx não apagam nada.
+- [ ] 4.7 Apagar token, cópia e tentativas pendentes somente diante do código explícito de revogação ou ao vincular outra pessoa; verificar por teste que erros de rede e 5xx não apagam nada e que um 200 atrasado, depois do 401, não grava dados.
 - [ ] 4.5 Ligar a implementação ao ponto de composição; verificar a suíte instrumentada com a confirmação de que `dengo-sync.db` e `dengo-local.db` não mudam nos testes.
 - [ ] 4.6 Testar nos dois aparelhos com dados sintéticos e servidor de teste: pedido, resposta, agradecimento, mood e espaço pessoal, com internet ligada e desligada.
 

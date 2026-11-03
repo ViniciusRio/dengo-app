@@ -37,6 +37,10 @@ O sistema SHALL manter no máximo uma sessão ativa por pessoa e SHALL permitir 
 - **WHEN** um aparelho com sessão revogada faz uma requisição
 - **THEN** o servidor recusa o acesso, e o app apaga o token, a cópia local e as tentativas pendentes, volta à tela de vínculo e não mostra a ação como enviada
 
+#### Scenario: Resposta atrasada depois da revogação
+- **WHEN** uma resposta de sincronização pedida antes da revogação chega depois de o app apagar a cópia
+- **THEN** a resposta é descartada, e nenhum dado dela é gravado
+
 #### Scenario: Aparelho substituído reconecta
 - **WHEN** o aparelho anterior se conecta depois de a pessoa vincular outro celular
 - **THEN** ele apaga a cópia local da mesma forma, sem mostrar dados do casal
