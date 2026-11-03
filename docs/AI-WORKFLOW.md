@@ -43,7 +43,7 @@ O implementador abre o PR e escreve o handoff na descrição, com o formato de `
 
 ### 5. Aprovar
 - Só Vinícius faz merge. O `gh` usa a conta dele e o GitHub não permite aprovar o próprio PR, então **o merge é a aprovação**.
-- A regra de merge precisa de proteção na `main`: PR obrigatório, 0 aprovações, valendo para administradores e sem force-push. Confira com `gh api repos/ViniciusRio/dengo-app/branches/main/protection`; se ela não existir, nada impede um push ou merge indevido, porque instrução no `AGENTS.md` é só contexto.
+- A regra de merge precisa de proteção na `main`: PR obrigatório, 0 aprovações, valendo para administradores e sem force-push. Ela é o ruleset `protect-main`. Confira com `gh api repos/ViniciusRio/dengo-app/rules/branches/main`, que deve listar `pull_request`, `non_fast_forward` e `deletion`; `branches/main/protection` responde 404 porque não enxerga rulesets. Se as regras não aparecerem, nada impede um push ou merge indevido, porque instrução no `AGENTS.md` é só contexto.
 - **O merge não prova aprovação no aparelho.** Em mudança de UI, a revisão no Samsung acontece antes do merge. Planejamento, testes, revisão no aparelho, aprovação humana e fechamento documental continuam sendo fases distintas.
 
 ### 6. Modo reserva (limite do Claude Code)
