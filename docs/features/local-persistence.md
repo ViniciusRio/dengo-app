@@ -16,7 +16,7 @@ Cada escrita relacionada é transacional. Confirmação significa que o dado pod
 
 ## Fora do escopo
 
-Rascunhos, perspectiva ativa, identidade de sessão, backup, exportação, recuperação após desinstalação, autenticação, backend, comunicação e sincronização entre aparelhos. O backup automático do app permanece desativado. Não havia banco anterior a migrar; interações mantidas apenas na memória de versões anteriores não podiam ser recuperadas após encerramento do processo.
+Rascunhos, perspectiva ativa, identidade de sessão, backup, exportação, recuperação após desinstalação, autenticação, backend, comunicação e sincronização entre aparelhos. O backup automático do app permanece desativado, e `data_extraction_rules.xml` também exclui os dados da transferência entre aparelhos no Android 12 ou superior: ao trocar de celular, eles não vão junto. Não havia banco anterior a migrar; interações mantidas apenas na memória de versões anteriores não podiam ser recuperadas após encerramento do processo.
 
 ## Validação do Incremento 2
 
