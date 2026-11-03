@@ -38,7 +38,7 @@ Cada escrita recebe um número de revisão crescente, gravado nas linhas que alt
 
 `GET /v1/sync?after=<revisão>&limit=<n>` devolve as linhas alteradas, a revisão alcançada e se há mais páginas. O servidor corta as páginas só entre revisões, nunca no meio de uma, então `limit` é aproximado. O cliente grava cada página e a revisão em uma única transação Room. Não há exclusão, então não há marcadores de remoção. **Alternativa descartada:** baixar tudo a cada atualização, porque desenhos tendem a pesar com o tempo.
 
-**Geração do banco:** o servidor guarda um identificador de geração, e o procedimento de restauração sempre cria um novo. Toda resposta de sincronização traz a geração. Se ela diferir da guardada no aparelho, ou se o cursor for maior que a revisão do servidor, o app baixa o estado inteiro para uma área temporária e só troca a cópia quando o download termina, na mesma transação. A cópia antiga continua visível até lá. Assim, depois de restaurar um backup anterior, o aparelho não ignora alterações novas nem mostra dados que não existem mais no servidor. Chaves de idempotência fazem parte do backup. A restauração acontece com a API fechada: ela cria a geração e invalida todas as sessões e todos os códigos de vínculo antes de aceitar tráfego, porque o backup pode conter a sessão de um aparelho revogado ou um código já usado depois dele. Os dois celulares precisam de novo vínculo, com códigos novos, o que apaga a cópia e as tentativas pendentes e baixa o estado restaurado.
+**Restauração de backup:** acontece com a API fechada e invalida todas as sessões e todos os códigos de vínculo antes de aceitar tráfego, porque o backup pode conter a sessão de um aparelho revogado ou um código já usado depois dele. Na conexão seguinte, cada celular recebe a revogação e apaga a cópia e as tentativas pendentes, como em qualquer revogação. O novo vínculo, com código novo, baixa o estado restaurado desde o início. Assim, nenhum aparelho fica com um cursor à frente do servidor nem com dados que não existem mais nele. **Limite aceito:** entre a restauração e o novo vínculo, o celular que já se conectou não mostra dados. **Alternativa descartada:** manter a cópia visível durante a reconstrução, que exigiria um identificador de geração e deixaria dados acessíveis em uma sessão inválida, para um evento raro.
 
 **Quando sincronizar:** ao abrir o app, ao voltar para o primeiro plano, ao receber aviso, depois de cada escrita, em `retryRead()` e a cada 30 segundos em primeiro plano, como rede de segurança caso um aviso se perca.
 
@@ -119,7 +119,7 @@ VPS pequena com pelo menos 2 GB de RAM, Docker Compose, PostgreSQL local à VPS 
 - **Economia de bateria do Motorola ou do Samsung atrasar avisos:** testar nos dois aparelhos em repouso e documentar ajustes, se forem necessários.
 - **Servidor exposto com dados íntimos:** tokens revogáveis, limite de tentativas, HTTPS, backup cifrado e atualizações de segurança da VPS.
 - **Manutenção recai sobre uma pessoa:** preferir componentes simples e documentar a restauração.
-- **Restauração de backup perde o que veio depois dele:** é inerente ao backup diário; a geração garante que os aparelhos passem a refletir o servidor restaurado, sem esconder a perda.
+- **Restauração de backup perde o que veio depois dele:** é inerente ao backup diário; o novo vínculo faz os aparelhos refletirem o servidor restaurado.
 - **Perda de cobertura da `MainActivity` real:** já existente desde o PR #5; a validação nos dois aparelhos cobre esse caminho.
 
 ## Branches e entregas

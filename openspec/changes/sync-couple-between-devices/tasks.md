@@ -2,7 +2,7 @@
 
 ## 0. Spec (`docs/two-device-sync-spec`)
 
-- [x] 0.1 Revisar esta spec com o Codex e corrigir bloqueantes; verificar `openspec validate sync-couple-between-devices --strict`. Três rodadas em 2026-11-03; a validação passou, e as correções da terceira não passaram por nova rodada antes da aprovação.
+- [x] 0.1 Revisar esta spec com o Codex e corrigir bloqueantes; verificar `openspec validate sync-couple-between-devices --strict`. Três rodadas antes da aprovação em 2026-11-03; as correções da terceira não passaram por nova rodada antes dela. A revisão do PR #6 apontou uma contradição na restauração, corrigida depois da aprovação com a retirada da geração do banco.
 - [x] 0.2 Obter a aprovação de Vinícius antes de qualquer código. Spec aprovada em 2026-11-03, sem quarta rodada, por decisão dele.
 
 ## 1. Backend (`feat/backend-core`)
@@ -10,7 +10,7 @@
 - [ ] 1.1 Criar `backend/` com build próprio, Flyway e Testcontainers; verificar que o build Android e `labs/backend` continuam passando.
 - [ ] 1.2 Implementar vínculo, tokens com hash e revogação, e comandos administrativos, escrevendo primeiro testes de expiração, uso único, limite de tentativas e token revogado.
 - [ ] 1.3 Implementar revisão serializada e `GET /v1/sync` com paginação; verificar por teste que escritas concorrentes não fazem a leitura pular revisões.
-- [ ] 1.4 Implementar idempotência com chaves sem prazo e geração do banco; verificar repetição com a mesma chave, chave com conteúdo diferente, segundo envio e descarte com a primeira transação em andamento, envio atrasado depois do descarte, e geração presente nas respostas.
+- [ ] 1.4 Implementar idempotência com chaves sem prazo; verificar repetição com a mesma chave, chave com conteúdo diferente, segundo envio e descarte com a primeira transação em andamento e envio atrasado depois do descarte.
 - [ ] 1.5 Implementar pedidos e Histórico, portando as regras de `RoomCoupleRepository`; verificar transições, duplicidade, espaço pessoal, permissão por pessoa e atomicidade contra a spec.
 - [ ] 1.6 Implementar mood e espaço pessoal; verificar repetição sem novo evento e a data no fuso configurado.
 
@@ -18,7 +18,7 @@
 
 - [ ] 2.1 Obter de Vinícius o domínio e a contratação da VPS, com preço conferido antes.
 - [ ] 2.2 Escrever Docker Compose, proxy com HTTPS e documentação de operação, sem segredos no repositório; verificar HTTPS e que o PostgreSQL não está exposto publicamente.
-- [ ] 2.3 Configurar backup diário cifrado fora da VPS; verificar restauração completa em ambiente separado, com dados sintéticos, e que o procedimento cria nova geração e invalida todas as sessões e códigos de vínculo antes de aceitar tráfego, inclusive uma sessão revogada e um código usado depois do backup.
+- [ ] 2.3 Configurar backup diário cifrado fora da VPS; verificar restauração completa em ambiente separado, com dados sintéticos, e que o procedimento invalida todas as sessões e códigos de vínculo antes de aceitar tráfego, inclusive uma sessão revogada e um código usado depois do backup.
 - [ ] 2.4 Verificar que os logs não contêm tokens nem conteúdo, com dados sintéticos.
 
 ## 3. Identidade no app (`feat/app-device-identity`)
@@ -32,7 +32,7 @@
 
 - [ ] 4.1 Criar `dengo-sync.db` com IDs do servidor e revisão, mantendo `dengo-local.db` intacto; verificar por teste que o arquivo antigo não é aberto nem alterado.
 - [ ] 4.2 Implementar a nova implementação de `CoupleRepository` sobre a API, com as regras de resultado da spec e a tabela de tentativas pendentes; verificar com servidor falso cada linha da tabela de resultados, tentar de novo e descartar, inclusive depois de reabrir o app, com descarte que encontra escrita confirmada e comando igual antes de a cópia alcançar a revisão.
-- [ ] 4.3 Implementar os gatilhos de sincronização e o aplicar por página em transação; verificar interrupção no meio da paginação, mudança de geração, cursor maior que o servidor e reconstrução interrompida.
+- [ ] 4.3 Implementar os gatilhos de sincronização e o aplicar por página em transação; verificar interrupção no meio da paginação.
 - [ ] 4.4 Comunicar dados possivelmente desatualizados e falta de conexão, sem criar novo componente se um aviso existente servir; verificar leitura sem internet.
 - [ ] 4.7 Apagar token, cópia e tentativas pendentes somente diante do código explícito de revogação ou ao vincular outra pessoa; verificar por teste que erros de rede e 5xx não apagam nada.
 - [ ] 4.5 Ligar a implementação ao ponto de composição; verificar a suíte instrumentada com a confirmação de que `dengo-sync.db` e `dengo-local.db` não mudam nos testes.

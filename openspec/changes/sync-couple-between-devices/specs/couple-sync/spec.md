@@ -81,12 +81,8 @@ O sistema SHALL entregar a cada aparelho todas as alterações confirmadas, em o
 - **THEN** a cópia local mantém um estado de uma revisão completa e a próxima sincronização continua dela sem duplicar dados
 
 #### Scenario: Servidor restaurado de backup anterior
-- **WHEN** a geração do servidor muda, ou o cursor do aparelho é maior que a revisão do servidor
-- **THEN** o app baixa o estado inteiro, mantém a cópia antiga visível até terminar, e passa a mostrar exatamente o estado do servidor, incluindo alterações novas
-
-#### Scenario: Reconstrução interrompida
-- **WHEN** o download do estado inteiro é interrompido
-- **THEN** a cópia anterior continua intacta, e a próxima sincronização recomeça a reconstrução
+- **WHEN** um aparelho se conecta depois de o servidor ser restaurado de um backup
+- **THEN** a sessão é recusada, o aparelho apaga a cópia local, e depois do novo vínculo mostra exatamente o estado do servidor, incluindo alterações novas
 
 #### Scenario: Atualização sem aviso
 - **WHEN** um aviso se perde e o app está aberto ou volta ao primeiro plano
@@ -127,7 +123,7 @@ O servidor SHALL aceitar tráfego de clientes somente por HTTPS, SHALL NOT regis
 
 #### Scenario: Restauração
 - **WHEN** um backup é restaurado em um ambiente separado
-- **THEN** o servidor restaurado devolve os mesmos dados confirmados até o momento do backup, cria nova geração e invalida todas as sessões, e os aparelhos voltam a sincronizar depois de novo vínculo
+- **THEN** o servidor restaurado devolve os mesmos dados confirmados até o momento do backup, invalida todas as sessões e códigos de vínculo, e os aparelhos voltam a sincronizar depois de novo vínculo
 
 #### Scenario: Backup anterior à revogação
 - **WHEN** o backup restaurado contém a sessão de um aparelho revogado depois dele
