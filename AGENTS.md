@@ -42,7 +42,7 @@ Claude Code implementa, Codex revisa somente leitura, Vinícius aprova e faz o m
 - A arte em `docs/design/references/approved/` define a **direção**, não uma especificação pixel-perfect.
 - Não transformar o produto em um Tamagotchi tradicional; a essência é comunicação afetiva entre duas pessoas.
 - Preferir soluções simples e adequadas a um projeto pessoal.
-- Dados só locais (Room). Não introduzir Spring Boot, PostgreSQL, Retrofit, autenticação remota ou sincronização no app sem decisão explícita.
+- No app, os dados publicados ficam locais (Room); sem decisão explícita, nada de Spring Boot, PostgreSQL, Retrofit, autenticação remota ou sincronização. `labs/backend/` segue suas specs e ADRs.
 - Componentes equivalentes devem reutilizar o mesmo componente/design token.
 - Manter acessibilidade, legibilidade, contraste e tamanhos de toque adequados.
 - Animações devem ser mínimas e funcionais.
