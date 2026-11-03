@@ -8,7 +8,7 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
@@ -51,7 +51,7 @@ internal fun MuralDrawing(
     selectedArgb: Int = 0xFFA63854.toInt(),
 ) {
     val active = remember { mutableStateListOf<Offset>() }
-    var activeColor by remember { mutableStateOf(selectedArgb) }
+    var activeColor by remember { mutableIntStateOf(selectedArgb) }
     val latestOnStroke by rememberUpdatedState(onStroke)
     val latestColor by rememberUpdatedState(selectedArgb)
     val drawingModifier = if (onStroke == null) modifier else modifier.pointerInput(Unit) {
