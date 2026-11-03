@@ -165,4 +165,41 @@ class SyncTest : BackendTest() {
         val delivered = (duringWrites.get("history") as Iterable<JsonNode>) + (afterWrites.get("history") as Iterable<JsonNode>)
         assertThat(delivered.map { it.get("type").asString() }).containsExactlyInAnyOrder("REQUEST_ACCEPTED", "REQUEST_CREATED")
     }
+
+    @Test
+    fun `a long history is walked in bounded pages, with whole revisions and nothing lost`() {
+        val lidianne = pair(Person.LIDIANNE)
+        // 3.000 revisões sintéticas, cada uma com um acontecimento.
+        jdbc.sql("""
+            INSERT INTO history_event (type, actor_id, occurred_at, revision)
+            SELECT 'PERSONAL_SPACE_ENDED', 'LIDIANNE', now(), g FROM generate_series(1, 3000) g
+        """).update()
+        jdbc.sql("UPDATE sync_counter SET value = 3000 WHERE id = 1").update()
+
+        var after = 0L
+        var seen = 0
+        var pages = 0
+        do {
+            val page = sync(lidianne, after = after, limit = 100).body
+            assertThat(page.get("history").size()).isEqualTo(100)
+            seen += page.get("history").size()
+            after = page.get("revision").asLong()
+            pages++
+        } while (page.get("hasMore").asBoolean())
+
+        assertThat(seen).isEqualTo(3000)
+        assertThat(pages).isEqualTo(30)
+        assertThat(after).isEqualTo(3000)
+    }
+
+    @Test
+    fun `reaching the limit exactly on the last revision reports the current revision with nothing more`() {
+        val lidianne = pair(Person.LIDIANNE)
+        other(lidianne, "um")
+
+        val page = sync(lidianne, limit = 2).body
+
+        assertThat(page.get("revision").asLong()).isEqualTo(1)
+        assertThat(page.get("hasMore").asBoolean()).isFalse()
+    }
 }

@@ -1,6 +1,8 @@
 package com.viniciusrio.dengo.backend
 
+import java.sql.DriverManager
 import java.time.Duration
+import java.util.concurrent.CompletableFuture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -169,4 +171,57 @@ class PairingTest : BackendTest() {
     private fun attempt(code: String) = api.send("POST", "/v1/pairings", body = mapOf("code" to code))
 
     private fun sessionCount() = jdbc.sql("SELECT count(*) FROM device_session WHERE revoked_at IS NULL").query(Int::class.java).single()
+
+    @Test
+    fun `a write already past authentication is refused when the revocation commits first`() {
+        val token = pair(Person.LIDIANNE)
+        val write = DriverManager.getConnection(postgres.jdbcUrl, postgres.username, postgres.password).use { revocation ->
+            revocation.autoCommit = false
+            // Revogação aberta: a leitura do interceptor ainda vê a sessão ativa, e a escrita segue adiante.
+            revocation.createStatement().use { it.executeUpdate("UPDATE device_session SET revoked_at = now() WHERE revoked_at IS NULL") }
+            val write = api.sendAsync("POST", "/v1/requests", token = token, key = newKey(), body = mapOf("type" to "DENGO"))
+            awaitBlockedWriters(1)
+            revocation.commit()
+            write
+        }
+
+        assertThat(write.join().status).isEqualTo(401)
+        assertThat(write.join().code).isEqualTo("SESSION_REVOKED")
+        assertThat(api.send("GET", "/v1/sync", token = pair(Person.VINICIUS)).body.get("requests")).isEmpty()
+    }
+
+    @Test
+    fun `a discard already past authentication is refused when the revocation commits first`() {
+        val token = pair(Person.LIDIANNE)
+        val key = newKey()
+        val discard = DriverManager.getConnection(postgres.jdbcUrl, postgres.username, postgres.password).use { revocation ->
+            revocation.autoCommit = false
+            revocation.createStatement().use { it.executeUpdate("UPDATE device_session SET revoked_at = now() WHERE revoked_at IS NULL") }
+            val discard = api.sendAsync("DELETE", "/v1/operations/$key", token = token)
+            awaitBlockedWriters(1)
+            revocation.commit()
+            discard
+        }
+
+        assertThat(discard.join().code).isEqualTo("SESSION_REVOKED")
+        val renewed = pair(Person.LIDIANNE)
+        val afterwards = api.send("POST", "/v1/requests", token = renewed, key = key, body = mapOf("type" to "DENGO"))
+        assertThat(afterwards.status).isEqualTo(200)
+    }
+
+    @Test
+    fun `a revocation waits for a write already in progress, which then finishes under the old session`() {
+        val token = pair(Person.LIDIANNE)
+        val (write, revocation) = holdingWriteLock {
+            val write = api.sendAsync("POST", "/v1/requests", token = token, key = newKey(), body = mapOf("type" to "DENGO"))
+            awaitBlockedWriters(1)
+            val revocation = CompletableFuture.runAsync { admin.revoke(Person.LIDIANNE) }
+            awaitBlockedWriters(2)
+            write to revocation
+        }
+        revocation.join()
+
+        assertThat(write.join().status).isEqualTo(200)
+        assertThat(api.send("GET", "/v1/sync", token = token).code).isEqualTo("SESSION_REVOKED")
+    }
 }

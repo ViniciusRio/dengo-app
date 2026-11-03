@@ -40,22 +40,25 @@ private data class OperationRow(
  * Toda escrita do casal passa por aqui, em uma única transação que grava a alteração, os
  * acontecimentos, a chave e o resultado.
  *
- * Ordem dos bloqueios: primeiro a chave, depois o contador. Quem espera por uma chave ainda não
- * detém o contador, então não há como formar um ciclo.
+ * Ordem dos bloqueios: a sessão, a chave e o contador. Quem espera por uma chave ainda não detém o
+ * contador, e a revogação não pede nenhum dos outros dois, então não há como formar um ciclo.
  */
 @Service
 class Operations(
     private val jdbc: JdbcClient,
     transactions: PlatformTransactionManager,
     private val mapper: JsonMapper,
+    private val identity: Identity,
 ) {
     private val transaction = TransactionTemplate(transactions)
 
     /** `content` identifica o comando: a mesma chave só repete o resultado se ele for igual. */
-    fun execute(actor: Person, key: String, content: List<Any?>, command: (WriteContext) -> CommandResult): StoredResponse {
+    fun execute(session: Session, key: String, content: List<Any?>, command: (WriteContext) -> CommandResult): StoredResponse {
         if (!isValidOperationKey(key)) return error(400, "IDEMPOTENCY_KEY_INVALID")
         val fingerprint = sha256(mapper.writeValueAsString(content))
+        val actor = session.person
         return transaction.execute {
+            identity.holdActiveSession(session)
             if (!reserve(actor, key, "COMPLETED", fingerprint)) return@execute existingResult(actor, key, fingerprint)
             // O bloqueio vai até o commit: as revisões ficam visíveis em ordem, e uma leitura nunca pula uma ainda aberta.
             val current = jdbc.sql("SELECT value FROM sync_counter WHERE id = 1 FOR UPDATE").query(Long::class.java).single()
@@ -72,7 +75,9 @@ class Operations(
     }
 
     /** Resposta definitiva: espera uma transação em andamento e só cancela se nada foi confirmado. */
-    fun discard(actor: Person, key: String): DiscardResult = transaction.execute {
+    fun discard(session: Session, key: String): DiscardResult = transaction.execute {
+        identity.holdActiveSession(session)
+        val actor = session.person
         if (reserve(actor, key, "CANCELLED", null)) return@execute DiscardResult(DiscardOutcome.CANCELLED, null)
         val row = load(actor, key)
         when {

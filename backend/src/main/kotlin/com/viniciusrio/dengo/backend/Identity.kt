@@ -12,6 +12,10 @@ import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+data class Session(val id: Long, val person: Person)
+
+class SessionRefused(val code: String) : RuntimeException(code)
+
 data class IssuedPairingCode(val code: String, val expiresAt: Instant)
 
 sealed interface PairingOutcome {
@@ -36,13 +40,22 @@ internal fun sha256(value: String): String =
 class Identity(private val jdbc: JdbcClient, private val clock: Clock) {
     private val random = SecureRandom()
 
-    fun personForToken(token: String): Person? =
-        jdbc.sql("SELECT person FROM device_session WHERE token_hash = :hash AND revoked_at IS NULL")
+    fun sessionForToken(token: String): Session? =
+        jdbc.sql("SELECT id, person FROM device_session WHERE token_hash = :hash AND revoked_at IS NULL")
             .param("hash", sha256(token))
-            .query(String::class.java)
+            .query { rs, _ -> Session(rs.getLong("id"), Person.valueOf(rs.getString("person"))) }
             .optional()
-            .map(Person::valueOf)
             .orElse(null)
+
+    /**
+     * Dentro da transação de uma escrita: segura a sessão até o commit. Uma revogação em andamento
+     * termina primeiro e recusa esta escrita; uma que chegue depois espera a escrita terminar.
+     */
+    fun holdActiveSession(session: Session) {
+        val active = jdbc.sql("SELECT 1 FROM device_session WHERE id = :id AND revoked_at IS NULL FOR SHARE")
+            .param("id", session.id).query(Int::class.java).optional().isPresent
+        if (!active) throw SessionRefused("SESSION_REVOKED")
+    }
 
     @Transactional
     fun issuePairingCode(person: Person): IssuedPairingCode {

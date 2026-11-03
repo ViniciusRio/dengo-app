@@ -21,59 +21,59 @@ private fun StoredResponse.toEntity(): ResponseEntity<String> =
 class CoupleController(private val operations: Operations, private val commands: CoupleCommands) {
     @PostMapping("/v1/requests")
     fun createRequest(
-        @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
+        @RequestAttribute(SESSION_ATTRIBUTE) session: Session,
         @RequestHeader("Idempotency-Key") key: String,
         @RequestBody body: CreateRequestBody,
-    ) = operations.execute(actor, key, listOf("createRequest", body.type, body.message)) { context ->
-        commands.createRequest(context, actor, body.type, body.message)
+    ) = operations.execute(session, key, listOf("createRequest", body.type, body.message)) { context ->
+        commands.createRequest(context, session.person, body.type, body.message)
     }.toEntity()
 
     @PostMapping("/v1/requests/{id}/accept")
     fun accept(
-        @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
+        @RequestAttribute(SESSION_ATTRIBUTE) session: Session,
         @RequestHeader("Idempotency-Key") key: String,
         @PathVariable id: Long,
-    ) = operations.execute(actor, key, listOf("accept", id)) { commands.acceptRequest(it, actor, id) }.toEntity()
+    ) = operations.execute(session, key, listOf("accept", id)) { commands.acceptRequest(it, session.person, id) }.toEntity()
 
     @PostMapping("/v1/requests/{id}/decline")
     fun decline(
-        @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
+        @RequestAttribute(SESSION_ATTRIBUTE) session: Session,
         @RequestHeader("Idempotency-Key") key: String,
         @PathVariable id: Long,
-    ) = operations.execute(actor, key, listOf("decline", id)) { commands.declineRequest(it, actor, id) }.toEntity()
+    ) = operations.execute(session, key, listOf("decline", id)) { commands.declineRequest(it, session.person, id) }.toEntity()
 
     @PostMapping("/v1/requests/{id}/acknowledge")
     fun acknowledge(
-        @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
+        @RequestAttribute(SESSION_ATTRIBUTE) session: Session,
         @RequestHeader("Idempotency-Key") key: String,
         @PathVariable id: Long,
-    ) = operations.execute(actor, key, listOf("acknowledge", id)) { commands.acknowledgeRequest(it, actor, id) }.toEntity()
+    ) = operations.execute(session, key, listOf("acknowledge", id)) { commands.acknowledgeRequest(it, session.person, id) }.toEntity()
 
     @PutMapping("/v1/mood")
     fun setMood(
-        @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
+        @RequestAttribute(SESSION_ATTRIBUTE) session: Session,
         @RequestHeader("Idempotency-Key") key: String,
         @RequestBody body: SetMoodBody,
-    ) = operations.execute(actor, key, listOf("setMood", body.option)) { commands.setMood(it, actor, body.option) }.toEntity()
+    ) = operations.execute(session, key, listOf("setMood", body.option)) { commands.setMood(it, session.person, body.option) }.toEntity()
 
     @PostMapping("/v1/personal-space")
     fun activatePersonalSpace(
-        @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
+        @RequestAttribute(SESSION_ATTRIBUTE) session: Session,
         @RequestHeader("Idempotency-Key") key: String,
-    ) = operations.execute(actor, key, listOf("activatePersonalSpace")) { commands.activatePersonalSpace(it, actor) }.toEntity()
+    ) = operations.execute(session, key, listOf("activatePersonalSpace")) { commands.activatePersonalSpace(it, session.person) }.toEntity()
 
     @DeleteMapping("/v1/personal-space")
     fun endPersonalSpace(
-        @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
+        @RequestAttribute(SESSION_ATTRIBUTE) session: Session,
         @RequestHeader("Idempotency-Key") key: String,
-    ) = operations.execute(actor, key, listOf("endPersonalSpace")) { commands.endPersonalSpace(it, actor) }.toEntity()
+    ) = operations.execute(session, key, listOf("endPersonalSpace")) { commands.endPersonalSpace(it, session.person) }.toEntity()
 
     @DeleteMapping("/v1/operations/{key}")
     fun discard(
-        @RequestAttribute(ACTOR_ATTRIBUTE) actor: Person,
+        @RequestAttribute(SESSION_ATTRIBUTE) session: Session,
         @PathVariable key: String,
     ): ResponseEntity<Any> {
         if (!isValidOperationKey(key)) return ResponseEntity.badRequest().body(ApiError("IDEMPOTENCY_KEY_INVALID"))
-        return ResponseEntity.ok(operations.discard(actor, key))
+        return ResponseEntity.ok(operations.discard(session, key))
     }
 }

@@ -57,14 +57,20 @@ internal fun ResultSet.toRequestView() = RequestView(
 )
 
 @Service
-class SyncReader(private val jdbc: JdbcClient, transactions: PlatformTransactionManager) {
+class SyncReader(
+    private val jdbc: JdbcClient,
+    transactions: PlatformTransactionManager,
+    private val identity: Identity,
+) {
     // Um só retrato do banco para todas as tabelas da página.
     private val snapshot = TransactionTemplate(transactions).apply {
         isolationLevel = TransactionDefinition.ISOLATION_REPEATABLE_READ
         isReadOnly = true
     }
 
-    fun read(after: Long, limit: Int): SyncPage = snapshot.execute {
+    /** Autentica no mesmo retrato dos dados: nada confirmado depois de uma revogação sai para aquela sessão. */
+    fun read(token: String, after: Long, limit: Int): SyncPage = snapshot.execute {
+        identity.sessionForToken(token) ?: throw SessionRefused("SESSION_REVOKED")
         val current = jdbc.sql("SELECT value FROM sync_counter WHERE id = 1").query(Long::class.java).single()
         val (upTo, hasMore) = pageEnd(after, limit, current)
         SyncPage(
@@ -77,22 +83,27 @@ class SyncReader(private val jdbc: JdbcClient, transactions: PlatformTransaction
         )
     }!!
 
-    /** A página termina na revisão que alcança `limit` linhas, nunca no meio dela. */
+    /**
+     * A página termina na revisão da linha de número `limit`, nunca no meio dela. Cada tabela contribui
+     * com no máximo `limit` linhas, pelo índice de revisão, sem percorrer o restante do histórico.
+     */
     private fun pageEnd(after: Long, limit: Int, current: Long): Pair<Long, Boolean> {
-        val perRevision = jdbc.sql("""
-            SELECT revision, count(*) AS rows FROM (
-                SELECT revision FROM care_request WHERE revision > :after
-                UNION ALL SELECT revision FROM history_event WHERE revision > :after
-                UNION ALL SELECT revision FROM mood WHERE revision > :after
-                UNION ALL SELECT revision FROM personal_space WHERE revision > :after
-            ) changed GROUP BY revision ORDER BY revision
-        """).param("after", after).query { rs, _ -> rs.getLong("revision") to rs.getInt("rows") }.list()
-        var rows = 0
-        for ((index, entry) in perRevision.withIndex()) {
-            rows += entry.second
-            if (rows >= limit && index < perRevision.lastIndex) return entry.first to true
-        }
-        return current to false
+        val end = jdbc.sql("""
+            SELECT revision FROM (
+                (SELECT revision FROM care_request WHERE revision > :after ORDER BY revision LIMIT :limit)
+                UNION ALL (SELECT revision FROM history_event WHERE revision > :after ORDER BY revision LIMIT :limit)
+                UNION ALL (SELECT revision FROM mood WHERE revision > :after ORDER BY revision LIMIT :limit)
+                UNION ALL (SELECT revision FROM personal_space WHERE revision > :after ORDER BY revision LIMIT :limit)
+            ) changed ORDER BY revision OFFSET :limit - 1 LIMIT 1
+        """).param("after", after).param("limit", limit).query(Long::class.java).optional().orElse(null)
+            ?: return current to false
+        val hasMore = jdbc.sql("""
+            SELECT EXISTS (SELECT 1 FROM care_request WHERE revision > :end)
+                OR EXISTS (SELECT 1 FROM history_event WHERE revision > :end)
+                OR EXISTS (SELECT 1 FROM mood WHERE revision > :end)
+                OR EXISTS (SELECT 1 FROM personal_space WHERE revision > :end)
+        """).param("end", end).query(Boolean::class.java).single()
+        return if (hasMore) end to true else current to false
     }
 
     private fun requests(after: Long, upTo: Long) = jdbc.sql(
