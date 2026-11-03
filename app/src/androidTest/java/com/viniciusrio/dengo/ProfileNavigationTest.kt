@@ -66,6 +66,6 @@ class ProfileNavigationTest {
 
         composeRule.onAllNodesWithText("Lidianne").assertCountEquals(0)
         composeRule.onAllNodes(isSelectable()).assertCountEquals(4) // só as abas da navegação
-        composeRule.onNodeWithText("Vinícius", substring = true).assertExists()
+        composeRule.onNodeWithText("Vinícius").assertIsDisplayed()
     }
 }
