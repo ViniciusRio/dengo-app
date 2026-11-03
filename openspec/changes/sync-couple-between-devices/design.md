@@ -18,7 +18,7 @@ Build Gradle próprio, com o wrapper da raiz, Kotlin, Spring Boot, Java 21, Post
 
 ### 2. O servidor é a fonte da verdade; o Room é cópia
 
-As regras de transição, duplicidade, espaço pessoal, autoria e limites passam ao servidor. O app valida só para dar retorno imediato na interface. **Alternativa descartada:** Room como fonte e sincronização bidirecional, que exigiria resolver conflitos para um caso em que escrever sem internet não é requisito.
+As regras de transição, duplicidade, espaço pessoal, autoria e limites passam ao servidor. O texto de `OTHER` continua sem teto de regra, como no app, por decisão de Vinícius em 2026-11-03. O app valida só para dar retorno imediato na interface. **Alternativa descartada:** Room como fonte e sincronização bidirecional, que exigiria resolver conflitos para um caso em que escrever sem internet não é requisito.
 
 ### 3. Sem escrita offline
 
@@ -26,7 +26,7 @@ Sem conexão, o app mostra a última cópia e a ação falha com aviso. **Motivo
 
 ### 4. Identidade por código de uso único
 
-Um comando administrativo no servidor gera um código curto para uma pessoa, válido por 15 minutos, com tentativas limitadas. O app troca o código por um token aleatório de 256 bits. O servidor guarda só o hash, e o app guarda o token cifrado com chave do Android Keystore. Vincular de novo revoga o aparelho anterior da mesma pessoa, o que cobre troca e perda de celular. Um comando administrativo também revoga diretamente. **Alternativa descartada:** login com senha, que traria recuperação de senha e cadastro sem benefício para duas pessoas.
+Um comando administrativo no servidor gera um código curto para uma pessoa, válido por 15 minutos, com tentativas limitadas. O app troca o código por um token aleatório de 256 bits. O servidor guarda só o hash, e o app guarda o token cifrado com chave do Android Keystore. Vincular de novo revoga o aparelho anterior da mesma pessoa, o que cobre troca e perda de celular. Um comando administrativo também revoga diretamente. O limite, definido por Vinícius em 2026-11-03, usa um contador global no banco: depois de 5 tentativas inválidas, o vínculo fica recusado por 15 minutos, mesmo com código correto. Quem conhecer o endereço pode atrasar um vínculo, mas não obtém acesso; o limite por IP foi descartado porque dependeria de confiar em cabeçalhos do proxy. **Alternativa descartada:** login com senha, que traria recuperação de senha e cadastro sem benefício para duas pessoas.
 
 ### 5. A API deriva quem age da sessão
 
@@ -36,7 +36,7 @@ Os comandos não recebem o autor: o servidor usa a pessoa do token. Assim, `ackn
 
 Cada escrita recebe um número de revisão crescente, gravado nas linhas que alterou. As escritas são serializadas por um bloqueio de linha em um contador único, o que evita que uma leitura pule uma revisão ainda não confirmada; duas pessoas não geram disputa relevante.
 
-`GET /v1/sync?after=<revisão>&limit=<n>` devolve as linhas alteradas, a revisão alcançada e se há mais páginas. O servidor corta as páginas só entre revisões, nunca no meio de uma, então `limit` é aproximado. O cliente grava cada página e a revisão em uma única transação Room. Não há exclusão, então não há marcadores de remoção. **Alternativa descartada:** baixar tudo a cada atualização, porque desenhos tendem a pesar com o tempo.
+`GET /v1/sync?after=<revisão>&limit=<n>` devolve as linhas alteradas, a revisão alcançada e se há mais páginas. O servidor corta as páginas só entre revisões, nunca no meio de uma, então `limit` é aproximado. O cliente grava cada página e a revisão em uma única transação Room. Uma linha alterada guarda só a revisão mais nova, então cada página também traz os pedidos citados pelos acontecimentos dela, mesmo com revisão à frente do cursor, decisão de Vinícius em 2026-11-03: nenhum acontecimento fica sem pedido, o pedido pode chegar com um status mais novo que o da página, e a página que corresponde à revisão dele o reenvia, para a cópia regravar sem duplicar. O cursor vem de `revision` da página, nunca da revisão de uma linha. **Alternativa descartada:** guardar versões das linhas, que daria o estado exato de cada revisão, com mais tabela e consulta para um intervalo raro e passageiro. Não há exclusão, então não há marcadores de remoção. **Alternativa descartada:** baixar tudo a cada atualização, porque desenhos tendem a pesar com o tempo.
 
 **Restauração de backup:** acontece com a API fechada e invalida todas as sessões e todos os códigos de vínculo antes de aceitar tráfego, porque o backup pode conter a sessão de um aparelho revogado ou um código já usado depois dele. Na conexão seguinte, cada celular recebe a revogação e apaga a cópia e as tentativas pendentes, como em qualquer revogação. O novo vínculo, com código novo, baixa o estado restaurado desde o início. Assim, nenhum aparelho fica com um cursor à frente do servidor nem com dados que não existem mais nele. **Limite aceito:** entre a restauração e o novo vínculo, o celular que já se conectou não mostra dados. **Alternativa descartada:** manter a cópia visível durante a reconstrução, que exigiria um identificador de geração e deixaria dados acessíveis em uma sessão inválida, para um evento raro.
 

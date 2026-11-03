@@ -7,12 +7,12 @@
 
 ## 1. Backend (`feat/backend-core`)
 
-- [ ] 1.1 Criar `backend/` com build próprio, Flyway e Testcontainers; verificar que o build Android e `labs/backend` continuam passando.
-- [ ] 1.2 Implementar vínculo, tokens com hash e revogação, e comandos administrativos, escrevendo primeiro testes de expiração, uso único, limite de tentativas e token revogado.
-- [ ] 1.3 Implementar revisão serializada e `GET /v1/sync` com paginação; verificar por teste que escritas concorrentes não fazem a leitura pular revisões.
-- [ ] 1.4 Implementar idempotência com chaves sem prazo; verificar repetição com a mesma chave, chave com conteúdo diferente, segundo envio e descarte com a primeira transação em andamento e envio atrasado depois do descarte.
-- [ ] 1.5 Implementar pedidos e Histórico, portando as regras de `RoomCoupleRepository`; verificar transições, duplicidade, espaço pessoal, permissão por pessoa e atomicidade contra a spec.
-- [ ] 1.6 Implementar mood e espaço pessoal; verificar repetição sem novo evento e a data no fuso configurado.
+- [x] 1.1 Criar `backend/` com build próprio, Flyway e Testcontainers; verificar que o build Android e `labs/backend` continuam passando.
+- [x] 1.2 Implementar vínculo, tokens com hash e revogação, e comandos administrativos, escrevendo primeiro testes de expiração, uso único, limite de tentativas e token revogado.
+- [x] 1.3 Implementar revisão serializada e `GET /v1/sync` com paginação; verificar por teste que escritas concorrentes não fazem a leitura pular revisões.
+- [x] 1.4 Implementar idempotência com chaves sem prazo; verificar repetição com a mesma chave, chave com conteúdo diferente, segundo envio e descarte com a primeira transação em andamento e envio atrasado depois do descarte.
+- [x] 1.5 Implementar pedidos e Histórico, portando as regras de `RoomCoupleRepository`; verificar transições, duplicidade, espaço pessoal, permissão por pessoa e atomicidade contra a spec.
+- [x] 1.6 Implementar mood e espaço pessoal; verificar repetição sem novo evento e a data no fuso configurado.
 
 ## 2. Implantação (`chore/backend-deploy`)
 
