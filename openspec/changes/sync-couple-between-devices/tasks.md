@@ -1,5 +1,7 @@
 # Tasks
 
+Ordem de execução, decidida por Vinícius em 2026-11-03: 3, 4, 6, 5, 2 e 7. Os números não mudam. Até a etapa 2, o servidor roda no computador de desenvolvimento, com dados sintéticos. Ver `design.md`, "Branches e entregas".
+
 ## 0. Spec (`docs/two-device-sync-spec`)
 
 - [x] 0.1 Revisar esta spec com o Codex e corrigir bloqueantes; verificar `openspec validate sync-couple-between-devices --strict`. Três rodadas antes da aprovação em 2026-11-03; as correções da terceira não passaram por nova rodada antes dela. A revisão do PR #6 apontou uma contradição na restauração, corrigida depois da aprovação com a retirada da geração do banco.
@@ -20,6 +22,8 @@
 - [ ] 2.2 Escrever Docker Compose, proxy com HTTPS e documentação de operação, sem segredos no repositório; verificar HTTPS e que o PostgreSQL não está exposto publicamente.
 - [ ] 2.3 Configurar backup diário cifrado fora da VPS; verificar restauração completa em ambiente separado, com dados sintéticos, e que o procedimento invalida todas as sessões e códigos de vínculo antes de aceitar tráfego, inclusive uma sessão revogada e um código usado depois do backup.
 - [ ] 2.4 Verificar que os logs não contêm tokens nem conteúdo, com dados sintéticos.
+- [ ] 2.5 Decidir com Vinícius o teto técnico do corpo JSON e aplicá-lo antes de expor o servidor; verificar a recusa acima do teto sem alterar nada.
+- [ ] 2.6 Repetir no servidor definitivo o teste de 5.5, com app fechado e em repouso, e o uso por dados móveis; registrar atrasos reais.
 
 ## 3. Identidade no app (`feat/app-device-identity`)
 
