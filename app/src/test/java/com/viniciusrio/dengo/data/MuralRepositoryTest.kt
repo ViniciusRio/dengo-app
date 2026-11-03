@@ -23,7 +23,7 @@ class MuralRepositoryTest {
     @Test fun drawingPublishesOnceWithAuthorTimeAndNoHistoryEvent() = runTest {
         val repository = FakeCoupleRepository(clock)
         val stroke = DrawingStroke(0xFFA63854.toInt(), listOf(DrawingPoint(0.2f, 0.3f)))
-        val note = repository.createMuralDrawing(PartnerId.VINICIUS, 1.5f, listOf(stroke)).confirmed()
+        val note = repository.actingAs(PartnerId.VINICIUS).createMuralDrawing(1.5f, listOf(stroke)).confirmed()
 
         assertEquals(1L, note.id)
         assertEquals(PartnerId.VINICIUS, note.authorId)
@@ -35,15 +35,15 @@ class MuralRepositoryTest {
 
     @Test fun emptyDrawingDoesNotPublishOrConsumeId() = runTest {
         val repository = FakeCoupleRepository(clock)
-        assertTrue(repository.createMuralDrawing(PartnerId.LIDIANNE, 1f, emptyList()) is WriteResult.Reverted)
+        assertTrue(repository.actingAs(PartnerId.LIDIANNE).createMuralDrawing(1f, emptyList()) is WriteResult.Reverted)
         assertTrue(repository.snapshot().muralNotes.isEmpty())
-        assertEquals(1L, repository.createMuralNote(PartnerId.LIDIANNE, "Oi").confirmed().id)
+        assertEquals(1L, repository.actingAs(PartnerId.LIDIANNE).createMuralNote("Oi").confirmed().id)
     }
 
     @Test fun publishingStoresTrimmedTextAuthorSequentialIdAndFixedTime() = runTest {
         val repository = FakeCoupleRepository(clock)
-        val first = repository.createMuralNote(PartnerId.LIDIANNE, "  Oi, meu amor ❤️  ").confirmed()
-        val second = repository.createMuralNote(PartnerId.VINICIUS, "  Também te amo  ").confirmed()
+        val first = repository.actingAs(PartnerId.LIDIANNE).createMuralNote("  Oi, meu amor ❤️  ").confirmed()
+        val second = repository.actingAs(PartnerId.VINICIUS).createMuralNote("  Também te amo  ").confirmed()
 
         assertEquals(1L, first.id)
         assertEquals(2L, second.id)
@@ -58,18 +58,18 @@ class MuralRepositoryTest {
 
     @Test fun emptyAndWhitespaceOnlyTextDoNotChangeStateOrConsumeId() = runTest {
         val repository = FakeCoupleRepository(clock)
-        assertTrue(repository.createMuralNote(PartnerId.LIDIANNE, "") is WriteResult.Reverted)
-        assertTrue(repository.createMuralNote(PartnerId.LIDIANNE, "  \n  ") is WriteResult.Reverted)
+        assertTrue(repository.actingAs(PartnerId.LIDIANNE).createMuralNote("") is WriteResult.Reverted)
+        assertTrue(repository.actingAs(PartnerId.LIDIANNE).createMuralNote("  \n  ") is WriteResult.Reverted)
         assertTrue(repository.snapshot().muralNotes.isEmpty())
-        assertEquals(1L, repository.createMuralNote(PartnerId.LIDIANNE, "Oi").confirmed().id)
+        assertEquals(1L, repository.actingAs(PartnerId.LIDIANNE).createMuralNote("Oi").confirmed().id)
     }
 
     @Test fun accepts160CodePointsIncludingEmojiAndRejects161WithoutTruncation() = runTest {
         val repository = FakeCoupleRepository(clock)
         val accepted = "a".repeat(159) + "❤️" // two code points, so this is 161
-        assertTrue(repository.createMuralNote(PartnerId.LIDIANNE, accepted) is WriteResult.Reverted)
+        assertTrue(repository.actingAs(PartnerId.LIDIANNE).createMuralNote(accepted) is WriteResult.Reverted)
         val exact = "a".repeat(158) + "❤️"
-        val note = repository.createMuralNote(PartnerId.LIDIANNE, exact).confirmed()
+        val note = repository.actingAs(PartnerId.LIDIANNE).createMuralNote(exact).confirmed()
 
         assertEquals(MuralContent.Text(exact), note.content)
         assertEquals(160, (note.content as MuralContent.Text).value.codePointCount(0, exact.length))
@@ -77,7 +77,7 @@ class MuralRepositoryTest {
         assertEquals(listOf(note), repository.snapshot().muralNotes)
 
         val supplementaryEmoji = "💗".repeat(160)
-        val emojiNote = repository.createMuralNote(PartnerId.VINICIUS, supplementaryEmoji).confirmed()
+        val emojiNote = repository.actingAs(PartnerId.VINICIUS).createMuralNote(supplementaryEmoji).confirmed()
         assertEquals(MuralContent.Text(supplementaryEmoji), emojiNote.content)
         assertEquals(160, (emojiNote.content as MuralContent.Text).value.codePointCount(0, supplementaryEmoji.length))
     }
@@ -87,7 +87,7 @@ class MuralRepositoryTest {
         repository.activatePersonalSpace()
         val historyBefore = repository.snapshot().history
 
-        val note = repository.createMuralNote(PartnerId.VINICIUS, "Estou por aqui").confirmed()
+        val note = repository.actingAs(PartnerId.VINICIUS).createMuralNote("Estou por aqui").confirmed()
 
         assertEquals(listOf(note), repository.snapshot().muralNotes)
         assertEquals(historyBefore, repository.snapshot().history)
@@ -97,8 +97,7 @@ class MuralRepositoryTest {
         val repository = FakeCoupleRepository(clock)
         repository.activatePersonalSpace()
         val before = repository.snapshot()
-        val note = repository.createMuralDrawing(
-            PartnerId.LIDIANNE, 1f,
+        val note = repository.actingAs(PartnerId.LIDIANNE).createMuralDrawing(1f,
             listOf(DrawingStroke(0xFF292426.toInt(), listOf(DrawingPoint(0.5f, 0.5f)))),
         ).confirmed()
 

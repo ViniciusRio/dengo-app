@@ -161,8 +161,8 @@ class HomeViewModelTest {
         val repository = FakeCoupleRepository(clock)
         val viewModel = HomeViewModel(repository)
         val request = repository.createRequest(CareRequestType.DENGO).confirmed()
-        repository.createMuralNote(PartnerId.VINICIUS, "Primeiro").confirmed()
-        val latest = repository.createMuralNote(PartnerId.LIDIANNE, "Segundo").confirmed()
+        repository.actingAs(PartnerId.VINICIUS).createMuralNote("Primeiro").confirmed()
+        val latest = repository.actingAs(PartnerId.LIDIANNE).createMuralNote("Segundo").confirmed()
         advanceUntilIdle()
 
         assertEquals(latest, viewModel.state.value.ready().latestMuralNote)

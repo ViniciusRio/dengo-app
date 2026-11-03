@@ -27,14 +27,14 @@ Ordem de execução, decidida por Vinícius em 2026-11-03: 3, 4, 6, 5, 2 e 7. Os
 
 ## 3. Identidade no app (`feat/app-device-identity`)
 
-- [ ] 3.1 Adicionar a permissão de internet e bloquear tráfego sem HTTPS, com exceção só no build debug para servidor local.
-- [ ] 3.2 Guardar o token cifrado com o Keystore; verificar que `allowBackup` e as regras de extração continuam excluindo os dados.
+- [x] 3.1 Adicionar a permissão de internet e bloquear tráfego sem HTTPS, com exceção só no build debug para servidor local.
+- [x] 3.2 Guardar o token cifrado com o Keystore; verificar que `allowBackup` e as regras de extração continuam excluindo os dados.
 - [ ] 3.3 Criar a tela de vínculo, com estados de erro, código expirado e sem conexão, consultando `docs/design/*`; verificar acessibilidade e toque.
-- [ ] 3.4 Derivar a perspectiva da sessão, retirar a troca do Perfil e retirar quem age de `CoupleRepository`; adaptar Fake, ViewModels e testes; verificar a suíte unitária e instrumentada.
+- [x] 3.4 Derivar a perspectiva da sessão, retirar a troca do Perfil e retirar quem age de `CoupleRepository`; adaptar Fake, ViewModels e testes; verificar a suíte unitária e instrumentada.
 
 ## 4. Sincronização no app (`feat/app-remote-sync`)
 
-- [ ] 4.1 Criar `dengo-sync.db` com IDs do servidor e revisão, mantendo `dengo-local.db` intacto; verificar por teste que o arquivo antigo não é aberto nem alterado.
+- [ ] 4.1 Criar `dengo-sync.db` com IDs do servidor e revisão, mantendo `dengo-local.db` intacto e apagando os arquivos `dengo-session-*.db` da etapa 3; verificar por teste que o arquivo antigo não é aberto nem alterado.
 - [ ] 4.2 Implementar a nova implementação de `CoupleRepository` sobre a API, com as regras de resultado da spec e a tabela de tentativas pendentes; verificar com servidor falso cada linha da tabela de resultados, tentar de novo e descartar, inclusive depois de reabrir o app, com descarte que encontra escrita confirmada e comando igual antes de a cópia alcançar a revisão.
 - [ ] 4.3 Implementar os gatilhos de sincronização e o aplicar por página em transação; verificar interrupção no meio da paginação.
 - [ ] 4.4 Comunicar dados possivelmente desatualizados e falta de conexão, sem criar novo componente se um aviso existente servir; verificar leitura sem internet.

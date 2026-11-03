@@ -46,15 +46,15 @@ class ReadFailureComposerTest {
             state.value = fake.state.value
         }
         override suspend fun createRequest(type: com.viniciusrio.dengo.model.CareRequestType, message: String?) = requestResult.await()
-        override suspend fun createMuralNote(authorId: PartnerId, text: String) = textResult.await()
-        override suspend fun createMuralDrawing(authorId: PartnerId, aspectRatio: Float, strokes: List<DrawingStroke>) = drawingResult.await()
+        override suspend fun createMuralNote(text: String) = textResult.await()
+        override suspend fun createMuralDrawing(aspectRatio: Float, strokes: List<DrawingStroke>) = drawingResult.await()
     }
 
     private fun showApp(repository: ControlledRepository): Pair<HomeViewModel, MuralViewModel> {
         val home = HomeViewModel(repository)
         val mural = MuralViewModel(repository)
         composeRule.setContent {
-            DengoApp(home, ViniciusHomeViewModel(repository), HistoryViewModel(repository), mural)
+            DengoApp(PartnerId.LIDIANNE, home, ViniciusHomeViewModel(repository), HistoryViewModel(repository), mural)
         }
         return home to mural
     }
@@ -110,7 +110,7 @@ class ReadFailureComposerTest {
         composeRule.runOnIdle {
             mural.openDrawing()
             mural.addStroke(listOf(DrawingPoint(0.5f, 0.5f)), 1f)
-            mural.publishDrawing(PartnerId.LIDIANNE)
+            mural.publishDrawing()
             repository.state.value = RepositoryReadState.Loading
         }
 
