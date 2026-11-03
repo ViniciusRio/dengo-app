@@ -107,7 +107,13 @@ class SyncReader(
     }
 
     private fun requests(after: Long, upTo: Long) = jdbc.sql(
-        "SELECT * FROM care_request WHERE revision > :after AND revision <= :upTo ORDER BY revision, id",
+        // Um pedido alterado depois guarda só a revisão mais nova: vem também quando um acontecimento da página o cita.
+        """
+        SELECT * FROM care_request
+        WHERE (revision > :after AND revision <= :upTo)
+           OR id IN (SELECT request_id FROM history_event WHERE revision > :after AND revision <= :upTo)
+        ORDER BY revision, id
+        """,
     ).param("after", after).param("upTo", upTo).query { rs, _ -> rs.toRequestView() }.list()
 
     private fun history(after: Long, upTo: Long) = jdbc.sql(

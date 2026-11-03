@@ -202,4 +202,47 @@ class SyncTest : BackendTest() {
         assertThat(page.get("revision").asLong()).isEqualTo(1)
         assertThat(page.get("hasMore").asBoolean()).isFalse()
     }
+
+    @Test
+    fun `a page brings the request its events cite, even when the request changed in a later revision`() {
+        val lidianne = pair(Person.LIDIANNE)
+        val vinicius = pair(Person.VINICIUS)
+        val created = other(lidianne, "citado")
+        val id = created.body.get("request").get("id").asLong()
+        api.send("POST", "/v1/requests/$id/accept", token = vinicius, key = newKey())
+
+        val first = sync(vinicius, limit = 1).body
+
+        assertThat(first.get("revision").asLong()).isEqualTo(1)
+        assertThat(first.get("hasMore").asBoolean()).isTrue()
+        assertThat((first.get("history") as Iterable<JsonNode>).map { it.get("type").asString() }).containsExactly("REQUEST_CREATED")
+        val cited = first.get("requests").single()
+        assertThat(cited.get("id").asLong()).isEqualTo(id)
+        assertThat(cited.get("status").asString()).isEqualTo("ACCEPTED")
+        assertThat(cited.get("revision").asLong()).isEqualTo(2)
+
+        // A próxima página reenvia o pedido com a sua revisão, e a cópia o regrava sem duplicar.
+        val second = sync(vinicius, after = 1, limit = 1).body
+        assertThat(second.ids("requests")).containsExactly(id)
+        assertThat((second.get("history") as Iterable<JsonNode>).map { it.get("type").asString() }).containsExactly("REQUEST_ACCEPTED")
+        assertThat(second.get("hasMore").asBoolean()).isFalse()
+    }
+
+    @Test
+    fun `no page has an event citing a request it does not bring`() {
+        val lidianne = pair(Person.LIDIANNE)
+        val vinicius = pair(Person.VINICIUS)
+        repeat(4) {
+            val id = other(lidianne, "pedido $it").body.get("request").get("id").asLong()
+            api.send("POST", "/v1/requests/$id/" + (if (it % 2 == 0) "accept" else "decline"), token = vinicius, key = newKey())
+        }
+
+        var after = 0L
+        do {
+            val page = sync(vinicius, after = after, limit = 1).body
+            val cited = (page.get("history") as Iterable<JsonNode>).map { it.get("requestId").asLong() }
+            assertThat(page.ids("requests")).containsAll(cited)
+            after = page.get("revision").asLong()
+        } while (page.get("hasMore").asBoolean())
+    }
 }

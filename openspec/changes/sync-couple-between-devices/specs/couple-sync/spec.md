@@ -78,7 +78,11 @@ O sistema SHALL entregar a cada aparelho todas as alterações confirmadas, em o
 
 #### Scenario: Interrupção no meio da paginação
 - **WHEN** a sincronização é interrompida entre duas páginas
-- **THEN** a cópia local mantém um estado de uma revisão completa e a próxima sincronização continua dela sem duplicar dados
+- **THEN** a cópia local mantém as páginas completas já gravadas, sem acontecimento que cite um pedido ausente, e a próxima sincronização continua da última revisão alcançada sem duplicar dados
+
+#### Scenario: Pedido alterado depois do acontecimento da página
+- **WHEN** uma página traz um acontecimento de um pedido que mudou em uma revisão posterior
+- **THEN** a página traz o pedido no estado mais novo, e a página da revisão dele o reenvia sem criar duplicidade
 
 #### Scenario: Servidor restaurado de backup anterior
 - **WHEN** um aparelho se conecta depois de o servidor ser restaurado de um backup

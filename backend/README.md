@@ -58,3 +58,7 @@ Cada comando envia `Idempotency-Key`. A chave pertence à pessoa da sessão, nã
 - `CANCELLED`: nada foi gravado, e um envio atrasado com essa chave recebe `OPERATION_CANCELLED`.
 - `CONFIRMED`: a escrita já existia; o registro local só pode sair quando a cópia alcançar `revision`.
 - `REFUSED`: o comando original foi recusado por uma regra, e nada foi gravado.
+
+## Sincronização
+
+`GET /v1/sync?after=<revisão>&limit=<n>` corta as páginas só entre revisões. A página traz também os pedidos citados pelos acontecimentos dela, que podem ter `revision` à frente do cursor e voltar em uma página seguinte: a cópia regrava pelo `id` e usa como cursor sempre o `revision` da página, nunca o de uma linha.
