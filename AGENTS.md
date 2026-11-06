@@ -29,7 +29,7 @@ Se falhar, procure o erro (`grep -n "FAILED\|error:"`) antes de abrir o relatór
 
 ## Fluxo
 
-Claude Code implementa, Codex revisa somente leitura, Vinícius aprova e faz o merge. Detalhes: [docs/AI-WORKFLOW.md](docs/AI-WORKFLOW.md).
+Claude Code implementa, Codex revisa somente leitura, Vinícius aprova e faz o merge. O quadro do Kanzo só mostra o andamento; não é fonte de verdade. Detalhes: [docs/AI-WORKFLOW.md](docs/AI-WORKFLOW.md).
 
 ## Correções recorrentes
 

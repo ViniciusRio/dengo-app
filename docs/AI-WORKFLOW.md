@@ -72,6 +72,7 @@ No fluxo sequencial, o revisor somente leitura pode revisar o commit sem worktre
 | `CLAUDE.md` | Importa o `AGENTS.md`; só notas específicas do Claude Code |
 | `docs/STATUS.md` | Estado atual, ~15 linhas; fonte única. Atualizado quando um agente para |
 | `openspec/changes/*/tasks.md` | Progresso das tarefas |
+| Quadro do Kanzo (`~/kanzo`, fora do repositório) | Visão do backlog e do andamento; só acompanha |
 | `docs/decisions/` e `design.md` do OpenSpec | Decisões com data e motivo. Índice em `docs/decisions/README.md` |
 | Descrição e comentários do PR | Handoff e revisão |
 | `dengo/` | Planejamento e contexto de produto; não registra o estado atual |
@@ -79,6 +80,16 @@ No fluxo sequencial, o revisor somente leitura pode revisar o commit sem worktre
 Quando um agente repetir um erro já corrigido, acrescente-o às correções recorrentes do `AGENTS.md`. Deixe de fora o que o agente consegue ler no código.
 
 Mantenha as skills upstream (`tdd`, `codebase-design`, `diagnosing-bugs`) sem modificações locais enquanto forem tratadas como upstream. Revise as mudanças antes de aceitar uma atualização.
+
+## Quadro de acompanhamento (Kanzo)
+
+O [Kanzo](https://github.com/emanuele-em/kanzo) mostra o backlog e o andamento num kanban local (http://localhost:4242), que os agentes acessam pelo MCP `kanzo`. Ele **só acompanha**: specs, `tasks.md`, ADRs, `docs/STATUS.md` e PRs continuam sendo as fontes de verdade, e o quadro não substitui nenhum deles.
+
+- Um cartão por change, PR ou item de backlog, com o link para a change ou o PR em vez de copiar o conteúdo.
+- O implementador move o cartão quando a etapa muda (planejar, implementar, revisar, aprovar, concluído). O Codex continua somente leitura e não mexe no quadro.
+- Mover o cartão para concluído não é aprovação: segue valendo o merge feito por Vinícius e, em UI, a revisão no aparelho.
+- Se o quadro divergir do repositório, vale o repositório, e o cartão é corrigido.
+- Os dados ficam em `~/kanzo`, em cada máquina, fora do Git do projeto.
 
 ## Commits
 
