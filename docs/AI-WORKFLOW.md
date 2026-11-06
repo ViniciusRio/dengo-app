@@ -85,11 +85,11 @@ Mantenha as skills upstream (`tdd`, `codebase-design`, `diagnosing-bugs`) sem mo
 
 O [Kanzo](https://github.com/emanuele-em/kanzo) mostra o backlog e o andamento num kanban local (http://localhost:4242), que os agentes acessam pelo MCP `kanzo`. Ele **só acompanha**: specs, `tasks.md`, ADRs, `docs/STATUS.md` e PRs continuam sendo as fontes de verdade, e o quadro não substitui nenhum deles.
 
-- Um cartão por change, PR ou item de backlog, com o link para a change ou o PR em vez de copiar o conteúdo.
-- O implementador move o cartão quando a etapa muda (planejar, implementar, revisar, aprovar, concluído). O Codex continua somente leitura e não mexe no quadro.
+- Um cartão por trabalho: a change e o PR dela compartilham o mesmo cartão, que recebe o link do PR quando ele é aberto. Item de backlog sem change também tem cartão. O cartão leva links, não cópia do conteúdo.
+- O implementador move o cartão quando a etapa muda (planejar, implementar, revisar, aprovar, concluído). Depois do merge, o implementador ou Vinícius move o cartão para concluído, quem perceber primeiro. O Codex continua somente leitura e não mexe no quadro.
 - Mover o cartão para concluído não é aprovação: segue valendo o merge feito por Vinícius e, em UI, a revisão no aparelho.
 - Se o quadro divergir do repositório, vale o repositório, e o cartão é corrigido.
-- Os dados ficam em `~/kanzo`, em cada máquina, fora do Git do projeto.
+- O quadro é um só: Claude Code, Codex e Vinícius usam o da mesma máquina. Em outra máquina, use `kanzo join <ip>` em vez de criar um quadro novo. Os dados ficam em `~/kanzo`, fora do Git do projeto.
 
 ## Commits
 

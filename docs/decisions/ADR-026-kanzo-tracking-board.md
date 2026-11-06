@@ -16,4 +16,4 @@ Usar o [Kanzo](https://github.com/emanuele-em/kanzo), um kanban local que os age
 
 Trocar os `tasks.md` pelo Kanzo tiraria o progresso do Git e da spec. Não usar quadro algum mantém a visão fragmentada.
 
-O quadro pode ficar desatualizado em relação ao repositório; nesse caso vale o repositório. Mover um cartão não é aprovação. Os dados ficam em `~/kanzo`, em cada máquina, fora do repositório. O Kanzo é AGPL-3.0, o que não afeta o app porque ele é só usado, não modificado nem distribuído.
+O quadro pode ficar desatualizado em relação ao repositório; nesse caso vale o repositório. Mover um cartão não é aprovação. Há um quadro só, compartilhado com `kanzo join` quando houver outra máquina; os dados ficam em `~/kanzo`, fora do repositório. O Kanzo é AGPL-3.0, o que não afeta o app porque ele é só usado, não modificado nem distribuído.
