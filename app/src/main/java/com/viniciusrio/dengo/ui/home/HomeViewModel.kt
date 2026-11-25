@@ -82,7 +82,7 @@ class HomeViewModel(private val repository: CoupleRepository) : ViewModel() {
     }
 
     fun acknowledgeRequest(requestId: Long) {
-        quickWrites.independent("ack" to requestId) { repository.acknowledgeRequest(requestId, PartnerId.LIDIANNE) }
+        quickWrites.independent("ack" to requestId) { repository.acknowledgeRequest(requestId) }
     }
 
     fun setMood(option: MoodOption) {

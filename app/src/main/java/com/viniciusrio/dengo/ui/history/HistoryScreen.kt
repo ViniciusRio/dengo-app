@@ -35,8 +35,8 @@ import androidx.compose.ui.unit.dp
 import com.viniciusrio.dengo.R
 import com.viniciusrio.dengo.model.CareRequestType
 import com.viniciusrio.dengo.model.HistoryEvent
+import com.viniciusrio.dengo.model.PartnerId
 import com.viniciusrio.dengo.model.MoodOption
-import com.viniciusrio.dengo.navigation.PrototypePerspective
 import com.viniciusrio.dengo.ui.theme.AppSpacing
 import com.viniciusrio.dengo.ui.theme.LidianneAction
 import com.viniciusrio.dengo.ui.theme.ViniciusAction
@@ -55,7 +55,7 @@ internal fun formatHistoryTime(time: LocalTime): String = time.format(timeFormat
 @Composable
 fun HistoryScreen(
     state: HistoryUiState,
-    perspective: PrototypePerspective,
+    person: PartnerId,
     contentPadding: PaddingValues = PaddingValues(),
     today: LocalDate = LocalDate.now(),
 ) {
@@ -95,7 +95,7 @@ fun HistoryScreen(
                     }
                 }) { entry ->
                     when (entry) {
-                        is RequestStory -> RequestStoryCard(entry, perspective, today)
+                        is RequestStory -> RequestStoryCard(entry, person, today)
                         is IndependentHistoryEntry -> HistoryEventRow(entry, dayLabel(day.date, today))
                     }
                 }
@@ -168,9 +168,9 @@ private fun HistoryEventRow(item: IndependentHistoryEntry, dayLabel: String) {
 }
 
 @Composable
-private fun RequestStoryCard(story: RequestStory, perspective: PrototypePerspective, today: LocalDate) {
+private fun RequestStoryCard(story: RequestStory, person: PartnerId, today: LocalDate) {
     val startsWithCreation = story.steps.firstOrNull()?.event is HistoryEvent.RequestCreated
-    val cardColor = if (perspective == PrototypePerspective.LIDIANNE) MaterialTheme.colorScheme.surfaceVariant
+    val cardColor = if (person == PartnerId.LIDIANNE) MaterialTheme.colorScheme.surfaceVariant
         else lerp(MaterialTheme.colorScheme.surface, ViniciusBlueSoft, 0.4f)
     Surface(
         modifier = Modifier.fillMaxWidth().padding(bottom = AppSpacing.Medium),

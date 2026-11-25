@@ -8,7 +8,6 @@ import com.viniciusrio.dengo.model.CareRequestType
 import com.viniciusrio.dengo.model.HistoryEvent
 import com.viniciusrio.dengo.model.MoodOption
 import com.viniciusrio.dengo.model.PartnerId
-import com.viniciusrio.dengo.navigation.PrototypePerspective
 import com.viniciusrio.dengo.ui.theme.DengoTheme
 import java.time.Instant
 import java.time.LocalDate
@@ -21,9 +20,9 @@ import org.junit.runner.RunWith
 class HistoryScreenTest {
     @get:Rule val composeRule = createAndroidComposeRule<ComponentActivity>()
 
-    @Test fun lidianneReadsAllRecordedSteps() = assertRecordedSteps(PrototypePerspective.LIDIANNE)
+    @Test fun lidianneReadsAllRecordedSteps() = assertRecordedSteps(PartnerId.LIDIANNE)
 
-    @Test fun viniciusReadsAllRecordedSteps() = assertRecordedSteps(PrototypePerspective.VINICIUS)
+    @Test fun viniciusReadsAllRecordedSteps() = assertRecordedSteps(PartnerId.VINICIUS)
 
     @Test fun declinedOtherRequestKeepsOriginalLongText() {
         val date = LocalDate.of(2026, 9, 30)
@@ -44,7 +43,7 @@ class HistoryScreenTest {
         )
         composeRule.setContent {
             DengoTheme {
-                HistoryScreen(HistoryUiState(listOf(HistoryDay(date, listOf(story)))), PrototypePerspective.VINICIUS, today = date)
+                HistoryScreen(HistoryUiState(listOf(HistoryDay(date, listOf(story)))), PartnerId.VINICIUS, today = date)
             }
         }
 
@@ -68,7 +67,7 @@ class HistoryScreenTest {
         )
         composeRule.setContent {
             DengoTheme {
-                HistoryScreen(HistoryUiState(listOf(HistoryDay(date, entries))), PrototypePerspective.LIDIANNE, today = date)
+                HistoryScreen(HistoryUiState(listOf(HistoryDay(date, entries))), PartnerId.LIDIANNE, today = date)
             }
         }
 
@@ -76,7 +75,7 @@ class HistoryScreenTest {
         composeRule.onNodeWithContentDescription("Hoje. 14:03. Lidianne pediu um tempo só dela").assertExists()
     }
 
-    private fun assertRecordedSteps(perspective: PrototypePerspective) {
+    private fun assertRecordedSteps(perspective: PartnerId) {
         val date = LocalDate.of(2026, 9, 30)
         val createdAt = Instant.parse("2026-09-30T14:32:00Z")
         val acceptedAt = Instant.parse("2026-09-30T14:34:00Z")
@@ -98,7 +97,7 @@ class HistoryScreenTest {
             DengoTheme {
                 HistoryScreen(
                     state = HistoryUiState(listOf(HistoryDay(date, listOf(story)))),
-                    perspective = perspective,
+                    person = perspective,
                     today = date,
                 )
             }

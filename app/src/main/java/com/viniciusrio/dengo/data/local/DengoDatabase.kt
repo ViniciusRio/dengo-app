@@ -11,6 +11,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
+import com.viniciusrio.dengo.model.PartnerId
 
 @Dao
 internal interface DengoDao {
@@ -77,12 +78,15 @@ internal abstract class DengoDatabase : RoomDatabase() {
     abstract fun dao(): DengoDao
 
     companion object {
-        fun open(context: Context, name: String = "dengo-local.db"): DengoDatabase =
+        fun open(context: Context, name: String): DengoDatabase =
             Room.databaseBuilder(context, DengoDatabase::class.java, name)
                 .openHelperFactory(PreservingOpenHelperFactory())
                 .build()
     }
 }
+
+/** O arquivo de cada pessoa até a etapa 4. O `dengo-local.db` antigo fica intacto e sem uso. */
+internal fun sessionDatabaseName(person: PartnerId): String = "dengo-session-${person.name.lowercase()}.db"
 
 private class PreservingOpenHelperFactory : SupportSQLiteOpenHelper.Factory {
     override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper {

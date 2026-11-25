@@ -8,7 +8,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone()) : CoupleRepository {
+class FakeCoupleRepository(
+    private val clock: Clock = Clock.systemDefaultZone(),
+    private var actor: PartnerId = PartnerId.LIDIANNE,
+) : CoupleRepository {
+    /** Só para testes: troca a pessoa da sessão, simulando o outro aparelho sobre o mesmo estado. */
+    fun actingAs(person: PartnerId): FakeCoupleRepository = apply { actor = person }
+
     private val nextRequestId = AtomicLong(1)
     private val nextMuralNoteId = AtomicLong(1)
     private val mutableState = MutableStateFlow(CoupleState(partners = listOf(
@@ -28,15 +34,15 @@ class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone())
         }
     }
 
-    override suspend fun createMuralNote(authorId: PartnerId, text: String): WriteResult<MuralNote> = synchronized(this) {
+    override suspend fun createMuralNote(text: String): WriteResult<MuralNote> = synchronized(this) {
         val normalized = text.trim()
         if (normalized.isEmpty() || normalized.muralCodePointCount() > MURAL_NOTE_MAX_CODE_POINTS) {
             return@synchronized WriteResult.Reverted("Invalid mural text")
         }
-        WriteResult.Confirmed(appendMuralNote(authorId, MuralContent.Text(normalized)), true)
+        WriteResult.Confirmed(appendMuralNote(actor, MuralContent.Text(normalized)), true)
     }
 
-    override suspend fun createMuralDrawing(authorId: PartnerId, aspectRatio: Float, strokes: List<DrawingStroke>): WriteResult<MuralNote> = synchronized(this) {
+    override suspend fun createMuralDrawing(aspectRatio: Float, strokes: List<DrawingStroke>): WriteResult<MuralNote> = synchronized(this) {
         if (!aspectRatio.isFinite() || aspectRatio <= 0f || strokes.isEmpty() || !strokes.all { stroke ->
             (stroke.aspectRatio == null || (stroke.aspectRatio.isFinite() && stroke.aspectRatio > 0f)) &&
                 stroke.points.isNotEmpty() && stroke.points.all { point ->
@@ -44,7 +50,7 @@ class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone())
                 }
         }) return@synchronized WriteResult.Reverted("Invalid mural drawing")
         val content = MuralContent.Drawing(aspectRatio, strokes.map { it.copy(points = it.points.toList()) })
-        WriteResult.Confirmed(appendMuralNote(authorId, content), true)
+        WriteResult.Confirmed(appendMuralNote(actor, content), true)
     }
 
     private fun appendMuralNote(authorId: PartnerId, content: MuralContent): MuralNote {
@@ -100,15 +106,15 @@ class FakeCoupleRepository(private val clock: Clock = Clock.systemDefaultZone())
         return WriteResult.Confirmed(Unit, true)
     }
 
-    override suspend fun acknowledgeRequest(requestId: Long, actorId: PartnerId): WriteResult<Unit> = synchronized(this) {
+    override suspend fun acknowledgeRequest(requestId: Long): WriteResult<Unit> = synchronized(this) {
         val request = mutableState.value.requests.firstOrNull { it.id == requestId }
-        if (actorId != PartnerId.LIDIANNE || request?.requesterId != actorId ||
+        if (actor != PartnerId.LIDIANNE || request?.requesterId != actor ||
             request.status != CareRequestStatus.ACCEPTED
         ) return@synchronized WriteResult.Reverted("Request cannot be acknowledged")
         val now = clock.instant()
         updateState { it.copy(
             requests = it.requests.map { existing -> if (existing.id == requestId) existing.copy(status = CareRequestStatus.ACKNOWLEDGED) else existing },
-            history = it.history + HistoryEvent.RequestAcknowledged(requestId, actorId, now),
+            history = it.history + HistoryEvent.RequestAcknowledged(requestId, actor, now),
         ) }
         WriteResult.Confirmed(Unit, true)
     }

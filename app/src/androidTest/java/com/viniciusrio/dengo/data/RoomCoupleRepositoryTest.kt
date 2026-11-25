@@ -12,6 +12,7 @@ import com.viniciusrio.dengo.model.DrawingStroke
 import com.viniciusrio.dengo.model.HistoryEvent
 import com.viniciusrio.dengo.model.MoodOption
 import com.viniciusrio.dengo.model.MuralContent
+import com.viniciusrio.dengo.model.MuralNote
 import com.viniciusrio.dengo.model.PartnerId
 import com.viniciusrio.dengo.ui.ScreenReadState
 import com.viniciusrio.dengo.ui.SubmissionState
@@ -57,7 +58,7 @@ class RoomCoupleRepositoryTest {
         val database = DengoDatabase.open(context, name)
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         try {
-            val room = RoomCoupleRepository(database, scope)
+            val room = RoomCoupleRepository(PartnerId.LIDIANNE, database, scope)
             room.awaitReady()
             val lostResponse = LostResponseRepository(room)
             val home = HomeViewModel(lostResponse)
@@ -79,7 +80,7 @@ class RoomCoupleRepositoryTest {
         val reopened = DengoDatabase.open(context, name)
         val reopenedScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         try {
-            val restored = RoomCoupleRepository(reopened, reopenedScope).awaitReady()
+            val restored = RoomCoupleRepository(PartnerId.LIDIANNE, reopened, reopenedScope).awaitReady()
             assertEquals(1, restored.requests.size)
             assertEquals(1, restored.history.size)
             assertTrue(restored.history.single() is HistoryEvent.RequestCreated)
@@ -95,25 +96,25 @@ class RoomCoupleRepositoryTest {
         fun open() = DengoDatabase.open(context, name)
         val firstDatabase = open()
         val firstScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-        val first = RoomCoupleRepository(firstDatabase, firstScope, clock)
+        val first = RoomCoupleRepository(PartnerId.LIDIANNE, firstDatabase, firstScope, clock)
         assertTrue(first.awaitReady().requests.isEmpty())
 
         val request = first.createRequest(CareRequestType.DENGO) as WriteResult.Confirmed<CareRequest>
         assertTrue(request.changed)
         assertEquals(WriteResult.Confirmed(Unit, true), first.acceptRequest(request.value.id))
-        assertEquals(WriteResult.Confirmed(Unit, true), first.acknowledgeRequest(request.value.id, PartnerId.LIDIANNE))
+        assertEquals(WriteResult.Confirmed(Unit, true), first.acknowledgeRequest(request.value.id))
         assertEquals(WriteResult.Confirmed(Unit, true), first.setMood(MoodOption.HAPPY))
         assertEquals(WriteResult.Confirmed(Unit, true), first.activatePersonalSpace())
-        assertTrue(first.createMuralNote(PartnerId.VINICIUS, "Oi ❤️") is WriteResult.Confirmed)
+        assertTrue(first.createMuralNote("Oi ❤️") is WriteResult.Confirmed)
         val stroke = DrawingStroke(0xFFCC4466.toInt(), listOf(DrawingPoint(0.1f, 0.2f), DrawingPoint(0.8f, 0.9f)), 1.5f)
-        assertTrue(first.createMuralDrawing(PartnerId.LIDIANNE, 2f, listOf(stroke)) is WriteResult.Confirmed)
+        assertTrue(first.createMuralDrawing(2f, listOf(stroke)) is WriteResult.Confirmed)
         firstScope.cancel()
         firstDatabase.close()
 
         val secondDatabase = open()
         val secondScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         try {
-            val second = RoomCoupleRepository(secondDatabase, secondScope, clock)
+            val second = RoomCoupleRepository(PartnerId.LIDIANNE, secondDatabase, secondScope, clock)
             val restored = second.awaitReady()
             assertEquals(CareRequestStatus.ACKNOWLEDGED, restored.requests.single().status)
             assertEquals(5, restored.history.size)
@@ -141,7 +142,7 @@ class RoomCoupleRepositoryTest {
         val database = DengoDatabase.open(context, name)
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         try {
-            val repository = RoomCoupleRepository(database, scope)
+            val repository = RoomCoupleRepository(PartnerId.LIDIANNE, database, scope)
             assertTrue(repository.awaitReady().requests.isEmpty())
             database.openHelper.writableDatabase.execSQL(
                 "CREATE TRIGGER fail_history BEFORE INSERT ON history_events BEGIN SELECT RAISE(ABORT, 'injected'); END"
@@ -158,7 +159,7 @@ class RoomCoupleRepositoryTest {
             val reopened = DengoDatabase.open(context, name)
             val reopenedScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
             try {
-                val afterReopen = RoomCoupleRepository(reopened, reopenedScope)
+                val afterReopen = RoomCoupleRepository(PartnerId.LIDIANNE, reopened, reopenedScope)
                 assertTrue(afterReopen.awaitReady().requests.isEmpty())
                 assertTrue(afterReopen.awaitReady().history.isEmpty())
                 assertTrue(afterReopen.createRequest(CareRequestType.DENGO) is WriteResult.Confirmed)
@@ -178,17 +179,17 @@ class RoomCoupleRepositoryTest {
         val database = DengoDatabase.open(context, "dengo-test-${UUID.randomUUID()}")
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         try {
-            val repository = RoomCoupleRepository(database, scope)
+            val repository = RoomCoupleRepository(PartnerId.LIDIANNE, database, scope)
             repository.awaitReady()
             database.openHelper.writableDatabase.execSQL(
                 "CREATE TRIGGER fail_point BEFORE INSERT ON drawing_points BEGIN SELECT RAISE(ABORT, 'injected'); END"
             )
             val stroke = DrawingStroke(0xFFCC4466.toInt(), listOf(DrawingPoint(0.3f, 0.4f)))
-            assertTrue(repository.createMuralDrawing(PartnerId.LIDIANNE, 1f, listOf(stroke)) is WriteResult.Uncertain)
+            assertTrue(repository.createMuralDrawing(1f, listOf(stroke)) is WriteResult.Uncertain)
             database.openHelper.writableDatabase.execSQL("DROP TRIGGER fail_point")
             assertTrue(repository.state.value is RepositoryReadState.Ready)
             assertTrue(repository.awaitReady().muralNotes.isEmpty())
-            assertTrue(repository.createMuralNote(PartnerId.VINICIUS, "Depois") is WriteResult.Confirmed)
+            assertTrue(repository.createMuralNote("Depois") is WriteResult.Confirmed)
         } finally {
             scope.cancel()
             database.close()
@@ -199,7 +200,7 @@ class RoomCoupleRepositoryTest {
         val database = DengoDatabase.open(context, "dengo-test-${UUID.randomUUID()}")
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         try {
-            val repository = RoomCoupleRepository(database, scope)
+            val repository = RoomCoupleRepository(PartnerId.LIDIANNE, database, scope)
             repository.awaitReady()
             database.openHelper.writableDatabase.execSQL(
                 "INSERT INTO care_requests (type, requesterId, recipientId, status, createdAtIso, message) " +
@@ -221,9 +222,9 @@ class RoomCoupleRepositoryTest {
         val name = "dengo-test-corrupt-${UUID.randomUUID()}"
         val initialDatabase = DengoDatabase.open(context, name)
         val initialScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-        val initialRepository = RoomCoupleRepository(initialDatabase, initialScope)
+        val initialRepository = RoomCoupleRepository(PartnerId.LIDIANNE, initialDatabase, initialScope)
         initialRepository.awaitReady()
-        assertTrue(initialRepository.createMuralNote(PartnerId.VINICIUS, "Conteúdo anterior") is WriteResult.Confirmed)
+        assertTrue(initialRepository.createMuralNote("Conteúdo anterior") is WriteResult.Confirmed)
         initialScope.cancel()
         initialDatabase.close()
 
@@ -236,7 +237,7 @@ class RoomCoupleRepositoryTest {
         val database = DengoDatabase.open(context, name)
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         try {
-            val repository = RoomCoupleRepository(database, scope)
+            val repository = RoomCoupleRepository(PartnerId.LIDIANNE, database, scope)
             withTimeout(10_000) { repository.state.first { it is RepositoryReadState.ReadError } }
             assertTrue(file.exists())
             assertArrayEquals(corrupted, file.readBytes())
@@ -250,7 +251,7 @@ class RoomCoupleRepositoryTest {
         val database = DengoDatabase.open(context, "dengo-test-${UUID.randomUUID()}")
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         try {
-            val repository = RoomCoupleRepository(database, scope)
+            val repository = RoomCoupleRepository(PartnerId.LIDIANNE, database, scope)
             repository.awaitReady()
             val outcomes = coroutineScope {
                 val first = async { repository.createRequest(CareRequestType.MEDICINE) }
@@ -271,7 +272,7 @@ class RoomCoupleRepositoryTest {
         val name = "dengo-test-${UUID.randomUUID()}"
         val firstDatabase = DengoDatabase.open(context, name)
         val firstScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-        val first = RoomCoupleRepository(firstDatabase, firstScope)
+        val first = RoomCoupleRepository(PartnerId.LIDIANNE, firstDatabase, firstScope)
         first.awaitReady()
         val original = first.createRequest(CareRequestType.HOT_WATER_BAG) as WriteResult.Confirmed<CareRequest>
         firstScope.cancel()
@@ -280,7 +281,7 @@ class RoomCoupleRepositoryTest {
         val reopened = DengoDatabase.open(context, name)
         val secondScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         try {
-            val second = RoomCoupleRepository(reopened, secondScope)
+            val second = RoomCoupleRepository(PartnerId.LIDIANNE, reopened, secondScope)
             second.awaitReady()
             val duplicate = second.createRequest(CareRequestType.HOT_WATER_BAG) as WriteResult.Confirmed<CareRequest>
             assertFalse(duplicate.changed)
@@ -296,11 +297,11 @@ class RoomCoupleRepositoryTest {
         val database = DengoDatabase.open(context, "dengo-test-${UUID.randomUUID()}")
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         try {
-            val repository = RoomCoupleRepository(database, scope)
+            val repository = RoomCoupleRepository(PartnerId.LIDIANNE, database, scope)
             repository.awaitReady()
             assertTrue(repository.createRequest(CareRequestType.OTHER, " ") is WriteResult.Reverted)
-            assertTrue(repository.createMuralNote(PartnerId.LIDIANNE, " ") is WriteResult.Reverted)
-            assertTrue(repository.createMuralDrawing(PartnerId.LIDIANNE, 1f, emptyList()) is WriteResult.Reverted)
+            assertTrue(repository.createMuralNote(" ") is WriteResult.Reverted)
+            assertTrue(repository.createMuralDrawing(1f, emptyList()) is WriteResult.Reverted)
             assertEquals(WriteResult.Confirmed(Unit, true), repository.setMood(MoodOption.SAD))
             assertEquals(WriteResult.Confirmed(Unit, false), repository.setMood(MoodOption.SAD))
             assertEquals(WriteResult.Confirmed(Unit, true), repository.activatePersonalSpace())
@@ -318,9 +319,9 @@ class RoomCoupleRepositoryTest {
         val name = "dengo-test-${UUID.randomUUID()}"
         val database = DengoDatabase.open(context, name)
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-        val repository = RoomCoupleRepository(database, scope)
+        val repository = RoomCoupleRepository(PartnerId.LIDIANNE, database, scope)
         repository.awaitReady()
-        repository.createMuralNote(PartnerId.VINICIUS, "Persistido")
+        repository.createMuralNote("Persistido")
         database.close()
         repository.retryRead()
         withTimeout(10_000) { repository.state.first { it is RepositoryReadState.ReadError } }
@@ -330,10 +331,34 @@ class RoomCoupleRepositoryTest {
         val reopened = DengoDatabase.open(context, name)
         val secondScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         try {
-            assertEquals(1, RoomCoupleRepository(reopened, secondScope).awaitReady().muralNotes.size)
+            assertEquals(1, RoomCoupleRepository(PartnerId.LIDIANNE, reopened, secondScope).awaitReady().muralNotes.size)
         } finally {
             secondScope.cancel()
             reopened.close()
+        }
+    }
+
+    @Test fun authorshipAndPermissionComeFromTheSessionOfTheRepository() = runBlocking {
+        val name = "dengo-test-${UUID.randomUUID()}"
+        val database = DengoDatabase.open(context, name)
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        try {
+            val lidianne = RoomCoupleRepository(PartnerId.LIDIANNE, database, scope)
+            lidianne.awaitReady()
+            val note = lidianne.createMuralNote("Dela") as WriteResult.Confirmed<MuralNote>
+            assertEquals(PartnerId.LIDIANNE, note.value.authorId)
+            val request = lidianne.createRequest(CareRequestType.DENGO) as WriteResult.Confirmed<CareRequest>
+
+            val vinicius = RoomCoupleRepository(PartnerId.VINICIUS, database, scope)
+            vinicius.awaitReady()
+            val his = vinicius.createMuralNote("Dele") as WriteResult.Confirmed<MuralNote>
+            assertEquals(PartnerId.VINICIUS, his.value.authorId)
+            assertEquals(WriteResult.Confirmed(Unit, true), vinicius.acceptRequest(request.value.id))
+            assertTrue(vinicius.acknowledgeRequest(request.value.id) is WriteResult.Reverted)
+        } finally {
+            scope.cancel()
+            database.close()
+            context.deleteDatabase(name)
         }
     }
 

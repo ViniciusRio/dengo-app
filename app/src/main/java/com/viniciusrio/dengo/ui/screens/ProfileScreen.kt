@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,7 +35,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -46,7 +43,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
@@ -56,7 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.viniciusrio.dengo.R
-import com.viniciusrio.dengo.navigation.PrototypePerspective
+import com.viniciusrio.dengo.model.PartnerId
 import com.viniciusrio.dengo.ui.theme.AppBackground
 import com.viniciusrio.dengo.ui.theme.AppSpacing
 import com.viniciusrio.dengo.ui.theme.LidianneAction
@@ -75,9 +71,8 @@ private val ProfilePanelShape = GenericShape { size, _ ->
 }
 
 @Composable
-fun PrototypePerspectiveScreen(
-    perspective: PrototypePerspective,
-    onPerspectiveSelected: (PrototypePerspective) -> Unit,
+fun ProfileScreen(
+    person: PartnerId,
     contentPadding: PaddingValues,
 ) {
     Column(
@@ -95,15 +90,12 @@ fun PrototypePerspectiveScreen(
                 .semantics { heading() },
             style = MaterialTheme.typography.titleLarge,
         )
-        ProfileComposition(perspective, onPerspectiveSelected)
+        ProfileComposition(person)
     }
 }
 
 @Composable
-private fun ProfileComposition(
-    perspective: PrototypePerspective,
-    onPerspectiveSelected: (PrototypePerspective) -> Unit,
-) {
+private fun ProfileComposition(person: PartnerId) {
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         // Only the illustration uses a width-based dimension. The panel and controls grow with text.
         val heroHeight = maxWidth * 0.79f
@@ -146,18 +138,7 @@ private fun ProfileComposition(
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
             )
             Spacer(Modifier.height(AppSpacing.Medium))
-            Column(
-                modifier = Modifier.selectableGroup(),
-                verticalArrangement = Arrangement.spacedBy(AppSpacing.Small),
-            ) {
-                PrototypePerspective.entries.forEach { option ->
-                    PerspectiveChoice(
-                        option = option,
-                        selected = perspective == option,
-                        onClick = { onPerspectiveSelected(option) },
-                    )
-                }
-            }
+            PersonCard(person)
             Spacer(Modifier.height(AppSpacing.Base))
             Row(
                 modifier = Modifier
@@ -173,7 +154,10 @@ private fun ProfileComposition(
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    text = stringResource(R.string.perspective_explanation),
+                    text = stringResource(
+                        R.string.profile_linked_explanation,
+                        stringResource(if (person == PartnerId.LIDIANNE) R.string.perspective_lidianne else R.string.perspective_vinicius),
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -223,26 +207,23 @@ private fun CoupleIdentity(showTextLettering: Boolean) {
 }
 
 @Composable
-private fun PerspectiveChoice(
-    option: PrototypePerspective,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
-    val isLidianne = option == PrototypePerspective.LIDIANNE
+private fun PersonCard(person: PartnerId) {
+    val isLidianne = person == PartnerId.LIDIANNE
     val name = stringResource(if (isLidianne) R.string.perspective_lidianne else R.string.perspective_vinicius)
     val accent = if (isLidianne) LidianneAction else ViniciusAction
     val soft = if (isLidianne) LidiannePinkSoft else ViniciusBlueSoft
     val avatar = if (isLidianne) R.drawable.dengo_lidianne_avatar else R.drawable.dengo_vinicius_avatar
     val shape = RoundedCornerShape(28.dp)
 
+    // A identidade vem do vínculo: o cartão informa, sem oferecer troca.
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .semantics(mergeDescendants = true) {}
             .heightIn(min = 80.dp)
             .clip(shape)
             .background(Brush.horizontalGradient(listOf(soft, soft.copy(alpha = 0.68f))))
-            .border(if (selected) 1.5.dp else 1.dp, if (selected) accent.copy(alpha = 0.8f) else Color.White, shape)
-            .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
+            .border(1.5.dp, accent.copy(alpha = 0.8f), shape)
             .padding(horizontal = AppSpacing.Medium, vertical = AppSpacing.Small),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(AppSpacing.Medium),
@@ -259,19 +240,17 @@ private fun PerspectiveChoice(
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                 color = MaterialTheme.colorScheme.onSurface,
             )
-            if (selected) {
-                Spacer(Modifier.height(AppSpacing.ExtraSmall))
-                Text(
-                    text = stringResource(R.string.profile_in_use),
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(accent.copy(alpha = 0.12f))
-                        .padding(horizontal = AppSpacing.Medium, vertical = AppSpacing.ExtraSmall),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = accent,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
+            Spacer(Modifier.height(AppSpacing.ExtraSmall))
+            Text(
+                text = stringResource(R.string.profile_in_use),
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(accent.copy(alpha = 0.12f))
+                    .padding(horizontal = AppSpacing.Medium, vertical = AppSpacing.ExtraSmall),
+                style = MaterialTheme.typography.labelMedium,
+                color = accent,
+                fontWeight = FontWeight.SemiBold,
+            )
         }
     }
 }

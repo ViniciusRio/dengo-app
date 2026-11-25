@@ -25,7 +25,6 @@ import com.viniciusrio.dengo.ui.ScreenReadState
 import com.viniciusrio.dengo.ui.SubmissionState
 import com.viniciusrio.dengo.ui.present
 import com.viniciusrio.dengo.navigation.AppDestination
-import com.viniciusrio.dengo.navigation.PrototypePerspective
 import com.viniciusrio.dengo.model.PartnerId
 import com.viniciusrio.dengo.ui.components.AppScaffold
 import com.viniciusrio.dengo.ui.components.ReadNoticeMessage
@@ -40,20 +39,20 @@ import com.viniciusrio.dengo.ui.mural.MuralScreen
 import com.viniciusrio.dengo.ui.mural.MuralViewModel
 import com.viniciusrio.dengo.ui.mural.ComposerMode
 import com.viniciusrio.dengo.ui.screens.PlaceholderScreen
-import com.viniciusrio.dengo.ui.screens.PrototypePerspectiveScreen
+import com.viniciusrio.dengo.ui.screens.ProfileScreen
 import com.viniciusrio.dengo.ui.theme.DengoTheme
 import com.viniciusrio.dengo.ui.theme.ViniciusAction
 import com.viniciusrio.dengo.ui.theme.ViniciusBlueSoft
 
 @Composable
 fun DengoApp(
+    person: PartnerId,
     homeViewModel: HomeViewModel,
     viniciusHomeViewModel: ViniciusHomeViewModel,
     historyViewModel: HistoryViewModel,
     muralViewModel: MuralViewModel,
 ) {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestination.Home) }
-    var perspective by rememberSaveable { mutableStateOf(PrototypePerspective.LIDIANNE) }
     var pendingDestination by rememberSaveable { mutableStateOf<AppDestination?>(null) }
     val composer by muralViewModel.composer.collectAsState()
     val otherSubmission by homeViewModel.otherSubmission.collectAsState()
@@ -80,10 +79,10 @@ fun DengoApp(
                     else if (muralViewModel.composer.value.confirmDiscard) pendingDestination = destination
                 } else currentDestination = destination
             },
-            selectedColor = if (perspective == PrototypePerspective.VINICIUS) ViniciusAction else MaterialTheme.colorScheme.primary,
-            indicatorColor = if (perspective == PrototypePerspective.VINICIUS) ViniciusBlueSoft else MaterialTheme.colorScheme.primaryContainer,
+            selectedColor = if (person == PartnerId.VINICIUS) ViniciusAction else MaterialTheme.colorScheme.primary,
+            indicatorColor = if (person == PartnerId.VINICIUS) ViniciusBlueSoft else MaterialTheme.colorScheme.primaryContainer,
         ) { padding ->
-            if (currentDestination == AppDestination.Home && perspective == PrototypePerspective.LIDIANNE) {
+            if (currentDestination == AppDestination.Home && person == PartnerId.LIDIANNE) {
                 ReadContent(homeRead, homeViewModel::retryRead, showTopNotice = !otherOpen, writeSubmission = lidianneQuickSubmission) { ready, notice -> LidianneHomeScreen(
                     state = ready,
                     readNotice = notice,
@@ -118,7 +117,7 @@ fun DengoApp(
                     onRetryRead = muralViewModel::retryRead,
                     composer = composer,
                     textSubmission = textSubmission,
-                    authorId = if (perspective == PrototypePerspective.LIDIANNE) PartnerId.LIDIANNE else PartnerId.VINICIUS,
+                    authorId = person,
                     onLeaveNote = muralViewModel::leaveNote,
                     onTextDraftChanged = muralViewModel::updateTextDraft,
                     onOpenChooser = muralViewModel::openChooser,
@@ -143,17 +142,10 @@ fun DengoApp(
                 ) }
             } else if (currentDestination == AppDestination.History) {
                 ReadContent(historyRead, historyViewModel::retryRead) { ready, _ ->
-                    HistoryScreen(state = ready, perspective = perspective, contentPadding = padding)
+                    HistoryScreen(state = ready, person = person, contentPadding = padding)
                 }
             } else if (currentDestination == AppDestination.Profile) {
-                PrototypePerspectiveScreen(
-                    perspective = perspective,
-                    onPerspectiveSelected = {
-                        perspective = it
-                        currentDestination = AppDestination.Home
-                    },
-                    contentPadding = padding,
-                )
+                ProfileScreen(person = person, contentPadding = padding)
             } else {
                 PlaceholderScreen(currentDestination, padding)
             }

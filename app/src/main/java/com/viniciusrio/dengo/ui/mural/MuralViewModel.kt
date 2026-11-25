@@ -53,12 +53,12 @@ class MuralViewModel(private val repository: CoupleRepository) : ViewModel() {
 
     fun retryRead() = repository.retryRead()
 
-    fun leaveNote(authorId: PartnerId, text: String) {
+    fun leaveNote(text: String) {
         if (mutableComposer.value.mode != ComposerMode.TEXT || isPublishing) return
         mutableTextSubmission.value = SubmissionState.Sending
         viewModelScope.launch {
             try {
-                when (val result = submitWrite { repository.createMuralNote(authorId, text) }) {
+                when (val result = submitWrite { repository.createMuralNote(text) }) {
                     SubmissionState.Confirmed -> {
                         mutableTextSubmission.value = result
                         mutableComposer.value = MuralComposerState()
@@ -127,13 +127,13 @@ class MuralViewModel(private val repository: CoupleRepository) : ViewModel() {
         if (!isPublishing) mutableComposer.value = MuralComposerState()
     }
 
-    fun publishDrawing(authorId: PartnerId): Boolean {
+    fun publishDrawing(): Boolean {
         val current = mutableComposer.value
         if (current.mode != ComposerMode.DRAWING || current.strokes.isEmpty() || isPublishing) return false
         mutableComposer.value = current.copy(submission = SubmissionState.Sending)
         viewModelScope.launch {
             try {
-                when (val result = submitWrite { repository.createMuralDrawing(authorId, current.aspectRatio, current.strokes) }) {
+                when (val result = submitWrite { repository.createMuralDrawing(current.aspectRatio, current.strokes) }) {
                     SubmissionState.Confirmed -> mutableComposer.value = MuralComposerState()
                     else -> mutableComposer.value = mutableComposer.value.copy(submission = result)
                 }

@@ -6,7 +6,6 @@ import com.viniciusrio.dengo.model.CoupleState
 import com.viniciusrio.dengo.model.DrawingStroke
 import com.viniciusrio.dengo.model.MoodOption
 import com.viniciusrio.dengo.model.MuralNote
-import com.viniciusrio.dengo.model.PartnerId
 import kotlinx.coroutines.flow.StateFlow
 
 sealed interface RepositoryReadState {
@@ -21,6 +20,7 @@ sealed interface WriteResult<out T> {
     data class Uncertain(val cause: Throwable) : WriteResult<Nothing>
 }
 
+/** Quem age vem da sessão, definida na construção da implementação; nenhum comando informa autor. */
 interface CoupleRepository {
     val state: StateFlow<RepositoryReadState>
     fun retryRead()
@@ -28,10 +28,10 @@ interface CoupleRepository {
     suspend fun createRequest(type: CareRequestType, message: String? = null): WriteResult<CareRequest>
     suspend fun acceptRequest(requestId: Long): WriteResult<Unit>
     suspend fun declineRequest(requestId: Long): WriteResult<Unit>
-    suspend fun acknowledgeRequest(requestId: Long, actorId: PartnerId): WriteResult<Unit>
+    suspend fun acknowledgeRequest(requestId: Long): WriteResult<Unit>
     suspend fun setMood(option: MoodOption): WriteResult<Unit>
     suspend fun activatePersonalSpace(): WriteResult<Unit>
     suspend fun endPersonalSpace(): WriteResult<Unit>
-    suspend fun createMuralNote(authorId: PartnerId, text: String): WriteResult<MuralNote>
-    suspend fun createMuralDrawing(authorId: PartnerId, aspectRatio: Float, strokes: List<DrawingStroke>): WriteResult<MuralNote>
+    suspend fun createMuralNote(text: String): WriteResult<MuralNote>
+    suspend fun createMuralDrawing(aspectRatio: Float, strokes: List<DrawingStroke>): WriteResult<MuralNote>
 }
