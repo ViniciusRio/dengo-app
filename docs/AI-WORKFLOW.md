@@ -72,6 +72,7 @@ No fluxo sequencial, o revisor somente leitura pode revisar o commit sem worktre
 | `CLAUDE.md` | Importa o `AGENTS.md`; só notas específicas do Claude Code |
 | `docs/STATUS.md` | Estado atual, ~15 linhas; fonte única. Atualizado quando um agente para |
 | `openspec/changes/*/tasks.md` | Progresso das tarefas |
+| Quadro do Kanzo (`~/kanzo`, fora do repositório) | Visão do backlog e do andamento; só acompanha |
 | `docs/decisions/` e `design.md` do OpenSpec | Decisões com data e motivo. Índice em `docs/decisions/README.md` |
 | Descrição e comentários do PR | Handoff e revisão |
 | `dengo/` | Planejamento e contexto de produto; não registra o estado atual |
@@ -79,6 +80,17 @@ No fluxo sequencial, o revisor somente leitura pode revisar o commit sem worktre
 Quando um agente repetir um erro já corrigido, acrescente-o às correções recorrentes do `AGENTS.md`. Deixe de fora o que o agente consegue ler no código.
 
 Mantenha as skills upstream (`tdd`, `codebase-design`, `diagnosing-bugs`) sem modificações locais enquanto forem tratadas como upstream. Revise as mudanças antes de aceitar uma atualização.
+
+## Quadro de acompanhamento (Kanzo)
+
+O [Kanzo](https://github.com/emanuele-em/kanzo) mostra o backlog e o andamento num kanban local (http://localhost:4242), que os agentes acessam pelo MCP `kanzo`. Ele **só acompanha**: specs, `tasks.md`, ADRs, `docs/STATUS.md` e PRs continuam sendo as fontes de verdade, e o quadro não substitui nenhum deles.
+
+- Um cartão por trabalho: a change e o PR dela compartilham o mesmo cartão, que recebe o link do PR quando ele é aberto. Item de backlog sem change também tem cartão. O cartão leva links, não cópia do conteúdo.
+- Quem estiver no papel de implementador move o cartão quando a etapa muda (planejar, implementar, revisar, aprovar, concluído); com papéis invertidos ou no modo reserva, é o Codex. O revisor somente leitura não mexe no quadro.
+- Depois do merge, o implementador move o cartão para concluído no início da sessão seguinte, ao conferir os PRs mesclados. Vinícius pode antecipar.
+- Mover o cartão para concluído não é aprovação: segue valendo o merge feito por Vinícius e, em UI, a revisão no aparelho.
+- Se o quadro divergir do repositório, vale o repositório, e o cartão é corrigido.
+- O quadro é um só: Claude Code, Codex e Vinícius usam o da mesma máquina. Para usar de outra máquina, rode `kanzo share on` na principal e `kanzo join <ip>` na outra, em vez de criar um quadro novo. Os dados ficam em `~/kanzo`, fora do Git do projeto.
 
 ## Commits
 

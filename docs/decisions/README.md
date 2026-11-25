@@ -29,3 +29,4 @@ Abra um ADR só quando a tarefa tocar a decisão dele. ADRs antigos ficam como e
 | [023](ADR-023-rabbitmq-delivery-lab.md) | Laboratório isolado com RabbitMQ | Vigente, só como laboratório |
 | [024](ADR-024-ai-agent-workflow.md) | Fluxo com agentes, leitura sob demanda e fonte única de estado | Vigente a partir do merge do PR #1 |
 | [025](ADR-025-two-device-own-backend.md) | Dois aparelhos com backend próprio | Direção escolhida e spec aprovada; nada implementado |
+| [026](ADR-026-kanzo-tracking-board.md) | Kanzo como quadro de acompanhamento | Vigente; só visualização |
