@@ -88,7 +88,7 @@ internal abstract class DengoDatabase : RoomDatabase() {
 /** O arquivo de cada pessoa até a etapa 4. O `dengo-local.db` antigo fica intacto e sem uso. */
 internal fun sessionDatabaseName(person: PartnerId): String = "dengo-session-${person.name.lowercase()}.db"
 
-private class PreservingOpenHelperFactory : SupportSQLiteOpenHelper.Factory {
+internal class PreservingOpenHelperFactory : SupportSQLiteOpenHelper.Factory {
     override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper {
         val original = configuration.callback
         val callback = object : SupportSQLiteOpenHelper.Callback(original.version) {
