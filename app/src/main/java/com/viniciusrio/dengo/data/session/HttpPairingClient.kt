@@ -1,15 +1,17 @@
 package com.viniciusrio.dengo.data.session
 
+import com.viniciusrio.dengo.data.net.dengoHttpClient
 import com.viniciusrio.dengo.model.PartnerId
 import java.io.IOException
 import java.net.ConnectException
-import java.net.HttpURLConnection
 import java.net.NoRouteToHostException
-import java.net.URL
 import java.net.UnknownHostException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -45,27 +47,21 @@ class HttpPairingClient(
         }
     }
 
+    private val client = dengoHttpClient(timeoutMillis)
+
     private fun exchange(code: String): PairingResult {
-        val connection = URL("$baseUrl/v1/pairings").openConnection() as HttpURLConnection
-        try {
-            connection.requestMethod = "POST"
-            connection.connectTimeout = timeoutMillis
-            connection.readTimeout = timeoutMillis
-            connection.doOutput = true
-            connection.setRequestProperty("Content-Type", "application/json")
-            connection.connect()
-            connection.outputStream.use { it.write(JSONObject().put("code", code).toString().toByteArray()) }
-            val status = connection.responseCode
-            val body = (if (status < 400) connection.inputStream else connection.errorStream)
-                ?.use { it.readBytes().decodeToString() }.orEmpty()
+        val request = Request.Builder()
+            .url("$baseUrl/v1/pairings")
+            .post(JSONObject().put("code", code).toString().toByteArray().toRequestBody("application/json".toMediaType()))
+            .build()
+        client.newCall(request).execute().use { response ->
+            val body = response.body?.string().orEmpty()
             return when {
-                status == 200 -> parseSession(body)?.let(PairingResult::Paired) ?: PairingResult.Unavailable
+                response.code == 200 -> parseSession(body)?.let(PairingResult::Paired) ?: PairingResult.Unavailable
                 errorCode(body) == "PAIRING_CODE_INVALID" -> PairingResult.InvalidCode
                 errorCode(body) == "PAIRING_LOCKED" -> PairingResult.Locked
                 else -> PairingResult.Unavailable
             }
-        } finally {
-            connection.disconnect()
         }
     }
 
