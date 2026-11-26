@@ -8,7 +8,7 @@ Fonte única do estado atual. Atualize ao parar um agente e mantenha em ~15 linh
 
 **Alcance das aprovações:** cada aprovação humana vale só para o que o ADR ou a feature descreve. TalkBack e fonte ampliada não foram validados em todas as telas.
 
-**Próximo:** dois aparelhos com backend próprio, escolhidos em 2026-11-03 (ADR-025). A spec `sync-couple-between-devices` foi aprovada. A etapa 1, `backend/`, foi integrada à `main` pelo PR #7, testada só localmente com dados sintéticos e sem ligação com o app. A VPS foi adiada: a ordem agora é identidade no app, sincronização, Mural, notificações, implantação e fechamento. Próxima etapa: `feat/app-device-identity`.
+**Próximo:** dois aparelhos com backend próprio (ADR-025), spec `sync-couple-between-devices` aprovada. Etapas 1 (`backend/`, PR #7) e 3 (identidade no app, PR #9) na `main`; a 3.3, revisão da tela de vínculo no Samsung, segue aberta. Etapa 4 em andamento em `feat/app-remote-sync`, sem PR: 4.1 (`dengo-sync.db`) e 4.2 (`RemoteCoupleRepository` sobre OkHttp sem retry) feitas e testadas; o app ainda não usa o repositório remoto. Próxima tarefa: 4.3. Ordem restante: sincronização, Mural, notificações, implantação e fechamento. Estudos (Kafka, SQS, Redis) seguem no laboratório, por decisão de 2026-11-25.
 
 **Bloqueios:** nenhum.
 
