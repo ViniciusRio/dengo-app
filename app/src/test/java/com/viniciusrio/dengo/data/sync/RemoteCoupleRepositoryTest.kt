@@ -233,4 +233,74 @@ class RemoteCoupleRepositoryTest {
 
         assertEquals(listOf("key-1", "key-1"), server.writes().filter { it.method == "POST" }.map { it.key })
     }
+    private fun syncReads() = server.requests.filter { it.method == "GET" }.map { it.path.substringAfter("after=").substringBefore('&').toLong() }
+
+    private fun firstPageWithNewerRequest() = page(
+        1, hasMore = true,
+        // O pedido chega no estado mais novo, à frente do cursor, para o acontecimento não ficar sem pedido.
+        requests = request(5, status = "ACCEPTED", revision = 2),
+        history = event(9, "REQUEST_CREATED", "LIDIANNE", requestId = 5, revision = 1),
+    )
+
+    private fun secondPage() = page(
+        2,
+        requests = request(5, status = "ACCEPTED", revision = 2),
+        history = event(10, "REQUEST_ACCEPTED", "VINICIUS", requestId = 5, revision = 2),
+    )
+
+    private fun assertNoEventWithoutItsRequest(state: CoupleState) {
+        val ids = state.requests.map { it.id }.toSet()
+        state.history.mapNotNull { it.requestId }.forEach { assertTrue("acontecimento sem pedido $it", it in ids) }
+    }
+
+    @Test fun `a connection lost between pages keeps the complete pages and the next sync resumes from the cursor`() = runBlocking {
+        server.respond("GET /v1/sync", 200, firstPageWithNewerRequest())
+        server.dropAfterRequest("GET /v1/sync")
+        server.syncPage = { after -> if (after < 2) secondPage() else page(2) }
+        val repository = repository()
+
+        val interrupted = repository.awaitState { it.requests.isNotEmpty() }
+        withTimeout(5_000) { while (syncReads().size < 2) kotlinx.coroutines.delay(20) }
+        assertEquals(1L, store.read().revision)
+        assertEquals(1, interrupted.history.size)
+        assertEquals(CareRequestStatus.ACCEPTED, interrupted.requests.single().status)
+        assertNoEventWithoutItsRequest(store.read().state)
+
+        assertTrue(repository.sync())
+
+        assertEquals(listOf(0L, 1L, 1L), syncReads())
+        val copy = store.read()
+        assertEquals(2L, copy.revision)
+        assertEquals(1, copy.state.requests.size)
+        assertEquals(2, copy.state.history.size)
+        assertNoEventWithoutItsRequest(copy.state)
+    }
+
+    @Test fun `a process that dies between pages reopens from the last complete page without duplicating`() = runBlocking {
+        val dying = java.util.concurrent.atomic.AtomicBoolean(true)
+        server.respond("GET /v1/sync", 200, firstPageWithNewerRequest())
+        server.syncPage = { after ->
+            // A segunda página chega tarde demais para o primeiro processo.
+            if (dying.get()) Thread.sleep(1_000)
+            if (after < 2) secondPage() else page(2)
+        }
+        val firstScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        val first = RemoteCoupleRepository(HttpCoupleApi(server.baseUrl, "token-sintetico"), store, firstScope, newKey = { "key-${++keys}" })
+        // A primeira página aparece antes de a paginação terminar.
+        first.awaitState { it.requests.isNotEmpty() }
+        assertEquals(1L, store.read().revision)
+        withTimeout(5_000) { while (syncReads().size < 2) kotlinx.coroutines.delay(20) }
+        firstScope.cancel()
+        kotlinx.coroutines.delay(1_500)
+        assertEquals("a página atrasada não pode ser gravada", 1L, store.read().revision)
+
+        dying.set(false)
+        val reopened = repository()
+        val state = reopened.awaitState { it.history.size == 2 }
+
+        assertEquals(2L, store.read().revision)
+        assertEquals(1, state.requests.size)
+        assertNoEventWithoutItsRequest(state)
+        assertEquals(1L, syncReads().last())
+    }
 }

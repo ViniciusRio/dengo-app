@@ -95,6 +95,7 @@ class RemoteCoupleRepository(
                 if (!store.apply(page) { !revoked }) return@withLock false
                 after = page.revision
                 if (!page.hasMore) break
+                publishCopy()
             }
             store.read().let { copy ->
                 copy.pending.filter { it.confirmedRevision != null && it.confirmedRevision <= copy.revision }

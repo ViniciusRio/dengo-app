@@ -36,7 +36,7 @@ Ordem de execução, decidida por Vinícius em 2026-11-03: 3, 4, 6, 5, 2 e 7. Os
 
 - [x] 4.1 Criar `dengo-sync.db` com IDs do servidor e revisão, mantendo `dengo-local.db` intacto e apagando os arquivos `dengo-session-*.db` da etapa 3; verificar por teste que o arquivo antigo não é aberto nem alterado.
 - [x] 4.2 Implementar a nova implementação de `CoupleRepository` sobre a API, com as regras de resultado da spec e a tabela de tentativas pendentes; verificar com servidor falso cada linha da tabela de resultados, tentar de novo e descartar, inclusive depois de reabrir o app, com descarte que encontra escrita confirmada e comando igual antes de a cópia alcançar a revisão.
-- [ ] 4.3 Implementar os gatilhos de sincronização e o aplicar por página em transação; verificar interrupção no meio da paginação.
+- [x] 4.3 Implementar os gatilhos de sincronização e o aplicar por página em transação; verificar interrupção no meio da paginação. Abrir, escrever e `retryRead()` sincronizam no repositório; primeiro plano, aviso e os 30 s ficam em `SyncTriggers`, ligado ao ciclo de vida na 4.5 e ao aviso na 5.3. Interrupção verificada na JVM, com conexão perdida e processo encerrado entre páginas.
 - [ ] 4.4 Comunicar dados possivelmente desatualizados e falta de conexão, sem criar novo componente se um aviso existente servir; verificar leitura sem internet.
 - [ ] 4.7 Apagar token, cópia e tentativas pendentes somente diante do código explícito de revogação ou ao vincular outra pessoa; verificar por teste que erros de rede e 5xx não apagam nada e que um 200 atrasado, depois do 401, não grava dados.
 - [ ] 4.5 Ligar a implementação ao ponto de composição; verificar a suíte instrumentada com a confirmação de que `dengo-sync.db` e `dengo-local.db` não mudam nos testes.
