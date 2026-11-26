@@ -147,4 +147,90 @@ class RemoteCoupleRepositoryTest {
         assertEquals(WriteResult.Reverted(RevertReason.MURAL_NOT_SYNCED), repository.createMuralNote("Oi"))
         assertTrue(server.writes().isEmpty())
     }
+
+    private fun uncertainActivation(repository: RemoteCoupleRepository) = runBlocking {
+        server.dropAfterRequest("POST /v1/personal-space")
+        assertTrue(repository.activatePersonalSpace() is WriteResult.Uncertain)
+    }
+
+    @Test fun `retrying resends the same key and content, even after reopening, and a confirmation clears it`() = runBlocking {
+        uncertainActivation(ready())
+        val reopened = ready()
+        assertEquals(listOf("key-1"), withTimeout(5_000) { reopened.uncertainOperations.first { it.isNotEmpty() } }.map { it.key })
+        server.respond("POST /v1/personal-space", 200, """{"changed":true,"revision":4}""")
+
+        assertTrue(reopened.retryPending("key-1") is WriteResult.Confirmed)
+
+        val sent = server.writes()
+        assertEquals(listOf("key-1", "key-1"), sent.map { it.key })
+        assertEquals(sent[0].body, sent[1].body)
+        assertTrue(pendingKeys().isEmpty())
+        assertTrue(withTimeout(5_000) { reopened.uncertainOperations.first { it.isEmpty() } }.isEmpty())
+    }
+
+    @Test fun `the same command as a pending one reuses its key`() = runBlocking {
+        val repository = ready()
+        uncertainActivation(repository)
+        server.respond("POST /v1/personal-space", 200, """{"changed":false,"revision":4}""")
+
+        assertTrue(repository.activatePersonalSpace() is WriteResult.Confirmed)
+
+        assertEquals(listOf("key-1", "key-1"), server.writes().map { it.key })
+    }
+
+    @Test fun `a cancelled discard removes the attempt`() = runBlocking {
+        val repository = ready()
+        uncertainActivation(repository)
+        server.respond("DELETE /v1/operations/key-1", 200, """{"outcome":"CANCELLED","revision":null}""")
+
+        assertEquals(DiscardResult.DISCARDED, repository.discardPending("key-1"))
+        assertTrue(pendingKeys().isEmpty())
+    }
+
+    @Test fun `discarding without connection keeps the attempt pending`() = runBlocking {
+        val repository = repository(baseUrl = unreachableUrl())
+        runBlocking { store.savePending(PendingOperation("key-1", PendingCommand.ActivatePersonalSpace)) }
+
+        assertEquals(DiscardResult.STILL_PENDING, repository.discardPending("key-1"))
+        assertEquals(listOf("key-1"), pendingKeys())
+    }
+
+    private val released = java.util.concurrent.atomic.AtomicBoolean(false)
+
+    /** A cópia fica na revisão 3 até o teste liberar a página da revisão 4. */
+    private fun holdCopyBelowRevisionFour() {
+        server.syncPage = { after ->
+            if (released.get()) page(4, personalSpace = """{"status":"ACTIVE","activatedAt":"2026-11-20T12:00:00Z","revision":4}""")
+            else page(maxOf(after, 3))
+        }
+    }
+
+    @Test fun `a discard that finds the write confirmed keeps the key until the copy reaches its revision`() = runBlocking {
+        holdCopyBelowRevisionFour()
+        val repository = ready()
+        uncertainActivation(repository)
+        server.respond("DELETE /v1/operations/key-1", 200, """{"outcome":"CONFIRMED","revision":4}""")
+
+        assertEquals(DiscardResult.ALREADY_CONFIRMED, repository.discardPending("key-1"))
+        assertTrue(repository.sync())
+        assertEquals(listOf("key-1"), pendingKeys())
+        assertTrue(repository.uncertainOperations.value.isEmpty())
+
+        released.set(true)
+        assertTrue(repository.sync())
+        assertTrue(pendingKeys().isEmpty())
+    }
+
+    @Test fun `before the copy reaches a confirmed discard, the same command reuses the key`() = runBlocking {
+        holdCopyBelowRevisionFour()
+        val repository = ready()
+        uncertainActivation(repository)
+        server.respond("DELETE /v1/operations/key-1", 200, """{"outcome":"CONFIRMED","revision":4}""")
+        repository.discardPending("key-1")
+        server.respond("POST /v1/personal-space", 200, """{"changed":true,"revision":4}""")
+
+        assertTrue(repository.activatePersonalSpace() is WriteResult.Confirmed)
+
+        assertEquals(listOf("key-1", "key-1"), server.writes().filter { it.method == "POST" }.map { it.key })
+    }
 }

@@ -98,6 +98,13 @@ VPS pequena com pelo menos 2 GB de RAM, Docker Compose, PostgreSQL local à VPS 
 
 **Limite aceito:** o responsável administra o servidor e tem acesso técnico aos dados. Isso precisa ser dito a Lidianne antes do uso.
 
+### 13. Cliente HTTP e Mural entre as etapas 4 e 6
+
+Decisões de Vinícius em 2026-11-25, durante a etapa 4:
+
+- **OkHttp com `retryOnConnectionFailure(false)`** nos dois clientes do app, vínculo e API. O teste com servidor falso mostrou que o `HttpURLConnection` reenviava sozinho um comando quando a conexão caía depois do envio, contra a regra "sem reenvio automático". O modo de corpo fixo, que impede esse reenvio, esconde na JVM o corpo do 401, e o app deixaria de reconhecer a revogação. **Alternativa descartada:** manter o `HttpURLConnection`, com comportamento diferente entre o teste na JVM e o aparelho. Retrofit continua fora.
+- **Mural recusado até a etapa 6:** com a cópia sincronizada, publicar recado devolve `Reverted` com o aviso de falha existente, sem chamar o servidor, e o Mural aparece vazio. **Motivo:** o servidor só aceita recados na etapa 6, e o uso diário só começa com todas as etapas prontas. **Alternativa descartada:** manter o Mural no Room local, que criaria recados que nunca chegam ao outro aparelho.
+
 ## API inicial
 
 | Método e caminho | Uso |
